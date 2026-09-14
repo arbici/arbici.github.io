@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css">
+<link rel="stylesheet" href="../base.css?v=6e6597b3">
 </head>
 <body>
 <div class="page">
@@ -22,8 +22,8 @@
 <a class="back" href="../"><span data-l="es">← Volver al índice</span><span data-l="en">← Back to the index</span></a>
 
 <h2><span data-l="es">Plan final</span><span data-l="en">Final plan</span></h2>
-<p class="note" data-l="es">Lo que hacemos cada día, dónde dormimos y cuánto se conduce. Los nombres de los alojamientos abren Google Maps. Esta es la tabla para llevar en el móvil durante el viaje.</p>
-<p class="note" data-l="en">What we do each day, where we sleep and how far we drive. Accommodation names open Google Maps. This is the table to keep on your phone during the trip.</p>
+<p class="note" data-l="es">Lo que hacemos cada día, dónde dormimos y cuánto se conduce. Cada sitio con nombre abre Google Maps. Esta es la tabla para llevar en el móvil durante el viaje.</p>
+<p class="note" data-l="en">What we do each day, where we sleep and how far we drive. Every named place opens Google Maps. This is the table to keep on your phone during the trip.</p>
 
 <table id="plan">
 <thead><tr>
@@ -38,8 +38,13 @@
   <td class="day" data-h="Día">9–10 Oct<small data-l="es">vie–sáb</small><small data-l="en">Fri–Sat</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">Vuelo</b><b data-l="en">Flying</b>
     <span data-l="es">2 noches en ruta</span><span data-l="en">2 nights in transit</span></td>
-  <td class="doing" data-h="Qué hacemos"><span data-l="es">Europa → Cairns, con una noche de escala en Brisbane. Lleva el permiso internacional junto al carné.</span>
-    <span data-l="en">Europe to Cairns, one night stop in Brisbane. Carry the IDP with your licence.</span></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t">9 oct</span><span class="w"><span data-l="es">Salimos de Europa</span><span data-l="en">Fly out of Europe</span></span></li>
+      <li><span class="t">10 oct</span><span class="w"><span data-l="es">Escala de una noche en Brisbane</span><span data-l="en">One night stop in Brisbane</span></span></li>
+      <li><span class="t"></span><span class="w"><span data-l="es">Lleva el permiso internacional junto al carné. Por sí solo no vale</span><span data-l="en">Carry the IDP alongside your licence. It is not valid on its own</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos"><span data-l="es">Avión, y una noche en Brisbane</span><span data-l="en">Plane, and one night in Brisbane</span></td>
 </tr>
 
@@ -47,66 +52,74 @@
   <td class="day" data-h="Día">11 Oct<small data-l="es">dom</small><small data-l="en">Sun</small></td>
   <td class="move" data-h="Ruta"><b>140 km · 2 h 30</b>
     <span data-l="es">Cairns → Cape Tribulation</span><span data-l="en">Cairns → Cape Tribulation</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>08:30</b> aterrizamos. Vehículo ~10:00 <span class="pin fix">Fijo</span></li>
-    <li data-l="en"><b>08:30</b> land. Vehicle ~10:00 <span class="pin fix">Fixed</span></li>
-    <li data-l="es"><b>Compra grande en Cairns.</b> En Cape Trib no hay supermercado</li>
-    <li data-l="en"><b>Big food shop in Cairns.</b> No supermarket at Cape Trib</li>
-    <li data-l="es">Ferry del río Daintree. No conducir de noche</li>
-    <li data-l="en">Daintree River ferry. Do not drive after dark</li>
-    <li data-l="es">Myall Beach y un baño al llegar</li>
-    <li data-l="en">Myall Beach and a swim on arrival</li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li class="fix"><span class="t">08:30</span><span class="w"><span data-l="es">Aterrizamos en Cairns</span><span data-l="en">Land in Cairns</span></span></li>
+      <li class="fix"><span class="t">10:00</span><span class="w"><span data-l="es">Recogemos la camper. Papeleo ~1 h, fianza de 500 A$</span><span data-l="en">Collect the van. Paperwork ~1 h, A$500 bond</span></span></li>
+      <li><span class="t">11:00</span><span class="w"><span data-l="es"><b>Compra grande en <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Coles+Smithfield+QLD" target="_blank" rel="noopener">Coles Smithfield</a>.</b> Último supermercado antes de Cape Trib. Al lado, <a class="gm" href="https://maps.app.goo.gl/Mrd5NXCApEr6hwNK7" target="_blank" rel="noopener">Dan Murphy's</a>, 9:00–21:00</span><span data-l="en"><b>Big food shop at <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Coles+Smithfield+QLD" target="_blank" rel="noopener">Coles Smithfield</a>.</b> Last supermarket before Cape Trib. <a class="gm" href="https://maps.app.goo.gl/Mrd5NXCApEr6hwNK7" target="_blank" rel="noopener">Dan Murphy's</a> next door, 9:00–21:00</span></span></li>
+      <li class="drive"><span class="t">12:00</span><span class="w"><span data-l="es">Hacia el norte, 140 km · 2 h 30. <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Port+Douglas+QLD" target="_blank" rel="noopener">Port Douglas</a> queda más o menos a mitad de camino</span><span data-l="en">North, 140 km · 2 h 30. <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Port+Douglas+QLD" target="_blank" rel="noopener">Port Douglas</a> is roughly halfway</span></span></li>
+      <li><span class="t">15:00</span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Daintree+River+Ferry+Crossing+QLD" target="_blank" rel="noopener">Ferry del río Daintree</a>, sale en continuo. <a class="gm" href="https://daintreeferry.com.au/" target="_blank" rel="noopener">Horarios</a></span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Daintree+River+Ferry+Crossing+QLD" target="_blank" rel="noopener">Daintree River ferry</a>, runs continuously. <a class="gm" href="https://daintreeferry.com.au/" target="_blank" rel="noopener">Timetable</a></span></span></li>
+      <li><span class="t">15:45</span><span class="w"><span data-l="es">Llegada y montar el campamento</span><span data-l="en">Arrive and set up camp</span></span></li>
+      <li><span class="t">16:30</span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Myall+Beach+Cape+Tribulation+QLD" target="_blank" rel="noopener">Myall Beach</a> y un baño</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Myall+Beach+Cape+Tribulation+QLD" target="_blank" rel="noopener">Myall Beach</a> and a swim</span></span></li>
+      <li><span class="t">18:30</span><span class="w"><span data-l="es">Anochece. A partir de aquí no se conduce</span><span data-l="en">Dark. No driving after this</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Cape%20Trib%20Camping%20Cape%20Tribulation%20QLD" target="_blank" rel="noopener">Cape Trib Camping</a>
-    <small data-l="es">noche 1 de 3</small><small data-l="en">night 1 of 3</small></td>
+    <small data-l="es">noche 1 de 2</small><small data-l="en">night 1 of 2</small></td>
 </tr>
 
 <tr>
   <td class="day" data-h="Día">12 Oct<small data-l="es">lun</small><small data-l="en">Mon</small></td>
   <td class="move" data-h="Ruta"><b>~80 km</b>
     <span data-l="es">ida y vuelta al río</span><span data-l="en">round trip to the river</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Mañana temprano:</b> crucero de fauna por el Daintree. Cocodrilos <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>Early morning:</b> Daintree wildlife cruise. Crocodiles <span class="pin ok">3/3</span></li>
-    <li data-l="es"><b>De noche:</b> paseo nocturno por la selva, 2 h <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>After dark:</b> rainforest night walk, 2 h <span class="pin ok">3/3</span></li>
-    <li data-l="es">Después, PK's Jungle Bar hasta medianoche <span class="pin ok">3/3</span></li>
-    <li data-l="en">Then PK's Jungle Bar till midnight <span class="pin ok">3/3</span></li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li class="drive"><span class="t">07:30</span><span class="w"><span data-l="es">Bajamos al río, 40 min</span><span data-l="en">Down to the river, 40 min</span></span></li>
+      <li><span class="t">08:30</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Solar+Whisper+Daintree+River+Cruises+QLD" target="_blank" rel="noopener">Crucero de fauna por el Daintree</a></b>, 1 h. Los cocodrilos se calientan al sol temprano</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Solar+Whisper+Daintree+River+Cruises+QLD" target="_blank" rel="noopener">Daintree wildlife cruise</a></b>, 1 h. Crocodiles bask early</span></span></li>
+      <li class="drive"><span class="t">10:00</span><span class="w"><span data-l="es">Vuelta a Cape Trib, 40 min</span><span data-l="en">Back to Cape Trib, 40 min</span></span></li>
+      <li><span class="t">11:00</span><span class="w"><span data-l="es">Las horas de calor. Playa, hamaca, nada</span><span data-l="en">The hot hours. Beach, hammock, nothing</span></span></li>
+      <li><span class="t">19:00</span><span class="w"><span data-l="es"><b>Paseo nocturno por la selva</b> con <a class="gm" href="https://www.treehuggertravel.com.au/tours/daintree-night-walks/" target="_blank" rel="noopener">Tree Hugger</a>, 2 h. Hay que reservarlo</span><span data-l="en"><b>Rainforest night walk</b> with <a class="gm" href="https://www.treehuggertravel.com.au/tours/daintree-night-walks/" target="_blank" rel="noopener">Tree Hugger</a>, 2 h. Needs booking</span></span></li>
+      <li><span class="t">21:30</span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=PK%27s+Jungle+Village+Cape+Tribulation+QLD" target="_blank" rel="noopener">PK's Jungle Bar</a>, abierto hasta medianoche</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=PK%27s+Jungle+Village+Cape+Tribulation+QLD" target="_blank" rel="noopener">PK's Jungle Bar</a>, open till midnight</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Cape%20Trib%20Camping%20Cape%20Tribulation%20QLD" target="_blank" rel="noopener">Cape Trib Camping</a>
-    <small data-l="es">noche 2 de 3</small><small data-l="en">night 2 of 3</small></td>
+    <small data-l="es">noche 2 de 2</small><small data-l="en">night 2 of 2</small></td>
 </tr>
 
 <tr>
   <td class="day" data-h="Día">13 Oct<small data-l="es">mar</small><small data-l="en">Tue</small></td>
-  <td class="move" data-h="Ruta"><b data-l="es">Sin conducir</b><b data-l="en">No driving</b></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>11:00 o 14:30:</b> paseo a caballo por Myall Beach, 90 min <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>11:00 or 14:30:</b> horse ride on Myall Beach, 90 min <span class="pin ok">3/3</span></li>
-    <li data-l="es">Pozas de agua dulce (Mason's), sin cocodrilos <span class="pin ok">2/3</span></li>
-    <li data-l="en">Freshwater swimming holes (Mason's), croc-free <span class="pin ok">2/3</span></li>
-    <li data-l="es"><i>Opcional:</i> pasarelas de Dubuji y Kulki, 1 h, gratis <span class="pin ok">1/3</span></li>
-    <li data-l="en"><i>Optional:</i> Dubuji and Kulki boardwalks, 1 h, free <span class="pin ok">1/3</span></li>
-  </ul></td>
+  <td class="move" data-h="Ruta"><b>75 km · 1 h 20</b>
+    <span data-l="es">Cape Tribulation → Port Douglas, con el ferry</span><span data-l="en">Cape Tribulation → Port Douglas, ferry included</span></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t"><span data-l="es">mañana</span><span data-l="en">morning</span></span><span class="w"><span data-l="es">Sin prisa en el campamento</span><span data-l="en">Slow start at camp</span></span></li>
+      <li><span class="t">10:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Cape+Trib+Horse+Rides+Cape+Tribulation+QLD" target="_blank" rel="noopener">Paseo a caballo por Myall Beach</a></b> con <a class="gm" href="https://www.capetribhorserides.com.au/" target="_blank" rel="noopener">Cape Trib Horse Rides</a>, 90 min. El otro turno es a las 13:30</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Cape+Trib+Horse+Rides+Cape+Tribulation+QLD" target="_blank" rel="noopener">Horse ride on Myall Beach</a></b> with <a class="gm" href="https://www.capetribhorserides.com.au/" target="_blank" rel="noopener">Cape Trib Horse Rides</a>, 90 min. The other slot is 13:30</span></span></li>
+      <li class="drive"><span class="t">14:00</span><span class="w"><span data-l="es">Al sur hasta <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Port+Douglas+QLD" target="_blank" rel="noopener">Port Douglas</a>, 75 km · 1 h 20 con el ferry</span><span data-l="en">South to <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Port+Douglas+QLD" target="_blank" rel="noopener">Port Douglas</a>, 75 km · 1 h 20 including the ferry</span></span></li>
+      <li><span class="t">15:20</span><span class="w"><span data-l="es">Llegada. El camping está a 5 min andando de <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Macrossan+Street+Port+Douglas+QLD" target="_blank" rel="noopener">Macrossan Street</a></span><span data-l="en">Arrive. The park is a 5 min walk from <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Macrossan+Street+Port+Douglas+QLD" target="_blank" rel="noopener">Macrossan Street</a></span></span></li>
+      <li><span class="t">18:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Rex+Smeal+Park+Port+Douglas+QLD" target="_blank" rel="noopener">Atardecer en Rex Smeal Park</a>.</b> Hay pescadería en el pueblo</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Rex+Smeal+Park+Port+Douglas+QLD" target="_blank" rel="noopener">Sunset at Rex Smeal Park</a>.</b> There is a seafood shop in town</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Cape%20Trib%20Camping%20Cape%20Tribulation%20QLD" target="_blank" rel="noopener">Cape Trib Camping</a>
-    <small data-l="es">noche 3 de 3</small><small data-l="en">night 3 of 3</small></td>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Tropic%20Breeze%20Caravan%20Park%20Port%20Douglas%20QLD" target="_blank" rel="noopener">Tropic Breeze</a>
+    <small data-l="es">Port Douglas · 5 min andando del centro</small><small data-l="en">Port Douglas · 5 min walk to town</small></td>
 </tr>
 
 <tr>
   <td class="day" data-h="Día">14 Oct<small data-l="es">mié</small><small data-l="en">Wed</small></td>
-  <td class="move" data-h="Ruta"><b>140 km · 2 h 30</b>
-    <span data-l="es">Cape Tribulation → Cairns</span><span data-l="en">Cape Tribulation → Cairns</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es">Reponer comida en Port Douglas o Mossman</li>
-    <li data-l="en">Restock food in Port Douglas or Mossman</li>
-    <li data-l="es">Crystal Cascades: pozas gratis, 20 min del centro <span class="pin ok">3/3</span></li>
-    <li data-l="en">Crystal Cascades: free swimming holes, 20 min out of town <span class="pin ok">3/3</span></li>
-    <li data-l="es"><b>Noche:</b> Gilligan's y The Woolshed. Última ronda a las 3, sal a las 10</li>
-    <li data-l="en"><b>Night out:</b> Gilligan's and The Woolshed. Last drinks 3am, be out by 10</li>
-  </ul></td>
+  <td class="move" data-h="Ruta"><b>75 km · 1 h 20</b>
+    <span data-l="es">Port Douglas → Crystal Cascades → Cairns</span><span data-l="en">Port Douglas → Crystal Cascades → Cairns</span></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t">09:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Four+Mile+Beach+Port+Douglas+QLD" target="_blank" rel="noopener">Four Mile Beach</a>.</b> Cuatro kilómetros de arena, y hoy no hay prisa</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Four+Mile+Beach+Port+Douglas+QLD" target="_blank" rel="noopener">Four Mile Beach</a>.</b> Four kilometres of sand, and no rush today</span></span></li>
+      <li class="drive"><span class="t">12:00</span><span class="w"><span data-l="es">Al sur, 55 km · 55 min, y luego tierra adentro</span><span data-l="en">South, 55 km · 55 min, then inland</span></span></li>
+      <li><span class="t">13:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Crystal+Cascades+Redlynch+Cairns+QLD" target="_blank" rel="noopener">Crystal Cascades</a>.</b> Sendero asfaltado de 1,5 km con pozas. Gratis, con baños y vestuarios</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Crystal+Cascades+Redlynch+Cairns+QLD" target="_blank" rel="noopener">Crystal Cascades</a>.</b> 1.5 km paved trail with swimming holes. Free, toilets and change rooms</span></span></li>
+      <li class="drive"><span class="t">15:30</span><span class="w"><span data-l="es">Al camping de Cairns, 20 km · 25 min</span><span data-l="en">To the Cairns campsite, 20 km · 25 min</span></span></li>
+      <li><span class="t">16:00</span><span class="w"><span data-l="es">Posibilidad de lavadora. Compra y descanso antes de la noche</span><span data-l="en">Laundry if we want it. Food shop and a rest before the night</span></span></li>
+      <li><span class="t"><span data-l="es">noche</span><span data-l="en">evening</span></span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Gilligan%27s+Backpacker+Hotel+Cairns+QLD" target="_blank" rel="noopener">Gilligan's</a> y The <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=The+Woolshed+Cairns+QLD" target="_blank" rel="noopener">Woolshed</a>. <b>Última ronda a las 3</b>, así que hay que salir a las 10</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Gilligan%27s+Backpacker+Hotel+Cairns+QLD" target="_blank" rel="noopener">Gilligan's</a> and The <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=The+Woolshed+Cairns+QLD" target="_blank" rel="noopener">Woolshed</a>. <b>Last drinks 3am</b>, so head out by 10</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Tasman%20Holiday%20Parks%20Cairns%20Cool%20Waters" target="_blank" rel="noopener">Tasman Cool Waters</a>
     <small data-l="es">una sola noche · 7 min del Esplanade</small><small data-l="en">one night only · 7 min from the Esplanade</small></td>
@@ -116,16 +129,16 @@
   <td class="day" data-h="Día">15 Oct<small data-l="es">jue</small><small data-l="en">Thu</small></td>
   <td class="move" data-h="Ruta"><b>~90 km · 1 h 30</b>
     <span data-l="es">Cairns → Gillies Range → Atherton, por la tarde</span><span data-l="en">Cairns → Gillies Range → Atherton, in the afternoon</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Mañana: helicóptero a Vlasoff Cay</b>, medio día <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>Morning: helicopter to Vlasoff Cay</b>, half day <span class="pin ok">3/3</span></li>
-    <li data-l="es">Banco de arena en mar abierto, snorkel y picnic. Crema apta para arrecifes</li>
-    <li data-l="en">Bare sandbank in open ocean, snorkelling and a picnic. Reef-safe sunscreen</li>
-    <li data-l="es"><b>Tarde:</b> subimos por Gillies Range, 19 km y ~260 curvas</li>
-    <li data-l="en"><b>Afternoon:</b> up the Gillies Range, 19 km and ~260 bends</li>
-    <li data-l="es"><b>Al atardecer:</b> ornitorrincos salvajes en Yungaburra <span class="pin ok">2/3</span></li>
-    <li data-l="en"><b>At dusk:</b> wild platypus at Yungaburra <span class="pin ok">2/3</span></li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li class="fix"><span class="t">07:00</span><span class="w"><span data-l="es">Facturación del helicóptero. Confirma la hora al reservar</span><span data-l="en">Helicopter check-in. Confirm the time when booking</span></span></li>
+      <li><span class="t">08:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Vlasoff+Cay+Great+Barrier+Reef+QLD" target="_blank" rel="noopener">Vlasoff Cay</a></b>, medio día. Banco de arena, snorkel y picnic</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Vlasoff+Cay+Great+Barrier+Reef+QLD" target="_blank" rel="noopener">Vlasoff Cay</a></b>, half day. Sandbank, snorkelling and a picnic</span></span></li>
+      <li><span class="t">13:00</span><span class="w"><span data-l="es">De vuelta en Cairns</span><span data-l="en">Back in Cairns</span></span></li>
+      <li class="drive"><span class="t">14:30</span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Gillies+Range+Road+Gordonvale+QLD" target="_blank" rel="noopener">Gillies Range</a> hasta <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Atherton+QLD" target="_blank" rel="noopener">Atherton</a>, 90 km · 1 h 30. 19 km y ~260 curvas, lento en camper</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Gillies+Range+Road+Gordonvale+QLD" target="_blank" rel="noopener">Gillies Range</a> to <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Atherton+QLD" target="_blank" rel="noopener">Atherton</a>, 90 km · 1 h 30. 19 km and ~260 bends, slow in a van</span></span></li>
+      <li><span class="t">16:00</span><span class="w"><span data-l="es">Llegada al camping. Check-in tardío</span><span data-l="en">Arrive at the park. Late check-in</span></span></li>
+      <li><span class="t">18:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Yungaburra+Platypus+Viewing+Platform+QLD" target="_blank" rel="noopener">Ornitorrincos en Yungaburra</a></b>, a 20 min. El atardecer es la franja buena</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Yungaburra+Platypus+Viewing+Platform+QLD" target="_blank" rel="noopener">Platypus at Yungaburra</a></b>, 20 min away. Dusk is the window</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=NRMA%20Atherton%20Tablelands%20Holiday%20Park%20141%20Herberton%20Rd%20Atherton%20QLD" target="_blank" rel="noopener">NRMA Atherton</a>
     <small data-l="es">noche 1 de 2 · llegada tarde</small><small data-l="en">night 1 of 2 · late check-in</small></td>
@@ -135,14 +148,15 @@
   <td class="day" data-h="Día">16 Oct<small data-l="es">vie</small><small data-l="en">Fri</small></td>
   <td class="move" data-h="Ruta"><b>~140 km</b>
     <span data-l="es">vueltas por la meseta, sin cambiar de campamento</span><span data-l="en">pottering around the tableland, same campsite</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Tarde:</b> Granite Gorge, Mareeba. Ualabíes de roca que comen de la mano, hasta cincuenta <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>Afternoon:</b> Granite Gorge, Mareeba. Rock wallabies that feed from your hand, up to fifty <span class="pin ok">3/3</span></li>
-    <li data-l="es">30 min por trayecto desde Atherton. Entrada de pago en la puerta, sin reserva</li>
-    <li data-l="en">30 min each way from Atherton. Paid entry at the gate, no booking</li>
-    <li data-l="es">Si sobra el día: circuito de cascadas de Millaa Millaa, con baño en cada una <span class="pin ok">1/3</span></li>
-    <li data-l="en">If the day allows: Millaa Millaa waterfall circuit, swimming at each <span class="pin ok">1/3</span></li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t"><span data-l="es">mañana</span><span data-l="en">morning</span></span><span class="w"><span data-l="es">Día tranquilo, no cambiamos de campamento</span><span data-l="en">Easy morning, we are not moving camp</span></span></li>
+      <li class="drive"><span class="t">13:00</span><span class="w"><span data-l="es">30 min al norte</span><span data-l="en">30 min north</span></span></li>
+      <li><span class="t">13:30</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Granite+Gorge+Nature+Park+Mareeba+QLD" target="_blank" rel="noopener">Granite Gorge</a></b>, 2 h. Los ualabíes comen de la mano y por la tarde salen hasta cincuenta</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Granite+Gorge+Nature+Park+Mareeba+QLD" target="_blank" rel="noopener">Granite Gorge</a></b>, 2 h. The wallabies feed from your hand and up to fifty come out in the afternoon</span></span></li>
+      <li class="drive"><span class="t">16:00</span><span class="w"><span data-l="es">Vuelta al campamento, 30 min</span><span data-l="en">Back to camp, 30 min</span></span></li>
+      <li><span class="t"><span data-l="es">tarde</span><span data-l="en">afternoon</span></span><span class="w"><span data-l="es"><i>Si queda cuerpo:</i> circuito de cascadas de <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Millaa+Millaa+Falls+QLD" target="_blank" rel="noopener">Millaa Millaa</a>, con baño en cada una</span><span data-l="en"><i>If there is appetite:</i> the <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Millaa+Millaa+Falls+QLD" target="_blank" rel="noopener">Millaa Millaa</a> waterfall circuit, swimming at each</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=NRMA%20Atherton%20Tablelands%20Holiday%20Park%20141%20Herberton%20Rd%20Atherton%20QLD" target="_blank" rel="noopener">NRMA Atherton</a>
     <small data-l="es">noche 2 de 2 · 141 Herberton Rd</small><small data-l="en">night 2 of 2 · 141 Herberton Rd</small></td>
@@ -152,12 +166,14 @@
   <td class="day" data-h="Día">17 Oct<small data-l="es">sáb</small><small data-l="en">Sat</small></td>
   <td class="move" data-h="Ruta"><b>147 km · 2 h 10</b>
     <span data-l="es">Atherton → Palmerston Hwy → Mission Beach</span><span data-l="en">Atherton → Palmerston Hwy → Mission Beach</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Mañana: paracaidismo</b>, 15.000 pies, aterrizaje en playa <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>Morning: skydive</b>, 15,000 ft, beach landing <span class="pin ok">3/3</span></li>
-    <li data-l="es">De camino, una parada de agua: Josephine Falls o Babinda Boulders <span class="pin ok">2/3</span></li>
-    <li data-l="en">One water stop en route: Josephine Falls or Babinda Boulders <span class="pin ok">2/3</span></li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li class="drive"><span class="t">07:00</span><span class="w"><span data-l="es">Bajamos por la <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Palmerston+Highway+Millaa+Millaa+QLD" target="_blank" rel="noopener">Palmerston Highway</a> y al sur, 147 km · 2 h 10</span><span data-l="en">Down the <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Palmerston+Highway+Millaa+Millaa+QLD" target="_blank" rel="noopener">Palmerston Highway</a> and south, 147 km · 2 h 10</span></span></li>
+      <li><span class="t">09:30</span><span class="w"><span data-l="es">Llegada a <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Mission+Beach+QLD" target="_blank" rel="noopener">Mission Beach</a> y facturación</span><span data-l="en">Arrive <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Mission+Beach+QLD" target="_blank" rel="noopener">Mission Beach</a> and check in</span></span></li>
+      <li><span class="t">10:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Skydive+Mission+Beach+QLD" target="_blank" rel="noopener">Paracaidismo</a></b>, 15.000 pies. Turno de mañana por el tiempo; si se cancela, pasa a la tarde</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Skydive+Mission+Beach+QLD" target="_blank" rel="noopener">Skydive</a></b>, 15,000 ft. Morning slot for the weather; a scrubbed jump rolls to the afternoon</span></span></li>
+      <li><span class="t">15:00</span><span class="w"><span data-l="es"><i>Opcional:</i> <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Josephine+Falls+Wooroonooran+National+Park+QLD" target="_blank" rel="noopener">Josephine Falls</a> o <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Babinda+Boulders+QLD" target="_blank" rel="noopener">Babinda Boulders</a>. Están 40 min al norte, así que es ir y volver</span><span data-l="en"><i>Optional:</i> <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Josephine+Falls+Wooroonooran+National+Park+QLD" target="_blank" rel="noopener">Josephine Falls</a> or <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Babinda+Boulders+QLD" target="_blank" rel="noopener">Babinda Boulders</a>. They are 40 min north, so it is there and back</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Mission%20Beach%20Camping%20and%20Caravan%20Park%2053%20Porter%20Promenade%20Mission%20Beach%20QLD" target="_blank" rel="noopener">Mission Beach Caravan Park</a>
     <small>53 Porter Promenade</small></td>
@@ -167,16 +183,16 @@
   <td class="day" data-h="Día">18 Oct<small data-l="es">dom</small><small data-l="en">Sun</small></td>
   <td class="move" data-h="Ruta"><b>240 km · 3 h + ferry</b>
     <span data-l="es">Mission Beach → Townsville → Magnetic Island</span><span data-l="en">Mission Beach → Townsville → Magnetic Island</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es">Parada en Cardwell, vistas a Hinchinbrook</li>
-    <li data-l="en">Break at Cardwell for the Hinchinbrook view</li>
-    <li data-l="es">Big Crystal Creek: pozas de granito junto a la carretera <span class="pin ok">2/3</span></li>
-    <li data-l="en">Big Crystal Creek: granite pools right off the highway <span class="pin ok">2/3</span></li>
-    <li data-l="es"><b>El vehículo se queda en Townsville</b> (~18 A$/día). Ferry SeaLink, 20 min <span class="pin fix">Fijo</span></li>
-    <li data-l="en"><b>Vehicle stays in Townsville</b> (~A$18/day). SeaLink ferry, 20 min <span class="pin fix">Fixed</span></li>
-    <li data-l="es">A última hora: ualabíes en Geoffrey Bay <span class="pin ok">2/3</span></li>
-    <li data-l="en">Late afternoon: rock wallabies at Geoffrey Bay <span class="pin ok">2/3</span></li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li class="drive"><span class="t">08:00</span><span class="w"><span data-l="es">Al sur por la <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Bruce+Highway+Cardwell+QLD" target="_blank" rel="noopener">Bruce Highway</a>. Parada en <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Cardwell+QLD" target="_blank" rel="noopener">Cardwell</a> para ver <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Hinchinbrook+Island+QLD" target="_blank" rel="noopener">Hinchinbrook</a></span><span data-l="en">South on the <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Bruce+Highway+Cardwell+QLD" target="_blank" rel="noopener">Bruce Highway</a>. Stop at <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Cardwell+QLD" target="_blank" rel="noopener">Cardwell</a> for the <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Hinchinbrook+Island+QLD" target="_blank" rel="noopener">Hinchinbrook</a> view</span></span></li>
+      <li><span class="t">10:30</span><span class="w"><span data-l="es"><b><a class="gm" href="https://maps.app.goo.gl/mKLxd49m7hHWuMAK7" target="_blank" rel="noopener">Big Crystal Creek</a></b>, 1–2 h. Pozas de granito a un paseo del aparcamiento</span><span data-l="en"><b><a class="gm" href="https://maps.app.goo.gl/mKLxd49m7hHWuMAK7" target="_blank" rel="noopener">Big Crystal Creek</a></b>, 1–2 h. Granite pools a short walk from the car park</span></span></li>
+      <li class="drive"><span class="t">14:00</span><span class="w"><span data-l="es">Hasta <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Townsville+QLD" target="_blank" rel="noopener">Townsville</a></span><span data-l="en">On to <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Townsville+QLD" target="_blank" rel="noopener">Townsville</a></span></span></li>
+      <li class="fix"><span class="t">15:00</span><span class="w"><span data-l="es"><b>La camper se queda en Townsville.</b> Aparcamiento de larga estancia junto a la terminal, ~18 A$/día</span><span data-l="en"><b>The van stays in Townsville.</b> Long-stay parking by the terminal, ~A$18/day</span></span></li>
+      <li><span class="t">16:00</span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=SeaLink+Ferry+Terminal+Townsville+QLD" target="_blank" rel="noopener">Ferry SeaLink</a>, 20 min</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=SeaLink+Ferry+Terminal+Townsville+QLD" target="_blank" rel="noopener">SeaLink ferry</a>, 20 min</span></span></li>
+      <li><span class="t">17:30</span><span class="w"><span data-l="es"><b>Ualabíes en <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Geoffrey+Bay+Magnetic+Island+QLD" target="_blank" rel="noopener">Geoffrey Bay</a>.</b> Bajan a las rocas al final del día</span><span data-l="en"><b>Rock wallabies at <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Geoffrey+Bay+Magnetic+Island+QLD" target="_blank" rel="noopener">Geoffrey Bay</a>.</b> They come down to the rocks at the end of the day</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Nelly%20Bay%20Magnetic%20Island%20QLD" target="_blank" rel="noopener">Magnetic Island</a>
     <small data-l="es">habitación · reservado por Sabas</small><small data-l="en">room · booked by Sabas</small></td>
@@ -186,14 +202,18 @@
   <td class="day" data-h="Día">19 Oct<small data-l="es">lun</small><small data-l="en">Mon</small></td>
   <td class="move" data-h="Ruta"><b>275 km · 3 h 30 + ferry</b>
     <span data-l="es">Magnetic Island → Townsville → Airlie. El día más largo</span><span data-l="en">Magnetic Island → Townsville → Airlie. The longest day</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Temprano:</b> Forts Walk, 4 km, koalas salvajes <span class="pin ok">3/3</span></li>
-    <li data-l="en"><b>Early:</b> Forts Walk, 4 km, wild koalas <span class="pin ok">3/3</span></li>
-    <li data-l="es">Coche descapotable por la isla (Isle Hire) <span class="pin ok">3/3</span></li>
-    <li data-l="en">Open-top car round the island (Isle Hire) <span class="pin ok">3/3</span></li>
-    <li data-l="es">Ferry de vuelta, recoger el vehículo y al sur. Llegada de noche</li>
-    <li data-l="en">Ferry back, collect the vehicle, drive south. Arrive in the evening</li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t">07:00</span><span class="w"><span data-l="es"><b><a class="gm" href="https://maps.app.goo.gl/D9AJMJ6jVA8giJX67" target="_blank" rel="noopener">Forts Walk</a> temprano</b>, 4 km, 2 h. Más fresco, se aparca mejor y los koalas están activos</span><span data-l="en"><b><a class="gm" href="https://maps.app.goo.gl/D9AJMJ6jVA8giJX67" target="_blank" rel="noopener">Forts Walk</a> early</b>, 4 km, 2 h. Cooler, easier parking and the koalas are active</span></span></li>
+      <li><span class="t">09:30</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Isle+Hire+Magnetic+Island+QLD" target="_blank" rel="noopener">Coche descapotable</a></b> por la isla, 2–3 h</span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Isle+Hire+Magnetic+Island+QLD" target="_blank" rel="noopener">Open-top car</a></b> round the island, 2–3 h</span></span></li>
+      <li><span class="t">13:30</span><span class="w"><span data-l="es">Ferry de vuelta a Townsville y recogemos la camper</span><span data-l="en">Ferry back to Townsville and collect the van</span></span></li>
+      <li class="drive"><span class="t">15:00</span><span class="w"><span data-l="es">Al sur hasta <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Airlie+Beach+QLD" target="_blank" rel="noopener">Airlie</a>, 275 km · 3 h 30. <b>El trayecto más largo del viaje</b></span><span data-l="en">South to <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Airlie+Beach+QLD" target="_blank" rel="noopener">Airlie</a>, 275 km · 3 h 30. <b>The longest drive of the trip</b></span></span></li>
+      <li><span class="t">18:30</span><span class="w"><span data-l="es">Llegada a Airlie</span><span data-l="en">Arrive Airlie</span></span></li>
+<li><span class="t">19:00</span><span class="w"><span data-l="es"><b>Preguntar si se puede dejar el alcohol en la oficina del barco</b> para llevarlo con la camper y evitar cargar con él mañana. <a class="gm" href="https://maps.app.goo.gl/YpDVAQ8rxUCMR6DPA" target="_blank" rel="noopener">BWS Whitsunday Village</a> cierra hoy a las 21:00</span><span data-l="en"><b>Ask whether we can leave the drink at the boat office</b> so we can take it in the camper and avoid carrying it tomorrow. <a class="gm" href="https://maps.app.goo.gl/YpDVAQ8rxUCMR6DPA" target="_blank" rel="noopener">BWS Whitsunday Village</a> shuts at 21:00 tonight</span></span></li>
+      <li><span class="t">19:45</span><span class="w"><span data-l="es">Copa en el agua: <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Hemingways+Brewery+Airlie+Beach+QLD" target="_blank" rel="noopener">Hemingway's</a> en Shute Harbour Rd, o <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Sorrento+Restaurant+Bar+Coral+Sea+Marina+Airlie+Beach+QLD" target="_blank" rel="noopener">Sorrento</a>, encima de la marina de donde zarpamos mañana</span><span data-l="en">A drink on the water: <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Hemingways+Brewery+Airlie+Beach+QLD" target="_blank" rel="noopener">Hemingway's</a> on Shute Harbour Rd, or <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Sorrento+Restaurant+Bar+Coral+Sea+Marina+Airlie+Beach+QLD" target="_blank" rel="noopener">Sorrento</a>, above the marina we sail from tomorrow</span></span></li>
+      <li><span class="t">21:30</span><span class="w"><span data-l="es">Si alguien quiere seguir: <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Beaches+Bar+and+Grill+Airlie+Beach+QLD" target="_blank" rel="noopener">Beaches</a> abre todos los días y <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Paddys+Shenanigans+Airlie+Beach+QLD" target="_blank" rel="noopener">Paddy's</a> suele tener algo. <b>Es lunes</b>, así que está tranquilo. La noche grande es el jueves 22</span><span data-l="en">If anyone wants more: <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Beaches+Bar+and+Grill+Airlie+Beach+QLD" target="_blank" rel="noopener">Beaches</a> is open seven days and <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Paddys+Shenanigans+Airlie+Beach+QLD" target="_blank" rel="noopener">Paddy's</a> usually has something on. <b>It is a Monday</b>, so it is quiet. The big night is Thursday the 22nd</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Tasman%20Holiday%20Parks%20Airlie%20Beach" target="_blank" rel="noopener">Tasman Airlie Beach</a>
     <small data-l="es">última noche con vehículo</small><small data-l="en">last night with the vehicle</small></td>
@@ -203,14 +223,16 @@
   <td class="day" data-h="Día">20 Oct<small data-l="es">mar</small><small data-l="en">Tue</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">Zarpa 14:00</b><b data-l="en">Sails 14:00</b>
     <span data-l="es">Coral Sea Marina</span><span data-l="en">Coral Sea Marina</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Mañana:</b> devolver el vehículo, 1/384 Shute Harbour Rd. Limpiar y repostar antes <span class="pin fix">Fijo</span></li>
-    <li data-l="en"><b>Morning:</b> return the vehicle, 1/384 Shute Harbour Rd. Clean it out and refuel first <span class="pin fix">Fixed</span></li>
-    <li data-l="es"><b>Coral Sea Marina, no Port of Airlie.</b> El barco no espera a nadie <span class="pin fix">Fijo</span></li>
-    <li data-l="en"><b>Coral Sea Marina, not Port of Airlie.</b> The boat does not wait <span class="pin fix">Fixed</span></li>
-    <li data-l="es">Solo bolsa pequeña a bordo. El resto se guarda en la oficina</li>
-    <li data-l="en">Small bag aboard only. The rest is stored at the check-in office</li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t">09:00</span><span class="w"><span data-l="es">Vaciar la camper y repostar</span><span data-l="en">Clean out the van and refuel</span></span></li>
+      <li class="fix"><span class="t">09:30</span><span class="w"><span data-l="es"><b>Última oportunidad de comprar alcohol con la camper.</b> <a class="gm" href="https://maps.app.goo.gl/YpDVAQ8rxUCMR6DPA" target="_blank" rel="noopener">BWS Whitsunday Village</a></span><span data-l="en"><b>Last chance to buy alcohol with the van.</b> <a class="gm" href="https://maps.app.goo.gl/YpDVAQ8rxUCMR6DPA" target="_blank" rel="noopener">BWS Whitsunday Village</a></span></span></li>
+      <li class="fix"><span class="t">10:00</span><span class="w"><span data-l="es"><b>Entrega en <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Camperman+Airlie+Beach+1%2F384+Shute+Harbour+Rd+QLD" target="_blank" rel="noopener">1/384 Shute Harbour Rd</a></b>, llaves en recepción de Whitsunday Adventures</span><span data-l="en"><b>Hand back at <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Camperman+Airlie+Beach+1%2F384+Shute+Harbour+Rd+QLD" target="_blank" rel="noopener">1/384 Shute Harbour Rd</a></b>, keys at Whitsunday Adventures reception</span></span></li>
+      <li><span class="t">11:00</span><span class="w"><span data-l="es">Mañana libre en Airlie. El equipaje grande se guarda en la oficina de facturación</span><span data-l="en">Free morning in Airlie. The big bags get stored at the check-in office</span></span></li>
+      <li class="fix"><span class="t">13:30</span><span class="w"><span data-l="es"><b><a class="gm" href="https://maps.app.goo.gl/jjtjUEX3XZ2aFGRv5" target="_blank" rel="noopener">Coral Sea Marina</a>, no Port of Airlie.</b> El barco no espera</span><span data-l="en"><b><a class="gm" href="https://maps.app.goo.gl/jjtjUEX3XZ2aFGRv5" target="_blank" rel="noopener">Coral Sea Marina</a>, not Port of Airlie.</b> The boat does not wait</span></span></li>
+      <li class="fix"><span class="t">14:00</span><span class="w"><span data-l="es">Zarpamos</span><span data-l="en">Sail</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Coral%20Sea%20Marina%20Airlie%20Beach%20QLD" target="_blank" rel="noopener">Fondeados</a>
     <small data-l="es">noche 1 de 2 a bordo</small><small data-l="en">night 1 of 2 aboard</small></td>
@@ -219,8 +241,13 @@
 <tr class="sea">
   <td class="day" data-h="Día">21 Oct<small data-l="es">mié</small><small data-l="en">Wed</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">En el agua</b><b data-l="en">On the water</b></td>
-  <td class="doing" data-h="Qué hacemos"><span data-l="es">Whitehaven Beach y mirador de Hill Inlet. Snorkel en los arrecifes de las islas entre parada y parada.</span>
-    <span data-l="en">Whitehaven Beach and Hill Inlet lookout. Snorkelling at island fringing reefs between stops.</span></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t">todo el día</span><span class="w"><span data-l="es"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Whitehaven+Beach+Whitsunday+Island+QLD" target="_blank" rel="noopener">Whitehaven Beach</a></b> y el mirador de <b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Hill+Inlet+Lookout+Whitsunday+Island+QLD" target="_blank" rel="noopener">Hill Inlet</a></b></span><span data-l="en"><b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Whitehaven+Beach+Whitsunday+Island+QLD" target="_blank" rel="noopener">Whitehaven Beach</a></b> and the <b><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Hill+Inlet+Lookout+Whitsunday+Island+QLD" target="_blank" rel="noopener">Hill Inlet</a></b> lookout</span></span></li>
+      <li><span class="t"></span><span class="w"><span data-l="es">Snorkel en los arrecifes de las islas entre parada y parada</span><span data-l="en">Snorkelling at island fringing reefs between stops</span></span></li>
+      <li><span class="t"><span data-l="es">noche</span><span data-l="en">evening</span></span><span class="w"><span data-l="es">Fondeados</span><span data-l="en">At anchor</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos"><span data-l="es">Fondeados</span><span data-l="en">At anchor</span>
     <small data-l="es">noche 2 de 2</small><small data-l="en">night 2 of 2</small></td>
 </tr>
@@ -229,12 +256,13 @@
   <td class="day" data-h="Día">22 Oct<small data-l="es">jue</small><small data-l="en">Thu</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">Vuelta 12:00</b><b data-l="en">Back 12:00</b>
     <span data-l="es">sin conducir</span><span data-l="en">no driving</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es">Recoger el equipaje en la oficina de facturación</li>
-    <li data-l="en">Collect stored luggage from the check-in office</li>
-    <li data-l="es"><b>La gran noche de Airlie.</b> Magnums, y los jueves hay carreras de sapos. Después, Beaches</li>
-    <li data-l="en"><b>The big Airlie night.</b> Magnums, and Thursday is toad race night. Then Beaches</li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t">12:00</span><span class="w"><span data-l="es">Bajamos del barco y recogemos el equipaje de la oficina</span><span data-l="en">Off the boat and collect the luggage from the office</span></span></li>
+      <li><span class="t"><span data-l="es">tarde</span><span data-l="en">afternoon</span></span><span class="w"><span data-l="es"><a class="gm" href="https://maps.app.goo.gl/eR4Jy9vdXmGLnv219" target="_blank" rel="noopener">Laguna de Airlie</a>, gratis. Recuperarse</span><span data-l="en"><a class="gm" href="https://maps.app.goo.gl/eR4Jy9vdXmGLnv219" target="_blank" rel="noopener">Airlie Lagoon</a>, free. Recover</span></span></li>
+      <li><span class="t"><span data-l="es">noche</span><span data-l="en">evening</span></span><span class="w"><span data-l="es"><b><a class="gm" href="https://maps.app.goo.gl/ZQrKKYRTwtGF8uFB7" target="_blank" rel="noopener">Magnums</a></b>, y los jueves hay carreras de sapos. Después <b>Beaches</b>. Última ronda a las 3</span><span data-l="en"><b><a class="gm" href="https://maps.app.goo.gl/ZQrKKYRTwtGF8uFB7" target="_blank" rel="noopener">Magnums</a></b>, and Thursday is toad race night. Then <b>Beaches</b>. Last drinks 3am</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Airlie%20Beach%20QLD" target="_blank" rel="noopener">Airlie Beach</a>
     <small data-l="es">habitación · reservado por Sabas</small><small data-l="en">room · booked by Sabas</small></td>
@@ -244,14 +272,18 @@
   <td class="day" data-h="Día">23 Oct<small data-l="es">vie</small><small data-l="en">Fri</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">Vuelo 1 h 50 + 1 h</b><b data-l="en">Flight 1 h 50 + 1 h</b>
     <span data-l="es">Proserpine → Brisbane → Woodfordia</span><span data-l="en">Proserpine → Brisbane → Woodfordia</span></td>
-  <td class="doing" data-h="Qué hacemos"><ul>
-    <li data-l="es"><b>Reserva la lanzadera a Proserpine el día antes</b>, no por la mañana <span class="pin fix">Fijo</span></li>
-    <li data-l="en"><b>Book the Proserpine shuttle the day before</b>, not on the morning <span class="pin fix">Fixed</span></li>
-    <li data-l="es">Woodfordia, 87 Woodrow Rd, Woodford. <b>Se mudó desde Ivory's Rock</b></li>
-    <li data-l="en">Woodfordia, 87 Woodrow Rd, Woodford. <b>Moved from Ivory's Rock</b></li>
-    <li data-l="es">Lleva comida, está permitido. La del festival va de 18 a 25 A$</li>
-    <li data-l="en">Bring food, it is allowed. Festival meals run A$18–25</li>
-  </ul></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li class="fix"><span class="t"><span data-l="es">temprano</span><span data-l="en">early</span></span><span class="w"><span data-l="es">Lanzadera o taxi a <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Whitsunday+Coast+Airport+Proserpine+QLD" target="_blank" rel="noopener">Proserpine</a>, 40 min. <b>Se reserva el día antes</b></span><span data-l="en">Shuttle or taxi to <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Whitsunday+Coast+Airport+Proserpine+QLD" target="_blank" rel="noopener">Proserpine</a>, 40 min. <b>Book it the day before</b></span></span></li>
+      <li><span class="t"></span><span class="w"><span data-l="es">Coge el vuelo más temprano que haya. Todo lo de después depende de él</span><span data-l="en">Take the earliest flight going. Everything downstream depends on it</span></span></li>
+      <li><span class="t"><span data-l="es">vuelo</span><span data-l="en">flight</span></span><span class="w"><span data-l="es"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Whitsunday+Coast+Airport+Proserpine+QLD" target="_blank" rel="noopener">Proserpine</a> → <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Brisbane+Airport+QLD" target="_blank" rel="noopener">Brisbane</a>, 1 h 50, y recogemos el coche</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Whitsunday+Coast+Airport+Proserpine+QLD" target="_blank" rel="noopener">Proserpine</a> → <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Brisbane+Airport+QLD" target="_blank" rel="noopener">Brisbane</a>, 1 h 50, then pick up the hire car</span></span></li>
+      <li class="fix"><span class="t"></span><span class="w"><span data-l="es"><b>Comprar el alcohol para el festival.</b> También es BYO. De camino: <a class="gm" href="https://maps.app.goo.gl/vBt9MbGi4djmRCon7" target="_blank" rel="noopener">Dan Murphy's Mango Hill</a>, 9:00–20:00, justo al lado de la Bruce Hwy. Última oportunidad, el <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Woodford+Hotel+Woodford+QLD" target="_blank" rel="noopener">Woodford Hotel</a>, con autoservicio, a 10 min del recinto. <b>Nada de vidrio</b>, está prohibido en el recinto</span><span data-l="en"><b>Buy the drink for the festival.</b> Also BYO. On the way: <a class="gm" href="https://maps.app.goo.gl/vBt9MbGi4djmRCon7" target="_blank" rel="noopener">Dan Murphy's Mango Hill</a>, 9:00–20:00, right off the Bruce Hwy. Last chance is the <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Woodford+Hotel+Woodford+QLD" target="_blank" rel="noopener">Woodford Hotel</a> drive-thru, 10 min from the site. <b>No glass</b>, it is banned on site</span></span></li>
+            <li><span class="t"></span><span class="w"><span data-l="es"><b>Compra de comida para el festival</b> en <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=ALDI+North+Lakes+48+North+Lakes+Drive+QLD" target="_blank" rel="noopener">ALDI North Lakes</a>, misma salida de la Bruce Hwy</span><span data-l="en"><b>Food shop for the festival</b> at <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=ALDI+North+Lakes+48+North+Lakes+Drive+QLD" target="_blank" rel="noopener">ALDI North Lakes</a>, same exit off the Bruce Hwy</span></span></li>
+      <li class="drive"><span class="t">↓</span><span class="w"><span data-l="es">Al norte hasta <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Woodfordia+87+Woodrow+Rd+Woodford+QLD" target="_blank" rel="noopener">Woodfordia</a>, ~70 km · 1 h</span><span data-l="en">North to <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Woodfordia+87+Woodrow+Rd+Woodford+QLD" target="_blank" rel="noopener">Woodfordia</a>, ~70 km · 1 h</span></span></li>
+      <li><span class="t"></span><span class="w"><span data-l="es">87 Woodrow Rd, Woodford.</span><span data-l="en">87 Woodrow Rd, Woodford.</span></span></li>
+      <li><span class="t"><span data-l="es">noche</span><span data-l="en">evening</span></span><span class="w"><span data-l="es">Dentro. Las tiendas ya están montadas. Se puede meter comida; la del festival va de 18 a 25 A$</span><span data-l="en">In. The tents are already up. You can bring food in; festival meals run A$18–25</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Woodfordia%2087%20Woodrow%20Rd%20Woodford%20QLD" target="_blank" rel="noopener">Woodfordia</a>
     <small data-l="es">tienda ya montada</small><small data-l="en">ready-built tent</small></td>
@@ -260,8 +292,12 @@
 <tr class="fest">
   <td class="day" data-h="Día">24 Oct<small data-l="es">sáb</small><small data-l="en">Sat</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">Sin conducir</b><b data-l="en">No driving</b></td>
-  <td class="doing" data-h="Qué hacemos"><span data-l="es">Earth Frequency, el único día completo. Escenarios, instalaciones entre los árboles, mercados y talleres.</span>
-    <span data-l="en">Earth Frequency, the one full day. Stages, installations through the trees, markets and workshops.</span></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t"><span data-l="es">todo el día</span><span data-l="en">all day</span></span><span class="w"><span data-l="es"><a class="gm" href="https://www.earthfrequency.com.au/" target="_blank" rel="noopener">Earth Frequency</a>, el único día completo</span><span data-l="en"><a class="gm" href="https://www.earthfrequency.com.au/" target="_blank" rel="noopener">Earth Frequency</a>, the one full day</span></span></li>
+      <li><span class="t"></span><span class="w"><span data-l="es">Escenarios, instalaciones entre los árboles, mercados artesanales y talleres</span><span data-l="en">Stages, installations through the trees, artisan markets and workshops</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos"><span data-l="es">Woodfordia</span><span data-l="en">Woodfordia</span>
     <small data-l="es">noche 2 de 2</small><small data-l="en">night 2 of 2</small></td>
 </tr>
@@ -270,15 +306,21 @@
   <td class="day" data-h="Día">25 Oct<small data-l="es">dom</small><small data-l="en">Sun</small></td>
   <td class="move" data-h="Ruta"><b data-l="es">~1 h + vuelo</b><b data-l="en">~1 h + flight</b>
     <span data-l="es">Woodfordia → Brisbane → Madrid</span><span data-l="en">Woodfordia → Brisbane → Madrid</span></td>
-  <td class="doing" data-h="Qué hacemos"><span data-l="es">Salir del festival por la mañana. El transporte tiene que bajar a cuatro personas con equipaje a tiempo para un vuelo internacional. Aterrizamos el lunes 26.</span>
-    <span data-l="en">Leave the festival in the morning. Whatever we use has to bring four people plus bags down in time for an international flight. Landing Monday the 26th.</span></td>
+  <td class="doing" data-h="Qué hacemos">
+    <ul class="sched">
+      <li><span class="t"><span data-l="es">mañana</span><span data-l="en">morning</span></span><span class="w"><span data-l="es">Recoger y salir del festival. La mañana es libre</span><span data-l="en">Pack up and leave the festival. The morning is free</span></span></li>
+      <li class="drive"><span class="t">16:30</span><span class="w"><span data-l="es">A <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Brisbane+Airport+QLD" target="_blank" rel="noopener">Brisbane</a>, ~70 km · 1 h</span><span data-l="en">To <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Brisbane+Airport+QLD" target="_blank" rel="noopener">Brisbane</a>, ~70 km · 1 h</span></span></li>
+      <li class="fix"><span class="t">18:00</span><span class="w"><span data-l="es">En el aeropuerto. Facturación internacional, unas 3 h antes</span><span data-l="en">At the airport. International check-in, about 3 h before</span></span></li>
+      <li class="fix"><span class="t">21:00?</span><span class="w"><span data-l="es">Vuelo <a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Brisbane+Airport+QLD" target="_blank" rel="noopener">Brisbane</a> → Madrid, aterrizando el lunes 26</span><span data-l="en"><a class="gm" href="https://www.google.com/maps/search/?api=1&amp;query=Brisbane+Airport+QLD" target="_blank" rel="noopener">Brisbane</a> → Madrid, landing Monday the 26th</span></span></li>
+    </ul>
+  </td>
   <td class="sleep" data-h="Dónde dormimos"><span data-l="es">Avión, y una noche en Brisbane</span><span data-l="en">Plane, and one night in Brisbane</span></td>
 </tr>
 
 </tbody>
 </table>
 
-<div class="flag" data-l="es"><b>Ya reservado:</b> furgoneta (Cairns 11 oct → Airlie 20 oct),
+<div class="flag" data-l="es"><b>Ya reservado:</b> camper (Cairns 11 oct → Airlie 20 oct),
 barco de los Whitsundays y coche de Brisbane. <b>Falta reservar:</b> los cinco campings, las dos
 habitaciones, el helicóptero, el paracaidismo, el paseo nocturno y los operadores pequeños.</div>
 <div class="flag" data-l="en"><b>Already booked:</b> the van (Cairns 11 Oct → Airlie 20 Oct), the
@@ -288,8 +330,8 @@ helicopter, the skydive, the night walk and the small operators.</div>
 <p class="note" data-l="es"><b>3/3</b> y <b>2/3</b> son los votos de Javi, Nico y Sabas. <b>Frodo está fuera por ahora</b>, aunque todavía podría venir, así que el plan sigue funcionando a tres o a cuatro. <b>Fijo</b> marca lo que no se puede mover sin romper otra cosa.</p>
 <p class="note" data-l="en"><b>3/3</b> and <b>2/3</b> are the votes from Javi, Nico and Sabas. <b>Frodo is out for now</b> but may still come, so the plan works at three or four. <b>Fixed</b> marks what cannot move without breaking something else.</p>
 
-<p class="note" data-l="es">Todo lo que se barajó, con descripciones y fotos, sigue en el <a href="../itinerary/">itinerario día a día</a>.</p>
-<p class="note" data-l="en">Everything that was considered, with descriptions and photos, is still on the <a href="../itinerary/">day-by-day itinerary</a>.</p>
+<p class="note" data-l="es">Todo lo que se barajó, con descripciones y fotos, sigue en el <a href="../itinerary/">alternativas día a día</a>.</p>
+<p class="note" data-l="en">Everything that was considered, with descriptions and photos, is still on the <a href="../itinerary/">day-by-day alternatives</a>.</p>
 
 
 </div>
