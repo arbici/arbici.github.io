@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css?v=6e6597b3">
+<link rel="stylesheet" href="../base.css?v=25451cb5">
 </head>
 <body>
 <div class="page">
@@ -24,6 +24,16 @@
 <h2><span data-l="es">Plan final</span><span data-l="en">Final plan</span></h2>
 <p class="note" data-l="es">Lo que hacemos cada día, dónde dormimos y cuánto se conduce. Cada sitio con nombre abre Google Maps. Esta es la tabla para llevar en el móvil durante el viaje.</p>
 <p class="note" data-l="en">What we do each day, where we sleep and how far we drive. Every named place opens Google Maps. This is the table to keep on your phone during the trip.</p>
+
+<div id="dfilter">
+  <label for="dfrom"><span data-l="es">Desde</span><span data-l="en">From</span></label>
+  <select id="dfrom"></select>
+  <span class="sep">&rarr;</span>
+  <label for="dto"><span data-l="es">Hasta</span><span data-l="en">To</span></label>
+  <select id="dto"></select>
+  <button type="button" class="rst" id="dall"><span data-l="es">Todo</span><span data-l="en">All</span></button>
+  <span class="cnt" id="dcnt"></span>
+</div>
 
 <table id="plan">
 <thead><tr>
@@ -65,7 +75,7 @@
     </ul>
   </td>
   <td class="sleep" data-h="Dónde dormimos">
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Cape%20Trib%20Camping%20Cape%20Tribulation%20QLD" target="_blank" rel="noopener">Cape Trib Camping</a>
+    <a href="https://maps.app.goo.gl/sFKTzJQWTjATFQGb7" target="_blank" rel="noopener">Cape Trib Camping</a>
     <small data-l="es">noche 1 de 2</small><small data-l="en">night 1 of 2</small></td>
 </tr>
 
@@ -84,7 +94,7 @@
     </ul>
   </td>
   <td class="sleep" data-h="Dónde dormimos">
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Cape%20Trib%20Camping%20Cape%20Tribulation%20QLD" target="_blank" rel="noopener">Cape Trib Camping</a>
+    <a href="https://maps.app.goo.gl/sFKTzJQWTjATFQGb7" target="_blank" rel="noopener">Cape Trib Camping</a>
     <small data-l="es">noche 2 de 2</small><small data-l="en">night 2 of 2</small></td>
 </tr>
 
@@ -194,8 +204,8 @@
     </ul>
   </td>
   <td class="sleep" data-h="Dónde dormimos">
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Nelly%20Bay%20Magnetic%20Island%20QLD" target="_blank" rel="noopener">Magnetic Island</a>
-    <small data-l="es">habitación · reservado por Sabas</small><small data-l="en">room · booked by Sabas</small></td>
+    <a href="https://maps.app.goo.gl/bB2VtBhf8VmHZVj78" target="_blank" rel="noopener">Arcadia Village Hotel</a>
+    <small data-l="es">Arcadia, a pie de Geoffrey Bay y cerca del Forts Walk · la reserva Javi</small><small data-l="en">Arcadia, steps from Geoffrey Bay and near the Forts Walk · Javi to book</small></td>
 </tr>
 
 <tr>
@@ -265,7 +275,7 @@
   </td>
   <td class="sleep" data-h="Dónde dormimos">
     <a href="https://www.google.com/maps/search/?api=1&amp;query=Airlie%20Beach%20QLD" target="_blank" rel="noopener">Airlie Beach</a>
-    <small data-l="es">habitación · reservado por Sabas</small><small data-l="en">room · booked by Sabas</small></td>
+    <small data-l="es">habitación · la reserva Javi</small><small data-l="en">room · Javi to book</small></td>
 </tr>
 
 <tr class="fest">
@@ -335,6 +345,38 @@ helicopter, the skydive, the night walk and the small operators.</div>
 
 
 </div>
+<script>
+// Date range filter: two day pickers over the plan rows, in trip order.
+(function(){
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#plan tbody tr'));
+  var from = document.getElementById('dfrom'), to = document.getElementById('dto'),
+      cnt  = document.getElementById('dcnt'),  all = document.getElementById('dall');
+  if (!rows.length || !from || !to) return;
+  rows.forEach(function(tr, i){
+    var d = tr.querySelector('td.day');
+    var label = d && d.firstChild ? d.firstChild.textContent.trim() : String(i + 1);
+    [from, to].forEach(function(sel){
+      var o = document.createElement('option');
+      o.value = i; o.textContent = label; sel.appendChild(o);
+    });
+  });
+  function apply(){
+    var a = +from.value, b = +to.value, n = 0;
+    rows.forEach(function(tr, i){
+      var on = i >= a && i <= b;
+      tr.classList.toggle('off', !on);
+      if (on) n++;
+    });
+    // Both languages in the markup, CSS shows one, so this survives a language switch.
+    cnt.innerHTML = '<span data-l="es">' + n + ' de ' + rows.length + ' d\u00edas</span>' +
+                    '<span data-l="en">' + n + ' of ' + rows.length + ' days</span>';
+  }
+  from.onchange = function(){ if (+from.value > +to.value) to.value = from.value; apply(); };
+  to.onchange   = function(){ if (+to.value < +from.value) from.value = to.value; apply(); };
+  all.onclick   = function(){ from.value = 0; to.value = rows.length - 1; apply(); };
+  from.value = 0; to.value = rows.length - 1; apply();
+})();
+</script>
 <script>
 document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
   const L = b.dataset.set;

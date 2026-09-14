@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css?v=6e6597b3">
+<link rel="stylesheet" href="../base.css?v=25451cb5">
 <style>
   .ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:14px 0 10px}
   .ctlg{display:flex;align-items:center;gap:0;border:1px solid var(--line);
@@ -47,7 +47,7 @@
   </div>
   <div class="ctlg">
     <span class="ctll" data-l="es">Ordenar</span><span class="ctll" data-l="en">Sort</span>
-    <button data-sort="doc"><span data-l="es">Por defecto</span><span data-l="en">Default</span></button>
+    <button data-sort="doc"><span data-l="es">Cronol&oacute;gico</span><span data-l="en">Chronological</span></button>
     <button data-sort="pri"><span data-l="es">Prioridad</span><span data-l="en">Priority</span></button>
     <button data-sort="who"><span data-l="es">Responsable</span><span data-l="en">Owner</span></button>
   </div>
@@ -57,117 +57,129 @@
 <table id="booking">
   <thead><tr><th class="chk">✓</th><th><span data-l="es">Qué</span><span data-l="en">What</span></th><th class="num"><span data-l="es">Coste p.p.</span><span data-l="en">Cost pp</span></th><th><span data-l="es">Responsable</span><span data-l="en">Owner</span></th><th><span data-l="es">Prioridad</span><span data-l="en">Priority</span></th></tr></thead>
   <tbody>
-    <tr><td class="chk"></td>
+    <tr data-when=""><td class="chk"></td>
       <td class="wht"><b><span data-l="es">Permiso internacional de conducir</span><span data-l="en">International Driving Permit</span></b>
         <small><span data-l="es">Se recomienda pedirlo con seis semanas y ya estamos dentro de ese plazo. España: sede de la DGT, 10,51 €, se recoge en Jefatura con dos fotos</span><span data-l="en">Guidance is six weeks ahead and we're inside that — do it this week. Spain: SEDE DGT, €10.51, collect at a Jefatura with two photos</span></small></td>
       <td class="num">A$18<small>€11</small></td><td><div class="who"><label class="javi"><input type="checkbox" data-k="idp-javi">Javi</label><label class="sabas"><input type="checkbox" data-k="idp-sabas">Sabas</label><label class="nico"><input type="checkbox" data-k="idp-nico">Nico</label><label class="frodo"><input type="checkbox" data-k="idp-frodo">Frodo</label></div></td><td><span class="pri p1"><span data-l="es">Ya</span><span data-l="en">Now</span></span></td></tr>
 
-    <tr><td class="chk"></td>
+    <tr data-when=""><td class="chk"></td>
       <td class="wht"><a href="https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/evisitor-651" target="_blank" rel="noopener"><span data-l="es">Visado eVisitor, subclase 651</span><span data-l="en">eVisitor visa, subclass 651</span></a>
         <small><span data-l="es">Gratis, online por ImmiAccount y normalmente se concede solo en minutos. Pasaportes de la UE</span><span data-l="en">Free, online via ImmiAccount, usually auto-granted in minutes. EU passports</span></small></td>
       <td class="num"><span data-l="es">gratis</span><span data-l="en">free</span></td><td><div class="who"><label class="javi"><input type="checkbox" data-k="visa-javi">Javi</label><label class="sabas"><input type="checkbox" data-k="visa-sabas">Sabas</label><label class="nico"><input type="checkbox" data-k="visa-nico">Nico</label><label class="frodo"><input type="checkbox" data-k="visa-frodo">Frodo</label></div></td><td><span class="pri p1"><span data-l="es">Ya</span><span data-l="en">Now</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="van"></td>
+    <tr data-when="2026-10-11"><td class="chk"><input type="checkbox" data-k="van"></td>
       <td class="wht"><a href="https://www.campermanaustralia.com/" target="_blank" rel="noopener"><span data-l="es">Autocaravana, 10 días</span><span data-l="en">Campervan, 10 days</span></a>
         <small><span data-l="es">Reservada. Recogida en Cairns el 11 oct, entrega en Airlie el 20 oct. Fianza de 500 A$ con tarjeta de crédito al recogerla</span><span data-l="en">Booked, <b>A$2,170 total</b>, A$723 each split three ways. Pick up Cairns 11 Oct, hand back Airlie Beach 20 Oct. A$500 bond on a credit card at pickup</span></small></td>
       <td class="num">A$723<small>€434</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri pok"><span data-l="es">Reservado</span><span data-l="en">Booked</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="fest"></td>
+    <tr data-when="2026-10-23"><td class="chk"><input type="checkbox" data-k="fest"></td>
       <td class="wht"><a href="https://events.humanitix.com/earth-frequency-festival-2026/tickets" target="_blank" rel="noopener"><span data-l="es">Entradas de Earth Frequency</span><span data-l="en">Earth Frequency tickets</span></a>
-        <small><span data-l="es">Compradas por Nico. 420 A$ cada una. Las entradas de día son solo para residentes, así que hacía falta abono completo aunque vayamos dos días</span><span data-l="en">Bought by Nico. A$420 each. Day passes are locals-only so we needed full passes even for two days</span></small></td>
+        <small><span data-l="es">Compradas por Nico. 420 A$ cada una. Las entradas de día son solo para residentes, así que hacía falta abono completo aunque vayamos dos días. Horarios, plano y normas del recinto en <a href="https://www.earthfrequency.com.au/" target="_blank" rel="noopener">earthfrequency.com.au</a></span><span data-l="en">Bought by Nico. A$420 each. Day passes are locals-only so we needed full passes even for two days. Gate times, site map and rules at <a href="https://www.earthfrequency.com.au/" target="_blank" rel="noopener">earthfrequency.com.au</a></span></small></td>
       <td class="num">A$420<small>€250</small></td><td><span class="dri nico">Nico</span></td><td><span class="pri pok"><span data-l="es">Reservado</span><span data-l="en">Booked</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="boat"></td>
+    <tr data-when="2026-10-20"><td class="chk"><input type="checkbox" data-k="boat"></td>
       <td class="wht"><a href="https://sailing-whitsundays.com/tours/backpackers-18-35" target="_blank" rel="noopener"><span data-l="es">Barco Whitsundays, 2 días 2 noches</span><span data-l="en">Whitsundays boat, 2D/2N</span></a>
         <small><span data-l="es">Reservado. Salida el 20 oct a las 14:00, vuelta el 22 oct a las 12:00. Falta preguntar dónde se queda el equipaje mientras estamos a bordo, porque para entonces la camper ya no está</span><span data-l="en">Booked. Out 20 Oct 14:00, back 22 Oct 12:00. Still to ask where luggage goes while we're aboard, since the van is gone by then</span></small></td>
       <td class="num">~A$700<small>€420</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri pok"><span data-l="es">Reservado</span><span data-l="en">Booked</span></span></td></tr>
 
-    <tr><td class="chk"></td>
+    <tr data-when=""><td class="chk"></td>
       <td class="wht"><b><span data-l="es">Vuelos</span><span data-l="en">Flights</span></b>
         <small><span data-l="es">De Europa a Cairns con una noche en Brisbane de camino, más Proserpine → Brisbane el 23 oct. Cada uno reserva el suyo, pero hay que coordinar el tramo de Proserpine para ir en el mismo. El precio que aparece es solo el tramo Proserpine → Brisbane</span><span data-l="en">Europe to Cairns with a night in Brisbane on the way, plus Proserpine → Brisbane on 23 Oct. Everyone books their own, but coordinate the Proserpine leg so we're on the same one. Price shown is the Proserpine → Brisbane leg only</span></small></td>
       <td class="num">~A$235<small>€140</small></td><td><div class="who"><label class="javi"><input type="checkbox" data-k="flights-javi">Javi</label><label class="sabas"><input type="checkbox" data-k="flights-sabas">Sabas</label><label class="nico"><input type="checkbox" data-k="flights-nico">Nico</label><label class="frodo"><input type="checkbox" data-k="flights-frodo">Frodo</label></div></td><td><span class="pri p1"><span data-l="es">Primero</span><span data-l="en">First</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="proserpine"></td>
+    <tr data-when="2026-10-23"><td class="chk"><input type="checkbox" data-k="proserpine"></td>
       <td class="wht"><b><span data-l="es">Traslado Airlie → Proserpine</span><span data-l="en">Airlie → Proserpine transfer</span></b>
-        <small><span data-l="es">23 oct por la mañana, 40 min al aeropuerto. Lanzadera de Whitsunday Transit o taxi. <b>Se reserva el día antes, no la misma mañana.</b> Cogemos el vuelo más temprano, así que hay que cuadrarlo con él</span><span data-l="en">Morning of 23 Oct, 40 min to the airport. Whitsunday Transit shuttle or a taxi. <b>Book it the day before, not on the morning.</b> We take the earliest flight, so it has to line up with that</span></small></td>
+        <small><span data-l="es">23 oct por la mañana, 40 min al aeropuerto. Lanzadera de <a href="https://www.whitsundaytransit.com.au/airport-transfers/" target="_blank" rel="noopener">Whitsunday Transit</a> o taxi. <b>Se reserva el día antes, no la misma mañana.</b> Cogemos el vuelo más temprano, así que hay que cuadrarlo con él</span><span data-l="en">Morning of 23 Oct, 40 min to the airport. <a href="https://www.whitsundaytransit.com.au/airport-transfers/" target="_blank" rel="noopener">Whitsunday Transit</a> shuttle or a taxi. <b>Book it the day before, not on the morning.</b> We take the earliest flight, so it has to line up with that</span></small></td>
       <td class="num">~A$25<small>€15</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="reef"></td>
-      <td class="wht"><a href="https://passions.com.au/great-barrier-reef-tours/" target="_blank" rel="noopener"><span data-l="es">Día de arrecife con Passions of Paradise</span><span data-l="en">Passions of Paradise reef day</span></a>
-        <small><span data-l="es"><b>Descartado 0/3 a favor del helicóptero.</b> Se queda como alternativa por si el precio o el tiempo lo tumban. Ocupa el día entero, así que si sale esta opción hay que rehacer las reservas de camping de Cairns y Atherton</span><span data-l="en"><b>Voted out 0/3 in favour of the helicopter.</b> Kept as the fallback if the helicopter price or the weather kills it. It takes the whole day, so if this is what we pick, the Cairns and Atherton campsite bookings have to be redone</span></small></td>
-      <td class="num">A$275<small>€165</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p3"><span data-l="es">Alternativa</span><span data-l="en">Fallback</span></span></td></tr>
-
-    <tr><td class="chk"><input type="checkbox" data-k="bnecar"></td>
+    <tr data-when="2026-10-23"><td class="chk"><input type="checkbox" data-k="bnecar"></td>
       <td class="wht"><b><span data-l="es">Coche de alquiler Brisbane → Woodfordia</span><span data-l="en">Brisbane → Woodfordia hire car</span></b>
         <small><span data-l="es">Reservado. Se recoge en Brisbane el 23 oct y se devuelve en Brisbane el 25 oct. Unos 70 km por trayecto, más o menos una hora</span><span data-l="en">Booked. Picked up in Brisbane 23 Oct, back in Brisbane 25 Oct. Roughly 70 km each way, about an hour</span></small></td>
       <td class="num">A$40–60<small>€25–35</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri pok"><span data-l="es">Reservado</span><span data-l="en">Booked</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="beds"></td>
-      <td class="wht"><b><span data-l="es">Camas: Magnetic Island y Airlie Beach</span><span data-l="en">Beds: Magnetic Island and Airlie Beach</span></b>
-        <span class="stay"><span data-l="es">Magnetic Island: entrada dom 18 oct<span class="arrow">→</span>salida lun 19 oct <span class="n">· 1 noche</span></span><span data-l="en">Magnetic Island: check in Sun 18 Oct<span class="arrow">→</span>check out Mon 19 Oct <span class="n">· 1 night</span></span></span>
-        <span class="stay"><span data-l="es">Airlie Beach: entrada jue 22 oct<span class="arrow">→</span>salida vie 23 oct <span class="n">· 1 noche</span></span><span data-l="en">Airlie Beach: check in Thu 22 Oct<span class="arrow">→</span>check out Fri 23 Oct <span class="n">· 1 night</span></span></span>
-        <small><span data-l="es">Ahora son <b>dos habitaciones dobles</b> cada noche. La de Airlie es la noche de bajar del barco: habitaciones, no literas</span><span data-l="en"><b>Two twin rooms</b> each night now. The Airlie one is the night off the boat — rooms, not dorms</span></small></td>
-      <td class="num">~A$145<small>€87</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
+    <tr data-when="2026-10-18"><td class="chk"><input type="checkbox" data-k="beds-magnetic"></td>
+      <td class="wht"><b><span data-l="es">Cama: Magnetic Island</span><span data-l="en">Bed: Magnetic Island</span></b>
+        <span class="stay"><span data-l="es">entrada dom 18 oct<span class="arrow">&rarr;</span>salida lun 19 oct <span class="n">&middot; 1 noche</span></span><span data-l="en">check in Sun 18 Oct<span class="arrow">&rarr;</span>check out Mon 19 Oct <span class="n">&middot; 1 night</span></span></span>
+        <small><span data-l="es"><b>Dos habitaciones dobles.</b> <a href="https://maps.app.goo.gl/bB2VtBhf8VmHZVj78" target="_blank" rel="noopener">Arcadia Village Hotel</a>, en Arcadia: a pie de Geoffrey Bay y cerca del Forts Walk. Domingo en octubre y Arcadia es peque&ntilde;a, as&iacute; que cuanto antes</span><span data-l="en"><b>Two twin rooms.</b> <a href="https://maps.app.goo.gl/bB2VtBhf8VmHZVj78" target="_blank" rel="noopener">Arcadia Village Hotel</a>, in Arcadia: steps from Geoffrey Bay and near the Forts Walk. A Sunday in October and Arcadia is small, so the sooner the better</span></small></td>
+      <td class="num">~A$75<small>&euro;45</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="camp-cape"></td>
+    <tr data-when="2026-10-22"><td class="chk"><input type="checkbox" data-k="beds-airlie"></td>
+      <td class="wht"><b><span data-l="es">Cama: Airlie Beach</span><span data-l="en">Bed: Airlie Beach</span></b>
+        <span class="stay"><span data-l="es">entrada jue 22 oct<span class="arrow">&rarr;</span>salida vie 23 oct <span class="n">&middot; 1 noche</span></span><span data-l="en">check in Thu 22 Oct<span class="arrow">&rarr;</span>check out Fri 23 Oct <span class="n">&middot; 1 night</span></span></span>
+        <small><span data-l="es"><b>Dos habitaciones dobles.</b> Es la noche de bajar del barco: habitaciones, no literas. Al d&iacute;a siguiente salimos temprano a Proserpine</span><span data-l="en"><b>Two twin rooms.</b> This is the night off the boat — rooms, not dorms. We leave early for Proserpine the next morning</span></small></td>
+      <td class="num">~A$70<small>&euro;42</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
+
+    <tr data-when="2026-10-11"><td class="chk"><input type="checkbox" data-k="camp-cape"></td>
       <td class="wht"><b><span data-l="es">Camping: Cape Tribulation, 2 noches</span><span data-l="en">Campsite: Cape Tribulation, 2 nights</span></b>
-        <span class="stay"><span data-l="es">Entrada dom 11 oct → salida mar 13 oct · 2 noches</span><span data-l="en">Check in Sun 11 Oct → check out Tue 13 Oct · 2 nights</span>check out Wed 14 Oct <span class="n">· 3 nights</span></span></span>
+        <span class="stay"><span data-l="es">Entrada dom 11 oct → salida mar 13 oct · 2 noches</span><span data-l="en">Check in Sun 11 Oct → check out Tue 13 Oct · 2 nights</span></span>
         <small><span data-l="es"><a href="https://www.capetribcamping.com.au/" target="_blank" rel="noopener">Cape Trib Camping</a> está en primera línea de playa y es el camping principal. Reservar con antelación, octubre es temporada alta. Alternativa: <a href="https://www.pksjunglevillage.com.au/" target="_blank" rel="noopener">PK's Jungle Village</a></span><span data-l="en"><a href="https://www.capetribcamping.com.au/" target="_blank" rel="noopener">Cape Trib Camping</a> is beachfront and the main facility. Book ahead — October is peak season. Alternative: <a href="https://www.pksjunglevillage.com.au/" target="_blank" rel="noopener">PK's Jungle Village</a></span></small></td>
       <td class="num">~A$40<small>€24</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri pok"><span data-l="es">Reservado</span><span data-l="en">Booked</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="camp-portdouglas"></td>
+    <tr data-when="2026-10-13"><td class="chk"><input type="checkbox" data-k="camp-portdouglas"></td>
       <td class="wht"><b><span data-l="es">Camping: Port Douglas, 1 noche (13 oct)</span><span data-l="en">Campsite: Port Douglas, 1 night (13 Oct)</span></b>
         <small><span data-l="es"><a href="https://tropicbreeze.com.au/" target="_blank" rel="noopener">Tropic Breeze</a>, a 1 min de Four Mile Beach y 5 min del centro. Sustituye a la tercera noche de Cape Trib</span><span data-l="en"><a href="https://tropicbreeze.com.au/" target="_blank" rel="noopener">Tropic Breeze</a>, one minute from Four Mile Beach and five from town. Replaces the third Cape Trib night</span></small></td>
       <td class="num">~A$30<small>€18</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p1"><span data-l="es">Primero</span><span data-l="en">First</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="camp-cairns"></td>
+    <tr data-when="2026-10-14"><td class="chk"><input type="checkbox" data-k="camp-cairns"></td>
       <td class="wht"><b><span data-l="es">Camping: Cairns</span><span data-l="en">Campsite: Cairns</span></b>
         <span class="stay"><span data-l="es">Entrada mié 14 oct<span class="arrow">→</span>salida jue 15 oct <span class="n">· 1 noche</span></span><span data-l="en">Check in Wed 14 Oct<span class="arrow">→</span>check out Thu 15 Oct <span class="n">· 1 night</span></span></span>
         <small><span data-l="es"><a href="https://tasmanholidayparks.com/au/cairns/" target="_blank" rel="noopener">Tasman Cool Waters</a>, a 7 min del Esplanade. Reservar con una semana. Una sola noche: al día siguiente subimos a la meseta por la tarde</span><span data-l="en"><a href="https://tasmanholidayparks.com/au/cairns/" target="_blank" rel="noopener">Tasman Cool Waters</a>, 7 min from the Esplanade. Book a week ahead. One night only — we climb onto the tableland the following afternoon</span></small></td>
       <td class="num">~A$25<small>€15</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="camp-atherton"></td>
+    <tr data-when="2026-10-15"><td class="chk"><input type="checkbox" data-k="camp-atherton"></td>
       <td class="wht"><b><span data-l="es">Camping: Atherton Tablelands</span><span data-l="en">Campsite: Atherton Tablelands</span></b>
         <span class="stay"><span data-l="es">Entrada jue 15 oct<span class="arrow">→</span>salida sáb 17 oct <span class="n">· 2 noches</span></span><span data-l="en">Check in Thu 15 Oct<span class="arrow">→</span>check out Sat 17 Oct <span class="n">· 2 nights</span></span></span>
         <small><span data-l="es"><a href="https://www.nrmaparksandresorts.com.au/atherton-tablelands/" target="_blank" rel="noopener">NRMA Atherton Tablelands</a>, 141 Herberton Rd. Reservar con una semana. Llegamos la tarde del 15, así que la entrada es tarde</span><span data-l="en"><a href="https://www.nrmaparksandresorts.com.au/atherton-tablelands/" target="_blank" rel="noopener">NRMA Atherton Tablelands</a>, 141 Herberton Rd. Book a week ahead. We arrive on the afternoon of the 15th, so it is a late check-in</span></small></td>
       <td class="num">~A$50<small>€30</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="camp-mission"></td>
+    <tr data-when="2026-10-17"><td class="chk"><input type="checkbox" data-k="camp-mission"></td>
       <td class="wht"><b><span data-l="es">Camping: Mission Beach</span><span data-l="en">Campsite: Mission Beach</span></b>
         <span class="stay"><span data-l="es">Entrada sáb 17 oct<span class="arrow">→</span>salida dom 18 oct <span class="n">· 1 noche</span></span><span data-l="en">Check in Sat 17 Oct<span class="arrow">→</span>check out Sun 18 Oct <span class="n">· 1 night</span></span></span>
         <small><span data-l="es"><a href="https://www.missionbeachcampingandcaravanpark.com.au/" target="_blank" rel="noopener">Mission Beach Camping &amp; Caravan Park</a>, 53 Porter Promenade. 50 parcelas frente al mar, con y sin electricidad. Reservar con una semana</span><span data-l="en"><a href="https://www.missionbeachcampingandcaravanpark.com.au/" target="_blank" rel="noopener">Mission Beach Camping &amp; Caravan Park</a>, 53 Porter Promenade. 50 beachfront sites, powered and unpowered. Book a week ahead</span></small></td>
       <td class="num">~A$28<small>€17</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="camp-airlie"></td>
+    <tr data-when="2026-10-19"><td class="chk"><input type="checkbox" data-k="camp-airlie"></td>
       <td class="wht"><b><span data-l="es">Camping: Airlie Beach</span><span data-l="en">Campsite: Airlie Beach</span></b>
         <span class="stay"><span data-l="es">Entrada lun 19 oct<span class="arrow">→</span>salida mar 20 oct <span class="n">· 1 noche</span></span><span data-l="en">Check in Mon 19 Oct<span class="arrow">→</span>check out Tue 20 Oct <span class="n">· 1 night</span></span></span>
         <small><span data-l="es"><a href="https://tasmanholidayparks.com/au/airlie-beach/" target="_blank" rel="noopener">Tasman Airlie</a> o <a href="https://www.nrmaparksandresorts.com.au/airlie-beach/" target="_blank" rel="noopener">NRMA Airlie</a>. La camper se devuelve a la mañana siguiente, así que esta es flexible</span><span data-l="en"><a href="https://tasmanholidayparks.com/au/airlie-beach/" target="_blank" rel="noopener">Tasman Airlie</a> or <a href="https://www.nrmaparksandresorts.com.au/airlie-beach/" target="_blank" rel="noopener">NRMA Airlie</a>. Van goes back the next morning, so this one is flexible</span></small></td>
       <td class="num">~A$35<small>€21</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="small"></td>
-      <td class="wht"><a href="https://www.capetribhorserides.com.au/bookings" target="_blank" rel="noopener">Horse ride</a>, <a href="https://www.solarwhisper.com/" target="_blank" rel="noopener">Daintree cruise</a>, Barbie car
-        <small><span data-l="es">Operadores pequeños, con una semana basta. El paseo a caballo sale a las 11:00 o a las 14:30 y cancelar dentro de 48 h cuesta el importe completo. Tropical Topless ha cerrado: para el descapotable, Isle Hire</span><span data-l="en">Small operators, a week ahead is fine. Horse ride departs 11:00 or 14:30 and forfeits inside 48 h. Tropical Topless has closed — use Isle Hire for the Barbie car</span></small></td>
-      <td class="num">A$30–130<small>€18–78</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri p3"><span data-l="es">Después</span><span data-l="en">Later</span></span></td></tr>
+    <tr data-when="2026-10-13"><td class="chk"><input type="checkbox" data-k="small-horse"></td>
+      <td class="wht"><a href="https://www.capetribhorserides.com.au/bookings" target="_blank" rel="noopener"><span data-l="es">Paseo a caballo, Cape Trib</span><span data-l="en">Horse ride, Cape Trib</span></a>
+        <small><span data-l="es">13 oct. Sale a las 10:00 o a las 13:30. Con una semana basta, pero cancelar dentro de 48 h cuesta el importe completo</span><span data-l="en">13 Oct. Departs 10:00 or 13:30. A week ahead is fine, but cancelling inside 48 h forfeits the full amount</span></small></td>
+      <td class="num">A$130<small>&euro;78</small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p3"><span data-l="es">Despu&eacute;s</span><span data-l="en">Later</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="sky"></td>
+    <tr data-when="2026-10-12"><td class="chk"><input type="checkbox" data-k="small-cruise"></td>
+      <td class="wht"><a href="https://www.solarwhisper.com/" target="_blank" rel="noopener"><span data-l="es">Crucero de fauna, Daintree</span><span data-l="en">Daintree wildlife cruise</span></a>
+        <small><span data-l="es">12 oct por la ma&ntilde;ana. Operador peque&ntilde;o, con una semana basta</span><span data-l="en">Morning of 12 Oct. Small operator, a week ahead is fine</span></small></td>
+      <td class="num">A$30<small>&euro;18</small></td><td><span class="dri sabas">Sabas</span></td><td><span class="pri p3"><span data-l="es">Despu&eacute;s</span><span data-l="en">Later</span></span></td></tr>
+
+    <tr data-when="2026-10-19"><td class="chk"><input type="checkbox" data-k="small-car"></td>
+      <td class="wht"><a href="https://www.islehire.com.au/" target="_blank" rel="noopener"><span data-l="es">Coche descapotable, Magnetic Island</span><span data-l="en">Barbie car, Magnetic Island</span></a>
+        <small><span data-l="es">19 oct por la ma&ntilde;ana. Isle Hire est&aacute; a 2 min del ferry en Nelly Bay. Solo carreteras principales</span><span data-l="en">Morning of 19 Oct. Isle Hire is 2 min from the Nelly Bay ferry. Sealed roads only</span></small></td>
+      <td class="num"><span data-l="es">por confirmar</span><span data-l="en">TBC</span></td><td><span class="dri nico">Nico</span></td><td><span class="pri p3"><span data-l="es">Despu&eacute;s</span><span data-l="en">Later</span></span></td></tr>
+
+    <tr data-when="2026-10-17"><td class="chk"><input type="checkbox" data-k="sky"></td>
       <td class="wht"><a href="https://www.skydive.com.au/locations/mission-beach/" target="_blank" rel="noopener"><span data-l="es">Paracaidismo</span><span data-l="en">Skydive</span></a> 
         <small><span data-l="es">17 oct por la mañana. <b>Ganó 3/3.</b> 379 A$ el salto más unos 170 A$ de vídeo y una tasa de unos 30 A$. Cada uno reserva el suyo</span><span data-l="en">17 Oct morning. <b>Won 3/3.</b> A$379 jump plus ~A$170 media and a ~A$30 levy. Each of us books our own</span></small></td>
       <td class="num">A$580<small>€350</small></td><td><span class="dri each"><span data-l="es">Cada uno</span><span data-l="en">Each of us</span></span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="pend-night"></td>
+    <tr data-when="2026-10-12"><td class="chk"><input type="checkbox" data-k="pend-night"></td>
       <td class="wht"><b><a href="../itinerary/#d12-daintree-night-walk"><span data-l="es">Paseo nocturno por el Daintree</span><span data-l="en">Daintree night walk</span></a></b>
-        <small><span data-l="es">12 oct de noche. <b>Ganó 3/3.</b> Grupos pequeños, reservar con antelación. Precio por confirmar</span><span data-l="en">12 Oct after dark. <b>Won 3/3.</b> Small groups, book ahead. Price TBC</span></small></td>
+        <small><span data-l="es">12 oct de noche. <b>Ganó 3/3.</b> Grupos pequeños, reservar con antelación con <a href="https://www.treehuggertravel.com.au/tours/daintree-night-walks/" target="_blank" rel="noopener">Tree Hugger</a>. Precio por confirmar</span><span data-l="en">12 Oct after dark. <b>Won 3/3.</b> Small groups, book ahead with <a href="https://www.treehuggertravel.com.au/tours/daintree-night-walks/" target="_blank" rel="noopener">Tree Hugger</a>. Price TBC</span></small></td>
       <td class="num"><span data-l="es">por confirmar</span><span data-l="en">TBC</span></td><td><span class="dri nico">Nico</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="pend-heli"></td>
+    <tr data-when="2026-10-15"><td class="chk"><input type="checkbox" data-k="pend-heli"></td>
       <td class="wht"><b><a href="../itinerary/#d15-helicopter-to-vlasoff"><span data-l="es">Helicóptero a Vlasoff Cay</span><span data-l="en">Helicopter to Vlasoff Cay</span></a></b>
-        <small><span data-l="es">15 oct. <b>Ganó 3/3, Passions se quedó a cero.</b> Unos 650 A$, sustituye al día de barco de 275 A$. Confirmar precio antes de reservar y no está en el total de arriba. Es media jornada, y las fechas de camping ya están puestas contando con eso</span><span data-l="en">15 Oct. <b>Won 3/3, Passions got zero.</b> Roughly A$650, replaces the A$275 boat day. Confirm the price before booking and is not in the total above. It is a half day, and the campsite dates are already set on that basis</span></small></td>
+        <small><span data-l="es">15 oct. Es media jornada. Tres sugerencias: <a href="https://www.nautilusaviation.com.au/experience/vlasoff-sand-cay/" target="_blank" rel="noopener">Nautilus Aviation</a>, <a href="https://www.zoomhelicopters.com.au/coral-cay-tours" target="_blank" rel="noopener">Zoom Helicopters</a> y <a href="https://www.getyourguide.com/cairns-l298?date_from=2026-10-15&amp;date_to=2026-10-15&amp;adults=3&amp;searchSource=8&amp;interestFilters=tc-44" target="_blank" rel="noopener">GetYourGuide</a>. El aterrizaje depende de la marea y de que el cayo esté libre</span><span data-l="en">15 Oct. It is a half day. Three suggestions: <a href="https://www.nautilusaviation.com.au/experience/vlasoff-sand-cay/" target="_blank" rel="noopener">Nautilus Aviation</a>, <a href="https://www.zoomhelicopters.com.au/coral-cay-tours" target="_blank" rel="noopener">Zoom Helicopters</a> and <a href="https://www.getyourguide.com/cairns-l298?date_from=2026-10-15&amp;date_to=2026-10-15&amp;adults=3&amp;searchSource=8&amp;interestFilters=tc-44" target="_blank" rel="noopener">GetYourGuide</a>. The landing depends on the tide and on the cay being unoccupied</span></small></td>
       <td class="num">~A$650<small>€390</small></td><td><span class="dri nico">Nico</span></td><td><span class="pri p1"><span data-l="es">Primero</span><span data-l="en">First</span></span></td></tr>
 
-    <tr><td class="chk"><input type="checkbox" data-k="pend-granite"></td>
+    <tr data-when="2026-10-16"><td class="chk"><input type="checkbox" data-k="pend-granite"></td>
       <td class="wht"><b><a href="../itinerary/#d16-granite-gorge-mareeba"><span data-l="es">Granite Gorge, Mareeba</span><span data-l="en">Granite Gorge, Mareeba</span></a></b>
         <small><span data-l="es">16 oct. <b>Ganó 3/3.</b> Entrada de pago en la puerta, sin reserva. Desvío de 30 min por trayecto, ya acordado</span><span data-l="en">16 Oct. <b>Won 3/3.</b> Paid entry at the gate, no booking needed. 30 min detour each way, already agreed</span></small></td>
       <td class="num"><span data-l="es">por confirmar</span><span data-l="en">TBC</span></td><td><span class="dri nico">Nico</span></td><td><span class="pri p3"><span data-l="es">Después</span><span data-l="en">Later</span></span></td></tr>
+    <tr class="grp" id="grp-pre" hidden><td colspan="5"><span data-l="es">Antes de viajar</span><span data-l="en">Pre-travel</span></td></tr>
+    <tr class="grp" id="grp-trip" hidden><td colspan="5"><span data-l="es">Durante el viaje</span><span data-l="en">On the trip</span></td></tr>
   </tbody>
 </table>
 <p class="prog"><span id="prog"></span> <span id="conn" class="connbadge wait">connecting…</span></p>
@@ -196,20 +208,9 @@ the real van price is a little above the estimate (+80). International flights o
 real one. The night walk and Granite Gorge are not in this yet.</p>
 
 <hr>
-<h2><span data-l="es">Pendiente de cerrar</span><span data-l="en">Still to pin down</span></h2>
-<table>
-  <thead><tr><th><span data-l="es">Asunto</span><span data-l="en">Item</span></th><th><span data-l="es">Qué hace falta</span><span data-l="en">What's needed</span></th></tr></thead>
-  <tbody>
-    <tr><td><span data-l="es">Precio del barco</span><span data-l="en">Boat price</span></td><td><span data-l="es">Ya reservado, pero la tabla sigue con los 700 A$ orientativos. Sustituirlos por el importe real.</span><span data-l="en">Booked, but the table still carries the ~A$700 placeholder. Replace it with the real figure.</span></td></tr>
-    
-    <tr><td><span data-l="es">Equipaje y bebida a bordo</span><span data-l="en">Luggage and drink aboard</span></td><td><span data-l="es">Preguntar a la naviera dos cosas de una vez: dónde va el equipaje del 20 al 22, y si aceptan la bebida la noche antes o la mañana del 20. Es BYO y, sin camper, hay que cargarla desde el depósito.</span><span data-l="en">Ask the boat operator two things in one go: where the luggage goes from the 20th to the 22nd, and whether they will take the drink the night before or on the morning of the 20th. It is BYO and, with no van, it has to be carried from the depot.</span></td></tr>
-    <tr><td><span data-l="es">Hora del vuelo de vuelta</span><span data-l="en">Return flight time</span></td><td><span data-l="es">El plan asume Brisbane → Madrid el 25 oct a las 21:00, pero no está confirmado. De esa hora depende a qué hora salimos de Woodfordia.</span><span data-l="en">The plan assumes Brisbane → Madrid on 25 Oct at 21:00, but it is not confirmed. What time we leave Woodfordia hangs off it.</span></td></tr>
-    <tr><td><span data-l="es">Precio de camping siendo cuatro</span><span data-l="en">Campsite fees for four</span></td><td><span data-l="es">La mayoría de campings cobran la parcela para dos y añaden entre 10 y 15 A$ por adulto extra, así que el precio por cabeza no baja a la mitad sin más.</span><span data-l="en">Most parks price a site for two and add A$10–15 per extra adult, so campsites will not simply halve per head.</span></td></tr>
-  </tbody>
-</table>
 
-<footer data-l="es">Actualizado el 31 de agosto de 2026. Verificado: presupuesto de Camperman, entrada de Earth Frequency, precio base del paracaidismo, tarifa y horarios de Passions of Paradise y normativa de carné de Queensland. Todo lo demás es orientativo.</footer>
-<footer data-l="en">Updated 31 August 2026. Verified: Camperman quote, Earth Frequency ticket, skydive base price, Passions of Paradise fare and sailing times, Queensland licence rules. Everything else indicative.</footer>
+<footer data-l="es">Actualizado el 31 de agosto de 2026. Verificado: presupuesto de Camperman, entrada de Earth Frequency, precio base del paracaidismo y normativa de carné de Queensland. Todo lo demás es orientativo.</footer>
+<footer data-l="en">Updated 31 August 2026. Verified: Camperman quote, Earth Frequency ticket, skydive base price, Queensland licence rules. Everything else indicative.</footer>
 
 
 </div>
@@ -228,7 +229,8 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
   const KEY='qld-todo-view';
   const tb=document.querySelector('#booking tbody');
   if(!tb) return;
-  const rows=[...tb.querySelectorAll('tr')];
+  const rows=[...tb.querySelectorAll('tr:not(.grp)')];
+  const gPre=document.getElementById('grp-pre'), gTrip=document.getElementById('grp-trip');
   rows.forEach((r,i)=>r.dataset.doc=i);
 
   // Booked last, then Now/First, Soon, Later/Fallback.
@@ -237,6 +239,8 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
     if(!m) return 5; const c=[...m.classList].find(x=>PRI[x]); return PRI[c]||5;};
   const whoOf=r=>{const d=r.querySelector('.dri');
     return d?d.textContent.trim().toLowerCase():'\uffff';};
+  // Trip date the item is needed for. Blank = pre-trip admin, sorts first.
+  const whenOf=r=>r.dataset.when||'';
 
   let view={filter:'all',sort:'doc'};
   try{ view=Object.assign(view,JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){}
@@ -245,7 +249,7 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
     const sorted=[...rows].sort((a,b)=>
       view.sort==='pri' ? priOf(a)-priOf(b) || a.dataset.doc-b.dataset.doc
     : view.sort==='who' ? whoOf(a).localeCompare(whoOf(b)) || a.dataset.doc-b.dataset.doc
-    : a.dataset.doc-b.dataset.doc);
+    : whenOf(a).localeCompare(whenOf(b)) || a.dataset.doc-b.dataset.doc);
     sorted.forEach(r=>tb.appendChild(r));
 
     let shown=0;
@@ -254,6 +258,16 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
       r.classList.toggle('hide',hide);
       if(!hide) shown++;
     });
+
+    // Group headings only make sense in date order, and only above rows still visible.
+    const vis=sorted.filter(r=>!r.classList.contains('hide'));
+    const head=(el,list)=>{
+      if(!el) return;
+      if(view.sort==='doc' && list.length){ tb.insertBefore(el,list[0]); el.hidden=false; }
+      else el.hidden=true;
+    };
+    head(gPre , vis.filter(r=>!whenOf(r)));
+    head(gTrip, vis.filter(r=> whenOf(r)));
 
     document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('on',b.dataset.filter===view.filter));
     document.querySelectorAll('[data-sort]').forEach(b=>b.classList.toggle('on',b.dataset.sort===view.sort));

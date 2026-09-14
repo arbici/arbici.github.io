@@ -109,6 +109,11 @@
              background:var(--wash);color:var(--light);margin-left:4px;white-space:nowrap}
   .connbadge.live{background:var(--gobg);border-color:#c8ded9;color:var(--go)}
   .connbadge.down{background:var(--warnbg);border-color:#f0d3c5;color:var(--warn)}
+  /* Group headings in the booking table, shown only in chronological order. */
+  #booking tr.grp td{background:var(--wash);border-bottom:1px solid var(--line);
+                     padding:7px 12px;font-size:9.5px;letter-spacing:1.1px;
+                     text-transform:uppercase;color:var(--light);font-weight:600}
+  #booking tr.grp[hidden]{display:none}
   #booking.locked{opacity:.55}
   #booking.locked input[type=checkbox]{cursor:not-allowed}
   .shout{background:var(--warnbg);border:1px solid #f0d3c5;border-left:3px solid var(--warn);
@@ -133,6 +138,30 @@
   .flag.ok{background:var(--gobg);border-color:#c8ded9;border-left-color:var(--go);color:#0b5f56}
   .flag.ok b{color:var(--go)}
   .pri.pok{background:var(--go);color:#fff}
+
+  /* Date range filter above the plan table. */
+  #dfilter{display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+           background:var(--paper);border:1px solid var(--line);border-radius:7px;
+           padding:10px 13px;margin:16px 0 0;font-size:13px}
+  #dfilter label{color:var(--light);font-size:10px;letter-spacing:1px;
+                 text-transform:uppercase;font-weight:600}
+  #dfilter select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--paper);
+                  border:1px solid var(--line);border-radius:5px;padding:5px 8px;cursor:pointer;
+                  max-width:130px}
+  #dfilter select:focus{outline:none;border-color:var(--go);box-shadow:0 0 0 3px var(--gobg)}
+  #dfilter .sep{color:var(--light)}
+  #dfilter .rst{font-family:inherit;font-size:12px;font-weight:600;color:var(--go);
+                background:var(--gobg);border:1px solid #c8ded9;border-radius:5px;
+                padding:5px 11px;cursor:pointer}
+  #dfilter .rst:hover{background:#e2f1ee}
+  #dfilter .cnt{margin-left:auto;color:var(--light);font-size:12px;
+                font-variant-numeric:tabular-nums}
+  #plan tr.off{display:none!important}
+  @media (max-width:760px){
+    #dfilter{gap:6px 7px}
+    #dfilter .cnt{margin-left:0;width:100%}
+  }
+  @media print{ #dfilter{display:none} }
 
   /* Final plan table. Scoped to #plan so the booking table is untouched. */
   #plan{font-size:13.5px}
