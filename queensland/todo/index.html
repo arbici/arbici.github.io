@@ -24,6 +24,9 @@
                color:var(--mid);cursor:pointer;white-space:nowrap}
   .ctlg button:hover{color:var(--go)}
   .ctlg button.on{background:var(--go);color:#fff}
+  .ctlg button[data-who="javi"].on{background:#0f7a6e}
+  .ctlg button[data-who="sabas"].on{background:#b4451c}
+  .ctlg button[data-who="nico"].on{background:#3f5480}
   .ctlcount{font-size:12px;color:var(--light)}
   #booking tr.hide{display:none}
 </style>
@@ -44,6 +47,13 @@
     <span class="ctll" data-l="es">Mostrar</span><span class="ctll" data-l="en">Show</span>
     <button data-filter="all"><span data-l="es">Todo</span><span data-l="en">All</span></button>
     <button data-filter="open"><span data-l="es">Pendiente</span><span data-l="en">Outstanding</span></button>
+  </div>
+  <div class="ctlg">
+    <span class="ctll" data-l="es">Qui&eacute;n</span><span class="ctll" data-l="en">Who</span>
+    <button data-who="all"><span data-l="es">Todos</span><span data-l="en">Everyone</span></button>
+    <button data-who="javi">Javi</button>
+    <button data-who="sabas">Sabas</button>
+    <button data-who="nico">Nico</button>
   </div>
   <div class="ctlg">
     <span class="ctll" data-l="es">Ordenar</span><span class="ctll" data-l="en">Sort</span>
@@ -248,8 +258,16 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
     return d?d.textContent.trim().toLowerCase():'\uffff';};
   // Trip date the item is needed for. Blank = pre-trip admin, sorts first.
   const whenOf=r=>r.dataset.when||'';
+  // A row with a single owner belongs to them. Rows we each book ourselves
+  // (personal checkboxes, or the "each" badge) belong to everybody.
+  const driOf=r=>{const d=r.querySelector('.dri');
+    if(!d) return null;
+    const c=[...d.classList].find(x=>x!=='dri');
+    return c==='each'?null:c;};
+  const mine=r=>{ if(view.who==='all') return true;
+    const o=driOf(r); return o===null || o===view.who; };
 
-  let view={filter:'all',sort:'doc'};
+  let view={filter:'all',sort:'doc',who:'all'};
   try{ view=Object.assign(view,JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){}
 
   function apply(){
@@ -261,7 +279,7 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
 
     let shown=0;
     rows.forEach(r=>{
-      const hide = view.filter==='open' && r.classList.contains('done');
+      const hide = (view.filter==='open' && r.classList.contains('done')) || !mine(r);
       r.classList.toggle('hide',hide);
       if(!hide) shown++;
     });
@@ -278,6 +296,7 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
 
     document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('on',b.dataset.filter===view.filter));
     document.querySelectorAll('[data-sort]').forEach(b=>b.classList.toggle('on',b.dataset.sort===view.sort));
+    document.querySelectorAll('[data-who]').forEach(b=>b.classList.toggle('on',b.dataset.who===view.who));
     const c=document.getElementById('shown');
     if(c) c.textContent = shown===rows.length ? '' : shown+' / '+rows.length;
     try{ localStorage.setItem(KEY,JSON.stringify(view)); }catch(e){}
@@ -285,6 +304,7 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
 
   document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{view.filter=b.dataset.filter;apply();});
   document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{view.sort=b.dataset.sort;apply();});
+  document.querySelectorAll('[data-who]').forEach(b=>b.onclick=()=>{view.who=b.dataset.who;apply();});
 
   // The Firebase listener re-paints .done, so re-apply whenever the table changes.
   new MutationObserver(()=>apply()).observe(tb,{attributes:true,subtree:true,attributeFilter:['class']});
