@@ -134,6 +134,53 @@
   #booking td.num[data-tbc="1"] .eur{color:var(--warn)}
   tr.done .amt input{color:var(--light)}
 
+  /* Booking reference, operator link and the paid flag. */
+  #booking .bk{display:flex;flex-wrap:wrap;align-items:center;gap:6px 9px;margin-top:9px}
+  #booking .bkf{display:inline-flex;align-items:center;gap:6px;
+                border:1px solid var(--line);border-radius:5px;background:var(--paper);
+                padding:2px 7px}
+  #booking .bkf:focus-within{border-color:var(--go);box-shadow:0 0 0 3px var(--gobg)}
+  #booking .bkl{font-size:9px;letter-spacing:1px;text-transform:uppercase;
+                color:var(--light);font-weight:600}
+  #booking .bk input[type=text],#booking .bk input[type=url]{
+                font-family:inherit;font-size:12.5px;color:var(--ink);
+                border:0;background:none;padding:1px 0;min-width:0}
+  #booking .bkr{width:8em;font-weight:600;letter-spacing:.3px}
+  #booking .bkc{width:9em}
+  #booking .bk input:focus{outline:none}
+  #booking .bk input:disabled{color:var(--light)}
+  #booking .bkgo{font-size:13px;line-height:1.3;text-decoration:none;color:var(--go);
+                 border:1px solid #c8ded9;background:var(--gobg);border-radius:5px;padding:3px 8px}
+  #booking .bkgo[hidden]{display:none}
+  #booking .bkp{display:inline-flex;align-items:center;gap:5px;font-size:12px;
+                color:var(--mid);cursor:pointer;white-space:nowrap}
+  #booking tr.paid .bkp{color:var(--go);font-weight:600}
+
+  /* Phone: the five columns squeeze the text into a sliver, so each row
+     becomes a card with the description across the full width. */
+  @media (max-width:760px){
+    #booking,#booking tbody{display:block}
+    #booking thead{display:none}
+    #booking{border:0;background:none;border-radius:0}
+    #booking tr{display:grid;grid-template-columns:24px 1fr auto;
+                align-items:start;column-gap:9px;row-gap:8px;
+                background:var(--paper);border:1px solid var(--line);
+                border-radius:7px;margin:0 0 9px;padding:12px 13px}
+    #booking tr.grp{display:block;background:none;border:0;border-radius:0;
+                    margin:16px 0 8px;padding:0}
+    #booking tr.grp td{padding:0;background:none;border:0}
+    #booking td{display:block;border:0;padding:0}
+    #booking td.chk{grid-column:1;grid-row:1}
+    #booking td.wht{grid-column:2/4;grid-row:1}
+    #booking td.num{grid-column:2;grid-row:2;text-align:left;white-space:normal}
+    #booking tr>td:nth-child(4){grid-column:3;grid-row:2;justify-self:end}
+    #booking tr>td:nth-child(5){grid-column:2/4;grid-row:3}
+    #booking .eur{margin-left:0;max-width:none;text-align:left}
+    #booking .amt input{width:5.2em;text-align:left}
+    #booking .bkr{width:7em}
+    #booking .bkc{width:7.5em}
+  }
+
   /* Who fronts what: one card per payer, totals ready to type into Tricount. */
   #settle{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));
           gap:10px;margin:14px 0 0}
