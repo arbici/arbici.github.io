@@ -472,6 +472,14 @@ function paintTotals(){
   if (b) b.innerHTML = '~' + box(sum + FUEL + FOOD);
 }
 
+// Money already out that is not a booking anyone still has to make,
+// so it gets no row in the table above. A$ at the page rate; 388 reads as EUR 233.
+const EXTRA = [
+  { who:'Javi', a:388,
+    es:'La otra camper que al final no cogemos (233 \u20ac)',
+    en:'The other van we are not taking (\u20ac233)' }
+];
+
 function paintSettle(){
   if (!settle) return;
   const by = {};
@@ -485,6 +493,11 @@ function paintSettle(){
     // A line counts only once it is ticked as paid: the total is money already out.
     if (paid && v != null) { b.total += v; b.lines.push({t:labelOf(r), n:v, why:null}); }
     else { b.tbc++; b.lines.push({t:labelOf(r), n:null, why: v == null ? 'tbc' : 'unpaid'}); }
+  });
+  EXTRA.forEach(x => {
+    const b = by[x.who] || (by[x.who] = {lines:[], total:0, tbc:0});
+    b.total += x.a;
+    b.lines.push({ t: x[lang()] || x.en, n: x.a, why:null });
   });
   const names = PAYERS.filter(n => by[n]).concat(Object.keys(by).filter(n => !PAYERS.includes(n)));
   settle.innerHTML = '';
