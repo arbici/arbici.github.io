@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css?v=19df3407">
+<link rel="stylesheet" href="../base.css?v=da8d6a7d">
 <style>
   .ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:14px 0 10px}
   .ctlg{display:flex;align-items:center;gap:0;border:1px solid var(--line);
@@ -220,8 +220,8 @@ the real van price is a little above the estimate (+80). International flights o
 real one. The night walk and Granite Gorge are not in this yet.</p>
 
 <h2><span data-l="es">Qui&eacute;n adelanta cu&aacute;nto</span><span data-l="en">Who fronts what</span></h2>
-<p class="note" data-l="es">Lo que paga cada uno de su bolsillo, tal cual se teclea arriba. Es lo que hay que meter en Tricount: un gasto por l&iacute;nea, pagado por esa persona, a partes iguales entre los tres. Vuelos, visado, permiso y paracaidismo no salen aqu&iacute; porque cada uno paga el suyo.</p>
-<p class="note" data-l="en">What each of us pays out of pocket, exactly as typed above. This is what goes into Tricount: one expense per line, paid by that person, split equally three ways. Flights, visa, licence and the skydive are not here because everyone pays their own.</p>
+<p class="note" data-l="es">Lo que paga cada uno de su bolsillo, tal cual se teclea arriba. Antes de viajar, cada uno mete <b>su total</b> en Tricount como un solo gasto pagado por &eacute;l y dividido entre los tres. El desglose de abajo es para comprobarlo, no hay que teclearlo l&iacute;nea a l&iacute;nea. Vuelos, visado, permiso y paracaidismo no salen aqu&iacute; porque cada uno paga el suyo.</p>
+<p class="note" data-l="en">What each of us pays out of pocket, exactly as typed above. Before the trip, each of us enters <b>their own total</b> into Tricount as a single expense paid by them and split three ways. The breakdown below is there to check against, not to be typed in line by line. Flights, visa, licence and the skydive are not here because everyone pays their own.</p>
 <div id="settle"></div>
 
 <hr>
@@ -429,18 +429,7 @@ function paintSettle(){
       z.textContent = l.n == null ? (lang() === 'es' ? 'por confirmar' : 'TBC') : money(l.n);
       li.append(a, z); ul.append(li);
     });
-    const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'cpy';
-    const label = lang() === 'es' ? 'Copiar' : 'Copy';
-    btn.textContent = label;
-    btn.onclick = () => {
-      const txt = b.lines.filter(l => l.n != null)
-                   .map(l => l.t + '\t' + Math.round(l.n)).join('\n');
-      copy(txt);
-      btn.textContent = lang() === 'es' ? 'Copiado' : 'Copied';
-      setTimeout(() => { btn.textContent = label; }, 1800);
-    };
-    el.append(head, ul, btn);
+    el.append(head, ul);
     if (b.tbc) {
       const p = document.createElement('div');
       p.className = 'na'; p.style.cssText = 'font-size:11.5px;color:var(--warn);margin-top:7px';
@@ -453,19 +442,6 @@ function paintSettle(){
   });
 }
 
-function copy(txt){
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(txt).catch(() => fallbackCopy(txt));
-  } else fallbackCopy(txt);
-}
-function fallbackCopy(txt){
-  const ta = document.createElement('textarea');
-  ta.value = txt; ta.setAttribute('readonly','');
-  ta.style.cssText = 'position:fixed;top:-1000px';
-  document.body.append(ta); ta.select();
-  try { document.execCommand('copy'); } catch(e){}
-  ta.remove();
-}
 
 let state = {};
 let db = null, api = null, live = false;
