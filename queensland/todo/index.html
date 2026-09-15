@@ -166,7 +166,7 @@
     <tr data-when="2026-10-19"><td class="chk"><input type="checkbox" data-k="camp-airlie"></td>
       <td class="wht"><b><span data-l="es">Camping: Airlie Beach</span><span data-l="en">Campsite: Airlie Beach</span></b>
         <span class="stay"><span data-l="es">Entrada lun 19 oct<span class="arrow">→</span>salida mar 20 oct <span class="n">· 1 noche</span></span><span data-l="en">Check in Mon 19 Oct<span class="arrow">→</span>check out Tue 20 Oct <span class="n">· 1 night</span></span></span>
-        <small><span data-l="es"><a href="https://tasmanholidayparks.com/au/airlie-beach/" target="_blank" rel="noopener">Tasman Airlie</a> o <a href="https://www.nrmaparksandresorts.com.au/airlie-beach/" target="_blank" rel="noopener">NRMA Airlie</a>. La camper se devuelve a la mañana siguiente, así que esta es flexible</span><span data-l="en"><a href="https://tasmanholidayparks.com/au/airlie-beach/" target="_blank" rel="noopener">Tasman Airlie</a> or <a href="https://www.nrmaparksandresorts.com.au/airlie-beach/" target="_blank" rel="noopener">NRMA Airlie</a>. Van goes back the next morning, so this one is flexible</span></small>
+        <small><span data-l="es">Reservado en <a href="https://www.nrmaparksandresorts.com.au/airlie-beach/" target="_blank" rel="noopener">NRMA Airlie Beach</a>. La camper se devuelve a la mañana siguiente</span><span data-l="en">Booked at <a href="https://www.nrmaparksandresorts.com.au/airlie-beach/" target="_blank" rel="noopener">NRMA Airlie Beach</a>. Van goes back the next morning</span></small>
         <div class="bk"><label class="bkf"><span class="bkl">Ref</span><input type="text" class="bkr" data-ref="camp-airlie" maxlength="40" autocapitalize="characters" spellcheck="false" placeholder="—"></label><label class="bkf"><span class="bkl">Web</span><input type="url" class="bkc" data-co="camp-airlie" placeholder="https://…" spellcheck="false"></label><a class="bkgo" data-go="camp-airlie" target="_blank" rel="noopener" hidden>&#8599;</a><label class="bkp"><input type="checkbox" data-paid="camp-airlie"><span data-l="es">Pagado</span><span data-l="en">Paid</span></label></div></td>
       <td class="num" data-cost="camp-airlie" data-approx="1" data-share="3"><span class="amt"><span class="cur">A$</span><input type="number" min="0" step="1" inputmode="numeric" aria-label="A$" value="105"></span><small class="eur"></small></td><td><span class="dri javi">Javi</span></td><td><span class="pri p2"><span data-l="es">Pronto</span><span data-l="en">Soon</span></span></td></tr>
 
@@ -239,8 +239,8 @@ the real van price is a little above the estimate (+80). International flights o
 real one. The night walk and Granite Gorge are not in this yet.</p>
 
 <h2><span data-l="es">Qui&eacute;n adelanta cu&aacute;nto</span><span data-l="en">Who fronts what</span></h2>
-<p class="note" data-l="es">Lo que paga cada uno de su bolsillo, tal cual se teclea arriba. Antes de viajar, cada uno mete <b>su total</b> en Tricount como un solo gasto pagado por &eacute;l y dividido entre los tres. El desglose de abajo es para comprobarlo, no hay que teclearlo l&iacute;nea a l&iacute;nea. Vuelos, visado, permiso y paracaidismo no salen aqu&iacute; porque cada uno paga el suyo.</p>
-<p class="note" data-l="en">What each of us pays out of pocket, exactly as typed above. Before the trip, each of us enters <b>their own total</b> into Tricount as a single expense paid by them and split three ways. The breakdown below is there to check against, not to be typed in line by line. Flights, visa, licence and the skydive are not here because everyone pays their own.</p>
+<p class="note" data-l="es">Lo que ya ha pagado cada uno de su bolsillo. Una l&iacute;nea cuenta cuando est&aacute; marcada como <b>pagada</b> arriba; hasta entonces sale como pendiente. Antes de viajar, cada uno mete <b>su total</b> en Tricount como un solo gasto pagado por &eacute;l y dividido entre los tres. El desglose de abajo es para comprobarlo, no hay que teclearlo l&iacute;nea a l&iacute;nea. Vuelos, visado, permiso y paracaidismo no salen aqu&iacute; porque cada uno paga el suyo.</p>
+<p class="note" data-l="en">What each of us has already paid out of pocket. A line counts once it is ticked <b>paid</b> above; until then it shows as pending. Before the trip, each of us enters <b>their own total</b> into Tricount as a single expense paid by them and split three ways. The breakdown below is there to check against, not to be typed in line by line. Flights, visa, licence and the skydive are not here because everyone pays their own.</p>
 <div id="settle"></div>
 
 <hr>
@@ -410,14 +410,14 @@ function paintExtras(){
 async function push(node, key, value, bag){
   const prev = bag[key];
   if (value === null || value === '' || value === false) delete bag[key]; else bag[key] = value;
-  paintExtras();
-  if (!db) { readExtras(); paintExtras(); return; }
+  paintExtras(); paintSettle();
+  if (!db) { readExtras(); paintExtras(); paintSettle(); return; }
   try {
     const r = api.ref(db, 'bookings/' + node + '/' + key);
     (value === null || value === '' || value === false) ? await api.remove(r) : await api.set(r, value);
   } catch(e){
     if (prev === undefined) delete bag[key]; else bag[key] = prev;
-    paintExtras();
+    paintExtras(); paintSettle();
     if (isDenied(e)) { status('down', t('denied')); shout(t('blocked')); }
     else             { status('down', t('down')); }
   }
@@ -480,9 +480,11 @@ function paintSettle(){
     const who = td && ownerOf(r);
     if (!who) return;
     const v = costs[td.dataset.cost];
+    const paid = !!extras.paid[td.dataset.cost];
     const b = by[who] || (by[who] = {lines:[], total:0, tbc:0});
-    if (v == null) { b.tbc++; b.lines.push({t:labelOf(r), n:null}); }
-    else { b.total += v; b.lines.push({t:labelOf(r), n:v}); }
+    // A line counts only once it is ticked as paid: the total is money already out.
+    if (paid && v != null) { b.total += v; b.lines.push({t:labelOf(r), n:v, why:null}); }
+    else { b.tbc++; b.lines.push({t:labelOf(r), n:null, why: v == null ? 'tbc' : 'unpaid'}); }
   });
   const names = PAYERS.filter(n => by[n]).concat(Object.keys(by).filter(n => !PAYERS.includes(n)));
   settle.innerHTML = '';
@@ -501,7 +503,9 @@ function paintSettle(){
       if (l.n == null) li.className = 'na';
       const a = document.createElement('span'), z = document.createElement('b');
       a.textContent = l.t;
-      z.textContent = l.n == null ? (lang() === 'es' ? 'por confirmar' : 'TBC') : money(l.n);
+      z.textContent = l.n != null ? money(l.n)
+        : l.why === 'tbc' ? (lang() === 'es' ? 'por confirmar' : 'TBC')
+        : (lang() === 'es' ? 'sin pagar' : 'unpaid');
       li.append(a, z); ul.append(li);
     });
     el.append(head, ul);
@@ -509,8 +513,8 @@ function paintSettle(){
       const p = document.createElement('div');
       p.className = 'na'; p.style.cssText = 'font-size:11.5px;color:var(--warn);margin-top:7px';
       p.textContent = lang() === 'es'
-        ? b.tbc + ' sin precio, no cuentan en el total'
-        : b.tbc + ' with no price yet, not in the total';
+        ? b.tbc + ' pendientes, fuera del total'
+        : b.tbc + ' pending, not in the total';
       el.append(p);
     }
     settle.append(el);
@@ -532,8 +536,7 @@ function paint(){
   });
   prog.textContent = done + ' ' + t('done') + ' ' + rows.length + ' '
     + (done === rows.length ? t('all') : t('some'));
-  readCosts(); paintCosts(); paintTotals(); paintSettle();
-  readExtras(); paintExtras();
+  readCosts(); readExtras(); paintCosts(); paintTotals(); paintExtras(); paintSettle();
 }
 
 function status(kind, text){
