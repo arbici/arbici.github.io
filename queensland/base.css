@@ -37,6 +37,35 @@
   @media (max-width:520px){ .nav a,.nav .on{padding:6px 11px;font-size:12px} }
   @media print{ .nav{display:none} }
 
+  /* Home hero: a slow cross-fade behind the title. With no photos present it
+     is just the gradient, so the page never looks broken. */
+  .hero{position:relative;overflow:hidden;background:#101a1d}
+  .hero .shots,.hero .scrim{position:absolute;inset:0}
+  .hero .shot{position:absolute;inset:0;background-size:cover;background-position:center;
+              opacity:0;transition:opacity 1.8s ease-in-out}
+  .hero .shot.on{opacity:1}
+  .hero .scrim{pointer-events:none;
+       background:linear-gradient(170deg,rgba(12,22,25,.58) 0%,rgba(12,22,25,.80) 65%,rgba(12,22,25,.92) 100%)}
+  .heroin{position:relative;max-width:860px;margin:0 auto;padding:44px 20px 34px;color:#fff}
+  .heroin h1{color:#fff}
+  .heroin .sub{color:rgba(255,255,255,.80)}
+  .heroin .facts{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.16)}
+  .heroin .fact{background:rgba(10,18,21,.46)}
+  .heroin .fact b{color:#fff}
+  .heroin .fact small{color:rgba(255,255,255,.66)}
+  .hero .langsel{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.26)}
+  .hero .langsel button{color:rgba(255,255,255,.72)}
+  .hero .langsel button:hover{color:#fff}
+  .hero + .page{padding-top:26px}
+  @media (prefers-reduced-motion:reduce){ .hero .shot{transition:none} }
+  @media print{ .hero{background:none}
+    .hero .shots,.hero .scrim{display:none}
+    .heroin{color:var(--ink);padding:0}
+    .heroin h1{color:var(--ink)} .heroin .sub{color:var(--mid)}
+    .heroin .facts{background:var(--line);border-color:var(--line)}
+    .heroin .fact{background:var(--paper)} .heroin .fact b{color:var(--ink)}
+    .heroin .fact small{color:var(--light)} }
+
   .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:1px;
          background:var(--line);border:1px solid var(--line);border-radius:6px;
          overflow:hidden;margin:18px 0 0}
