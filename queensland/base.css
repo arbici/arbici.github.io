@@ -45,11 +45,37 @@
         opacity:0;transition:opacity 1.8s ease-in-out}
   .shot.on{opacity:1}
   /* Caption naming the photo on screen. Top left: the langsel owns the right. */
-  .shotname{position:fixed;z-index:2;top:18px;left:20px;max-width:70vw;
-            font-size:15px;letter-spacing:2.4px;text-transform:uppercase;font-weight:600;
-            color:rgba(255,255,255,.88);text-shadow:0 2px 16px rgba(0,0,0,.7);
+  .shothead{position:fixed;z-index:2;top:52px;left:52px;max-width:min(78vw,900px)}
+  /* Uppercase and tracked, as large as that treatment holds together. */
+  .shotname{font-size:clamp(16px,2.5vw,29px);line-height:1.15;
+            letter-spacing:3.2px;text-transform:uppercase;font-weight:600;
+            color:rgba(255,255,255,.92);text-shadow:0 2px 20px rgba(0,0,0,.7);
             opacity:0;transition:opacity .8s ease}
   .shotname.on{opacity:1}
+
+  /* Slideshow controls: arrows at the edges, dots under the caption. */
+  .shotnav{position:fixed;z-index:2;top:50%;transform:translateY(-50%);
+           width:42px;height:42px;border-radius:100px;cursor:pointer;
+           font-family:inherit;font-size:24px;line-height:1;padding:0 0 3px;
+           color:rgba(255,255,255,.72);background:rgba(8,16,18,.34);
+           border:1px solid rgba(255,255,255,.20);backdrop-filter:blur(6px);
+           transition:background .15s,color .15s,border-color .15s}
+  .shotnav:hover{background:rgba(8,16,18,.62);color:#fff;border-color:rgba(255,255,255,.42)}
+  .shotnav.prev{left:14px}
+  .shotnav.next{right:14px}
+  .shotdots{display:flex;gap:6px;flex-wrap:wrap;margin-top:22px}
+  .shotdots button{width:7px;height:7px;padding:0;border-radius:100px;cursor:pointer;
+                   background:rgba(255,255,255,.30);border:0;
+                   box-shadow:0 1px 5px rgba(0,0,0,.45);transition:background .3s,transform .3s}
+  .shotdots button:hover{background:rgba(255,255,255,.65)}
+  .shotdots button.on{background:rgba(255,255,255,.92);transform:scale(1.25)}
+  @media (max-width:640px){
+    .shotnav{width:36px;height:36px;font-size:21px}
+    .shotnav.prev{left:8px} .shotnav.next{right:8px}
+    .shothead{top:30px;left:24px;max-width:82vw}
+    .shotdots{margin-top:16px}
+  }
+  @media print{ .shotnav,.shotdots{display:none} }
   @media print{ .shotname{display:none} }
   .scrim{pointer-events:none;
      background:linear-gradient(180deg,rgba(8,16,18,.28) 0%,rgba(8,16,18,.20) 30%,
@@ -79,7 +105,6 @@
   @media (max-width:640px){
     body.home .page{padding-top:34vh;padding-bottom:20px}
     body.home h1{font-size:31px}
-    .shotname{font-size:12.5px;letter-spacing:1.9px}
   }
   @media (prefers-reduced-motion:reduce){ .shot{transition:none} }
   @media print{

@@ -12,11 +12,16 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="base.css?v=7d86bb0c">
+<link rel="stylesheet" href="base.css?v=d32faa37">
 </head>
 <body class="home">
 <div class="shots" id="shots"></div>
-<div class="shotname" id="shotname"></div>
+<div class="shothead">
+  <div class="shotname" id="shotname"></div>
+  <div class="shotdots" id="shotdots"></div>
+</div>
+<button class="shotnav prev" id="shotprev" type="button" aria-label="Anterior">&#8249;</button>
+<button class="shotnav next" id="shotnext" type="button" aria-label="Siguiente">&#8250;</button>
 <div class="scrim"></div>
 
 <div class="page">
@@ -24,16 +29,6 @@
 <div class="langsel"><button data-set="es">ES</button><button data-set="en">EN</button></div>
 
 <h1><span data-l="es">Queensland roadtrip</span><span data-l="en">Queensland roadtrip</span></h1>
-
-<div class="facts">
-  <div class="fact"><b>3–4</b><small><span data-l="es">de nosotros</span><span data-l="en">of us</span></small></div>
-  <div class="fact"><b>15</b><small><span data-l="es">días</span><span data-l="en">days</span></small></div>
-  <div class="fact"><b>1,200</b><small><span data-l="es">km conducidos</span><span data-l="en">km driven</span></small></div>
-  <div class="fact"><b>10</b><small><span data-l="es">días de furgo</span><span data-l="en">van days</span></small></div>
-  <div class="fact"><b>8</b><small><span data-l="es">noches en furgo</span><span data-l="en">van nights</span></small></div>
-  <div class="fact"><b>2</b><small><span data-l="es">noches fondeados</span><span data-l="en">nights at anchor</span></small></div>
-  <div class="fact"><b>2</b><small><span data-l="es">días de festival</span><span data-l="en">festival days</span></small></div>
-</div>
 
 <div class="ctas">
 
@@ -78,14 +73,15 @@
     'airlie-night.jpg':    ['Airlie Beach', 'Airlie Beach'],
     'festival.jpg':        ['Earth Frequency Festival', 'Earth Frequency Festival'],
     'party-1.jpg':         ['Fiesta en Cairns', 'Cairns party'],
-    'party-2.jpg':         ['La hospitalidad australiana', "Australia's welcoming people"]
+    'hospitality.jpg':     ['La hospitalidad australiana', "Australia's welcoming people"]
   };
   const box = document.getElementById('shots');
   if (!box) return;
   const mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   const still = !!(mq && mq.matches);
   const order = Object.keys(FILES).sort(() => Math.random() - 0.5);
-  const cap = document.getElementById('shotname');
+  const cap  = document.getElementById('shotname');
+  const dots = document.getElementById('shotdots');
   const layers = [];
   let i = 0, timer = null;
 
@@ -101,13 +97,43 @@
     }, 700);
   }
 
-  function step(){
+  function dot(){
+    if (!dots) return;
+    while (dots.children.length < layers.length) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.addEventListener('click', () => { const n = [...dots.children].indexOf(b); go(n - i); });
+      dots.appendChild(b);
+    }
+    [...dots.children].forEach((b, n) => b.classList.toggle('on', n === i));
+  }
+
+  // One place to change slide, whether the timer or a person asked for it.
+  function go(by){
     if (layers.length < 2) return;
     layers[i].classList.remove('on');
-    i = (i + 1) % layers.length;
+    i = (i + by % layers.length + layers.length) % layers.length;
     layers[i].classList.add('on');
     say(layers[i].dataset.name);
+    dot();
+    run();                       // a manual move restarts the clock
   }
+
+  function run(){
+    if (still) return;
+    clearInterval(timer);
+    timer = layers.length > 1 ? setInterval(() => go(1), 6500) : null;
+  }
+
+  const prev = document.getElementById('shotprev');
+  const next = document.getElementById('shotnext');
+  if (prev) prev.addEventListener('click', () => go(-1));
+  if (next) next.addEventListener('click', () => go(1));
+  addEventListener('keydown', e => {
+    if (e.target.closest('input,select,textarea,button')) return;
+    if (e.key === 'ArrowLeft')  go(-1);
+    if (e.key === 'ArrowRight') go(1);
+  });
 
   function load(f){
     const src = 'img/' + f, im = new Image();
@@ -119,7 +145,8 @@
       box.appendChild(el);
       layers.push(el);
       if (layers.length === 1) { el.classList.add('on'); say(f); }
-      if (!still && !timer && layers.length > 1) timer = setInterval(step, 6500);
+      dot();
+      if (!timer && layers.length > 1) run();
     };
     im.src = src;                 // a file that fails is simply never added
   }
