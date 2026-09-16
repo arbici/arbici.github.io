@@ -45,18 +45,19 @@
         opacity:0;transition:opacity 1.8s ease-in-out}
   .shot.on{opacity:1}
   /* Caption naming the photo on screen. Top left: the langsel owns the right. */
-  .shotname{position:fixed;z-index:2;top:17px;left:20px;max-width:60vw;
-            font-size:10.5px;letter-spacing:1.7px;text-transform:uppercase;font-weight:600;
-            color:rgba(255,255,255,.66);text-shadow:0 1px 10px rgba(0,0,0,.65);
+  .shotname{position:fixed;z-index:2;top:18px;left:20px;max-width:70vw;
+            font-size:15px;letter-spacing:2.4px;text-transform:uppercase;font-weight:600;
+            color:rgba(255,255,255,.88);text-shadow:0 2px 16px rgba(0,0,0,.7);
             opacity:0;transition:opacity .8s ease}
   .shotname.on{opacity:1}
   @media print{ .shotname{display:none} }
   .scrim{pointer-events:none;
      background:linear-gradient(180deg,rgba(8,16,18,.28) 0%,rgba(8,16,18,.20) 30%,
                                        rgba(8,16,18,.62) 78%,rgba(8,16,18,.86) 100%)}
-  body.home .page{position:relative;z-index:1;min-height:100vh;
+  body.home .page{position:relative;z-index:1;min-height:100svh;min-height:100vh;
                   display:flex;flex-direction:column;justify-content:flex-end;
-                  padding:34vh 20px 34px}
+                  padding:40vh 20px 26px}
+  body.home h1{margin-bottom:0}
   body.home h1{color:#fff;font-size:40px;text-shadow:0 2px 22px rgba(0,0,0,.55)}
   body.home .facts{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.14);
                    margin-top:20px;backdrop-filter:blur(6px)}
@@ -76,8 +77,9 @@
   body.home .langsel button{color:rgba(255,255,255,.72)}
   body.home .langsel button:hover{color:#fff}
   @media (max-width:640px){
-    body.home .page{padding-top:30vh}
-    body.home h1{font-size:30px}
+    body.home .page{padding-top:34vh;padding-bottom:20px}
+    body.home h1{font-size:31px}
+    .shotname{font-size:12.5px;letter-spacing:1.9px}
   }
   @media (prefers-reduced-motion:reduce){ .shot{transition:none} }
   @media print{
