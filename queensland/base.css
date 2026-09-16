@@ -37,43 +37,53 @@
   @media (max-width:520px){ .nav a,.nav .on{padding:6px 11px;font-size:12px} }
   @media print{ .nav{display:none} }
 
-  /* Home hero: a slow cross-fade behind the title. With no photos present it
-     is just the gradient, so the page never looks broken. */
-  .hero{position:relative;overflow:hidden;background:#101a1d;
-        min-height:70vh;display:flex;align-items:flex-end}
-  .hero .shots,.hero .scrim{position:absolute;inset:0}
-  .hero .shot{position:absolute;inset:0;background-size:cover;background-position:center;
-              opacity:0;transition:opacity 1.8s ease-in-out}
-  .hero .shot.on{opacity:1}
-  /* Clear at the top so the photo reads, dark only where the words are. */
-  .hero .scrim{pointer-events:none;
-       background:linear-gradient(180deg,rgba(12,22,25,.30) 0%,rgba(12,22,25,.10) 32%,
-                                        rgba(12,22,25,.62) 72%,rgba(12,22,25,.88) 100%)}
-  .heroin{position:relative;width:100%;max-width:860px;margin:0 auto;padding:120px 20px 34px;color:#fff}
-  .heroin h1{color:#fff;font-size:38px;text-shadow:0 1px 18px rgba(0,0,0,.45)}
-  .heroin .sub{color:rgba(255,255,255,.84);text-shadow:0 1px 12px rgba(0,0,0,.45)}
-  .heroin .facts{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.14);margin-top:22px}
-  .heroin .fact{background:rgba(10,18,21,.34);padding:10px 9px}
-  .heroin .fact b{color:#fff;font-size:18px}
-  .heroin .fact small{color:rgba(255,255,255,.66)}
-  .hero .langsel{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.26)}
-  .hero .langsel button{color:rgba(255,255,255,.72)}
-  .hero .langsel button:hover{color:#fff}
-  .hero + .page{padding-top:22px}
-  @media (prefers-reduced-motion:reduce){ .hero .shot{transition:none} }
+  /* Home: the photo is the page. A fixed backdrop behind everything, with
+     the content sitting on it. No photos present leaves the flat colour. */
+  body.home{background:#0c1619;color:#fff}
+  .shots,.scrim{position:fixed;inset:0;z-index:0}
+  .shot{position:absolute;inset:0;background-size:cover;background-position:center;
+        opacity:0;transition:opacity 1.8s ease-in-out}
+  .shot.on{opacity:1}
+  .scrim{pointer-events:none;
+     background:linear-gradient(180deg,rgba(8,16,18,.28) 0%,rgba(8,16,18,.20) 30%,
+                                       rgba(8,16,18,.62) 78%,rgba(8,16,18,.86) 100%)}
+  body.home .page{position:relative;z-index:1;min-height:100vh;
+                  display:flex;flex-direction:column;justify-content:flex-end;
+                  padding:34vh 20px 34px}
+  body.home h1{color:#fff;font-size:40px;text-shadow:0 2px 22px rgba(0,0,0,.55)}
+  body.home .facts{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.14);
+                   margin-top:20px;backdrop-filter:blur(6px)}
+  body.home .fact{background:rgba(8,16,18,.38);padding:11px 9px}
+  body.home .fact b{color:#fff;font-size:19px}
+  body.home .fact small{color:rgba(255,255,255,.66)}
+  body.home .ctas{margin-top:12px}
+  body.home .cta{background:rgba(8,16,18,.46);border-color:rgba(255,255,255,.16);
+                 backdrop-filter:blur(6px)}
+  body.home .cta:hover{background:rgba(8,16,18,.66);border-color:rgba(255,255,255,.34)}
+  body.home .cta b{color:#fff}
+  body.home .cta b + span{color:rgba(255,255,255,.72)}
+  body.home .cta .arw{color:rgba(255,255,255,.55)}
+  body.home footer{color:rgba(255,255,255,.46);border-top-color:rgba(255,255,255,.14);
+                   margin-top:26px}
+  body.home .langsel{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.26)}
+  body.home .langsel button{color:rgba(255,255,255,.72)}
+  body.home .langsel button:hover{color:#fff}
   @media (max-width:640px){
-    .hero{min-height:74vh}
-    .heroin{padding:96px 20px 28px}
-    .heroin h1{font-size:30px}
+    body.home .page{padding-top:30vh}
+    body.home h1{font-size:30px}
   }
-  @media (max-height:620px){ .hero{min-height:88vh} .heroin{padding-top:76px} }
-  @media print{ .hero{background:none}
-    .hero .shots,.hero .scrim{display:none}
-    .heroin{color:var(--ink);padding:0}
-    .heroin h1{color:var(--ink)} .heroin .sub{color:var(--mid)}
-    .heroin .facts{background:var(--line);border-color:var(--line)}
-    .heroin .fact{background:var(--paper)} .heroin .fact b{color:var(--ink)}
-    .heroin .fact small{color:var(--light)} }
+  @media (prefers-reduced-motion:reduce){ .shot{transition:none} }
+  @media print{
+    body.home{background:#fff;color:var(--ink)}
+    .shots,.scrim{display:none}
+    body.home .page{padding:0;min-height:0;display:block}
+    body.home h1{color:var(--ink);text-shadow:none}
+    body.home .facts{background:var(--line);border-color:var(--line)}
+    body.home .fact{background:var(--paper)} body.home .fact b{color:var(--ink)}
+    body.home .fact small{color:var(--light)}
+    body.home .cta{background:var(--paper);border-color:var(--line)}
+    body.home .cta b{color:var(--go)} body.home .cta b + span{color:var(--mid)}
+    body.home footer{color:var(--light);border-top-color:var(--line)} }
 
   .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:1px;
          background:var(--line);border:1px solid var(--line);border-radius:6px;
