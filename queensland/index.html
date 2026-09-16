@@ -92,7 +92,7 @@
     layers[i].classList.add('on');
   }
 
-  order.forEach(f => {
+  function load(f){
     const src = 'img/' + f, im = new Image();
     im.onload = () => {
       const el = document.createElement('div');
@@ -103,8 +103,16 @@
       if (layers.length === 1) el.classList.add('on');
       if (!still && !timer && layers.length > 1) timer = setInterval(step, 6500);
     };
-    im.src = src;
-  });
+    im.src = src;                 // a file that fails is simply never added
+  }
+
+  // The first two load at once so the hero fills straight away. The rest
+  // trickle in afterwards, well before the slideshow gets to them, so the
+  // page is not holding up a couple of megabytes on a phone.
+  order.slice(0, 2).forEach(load);
+  const later = () => order.slice(2).forEach((f, i) => setTimeout(() => load(f), i * 600));
+  if (document.readyState === 'complete') setTimeout(later, 1200);
+  else addEventListener('load', () => setTimeout(later, 1200));
 })();
 </script>
 <script>
