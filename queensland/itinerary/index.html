@@ -41,8 +41,16 @@
   .sub{color:var(--mid);margin:0 0 3px;font-size:14.5px}
   h2{font-family:var(--serif);font-weight:400;font-size:20px;margin:38px 0 12px;letter-spacing:-.2px}
 
-  .back{display:inline-block;font-size:13px;color:var(--go);text-decoration:none;margin:0 0 18px}
-  .back:hover{text-decoration:underline}
+  /* Page switcher, so nobody has to go back to the index to change page. */
+  .nav{display:flex;flex-wrap:wrap;gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:100px;overflow:hidden;
+       width:fit-content;max-width:100%;margin:0 0 20px}
+  .nav a,.nav .on{display:block;padding:6px 14px;font-size:12.5px;font-weight:600;
+       background:var(--paper);color:var(--mid);text-decoration:none;white-space:nowrap}
+  .nav a:hover{color:var(--go);background:var(--gobg)}
+  .nav .on{background:var(--go);color:#fff}
+  @media (max-width:520px){ .nav a,.nav .on{padding:6px 11px;font-size:12px} }
+  @media print{ .nav{display:none} }
 
   .day{background:var(--paper);border:1px solid var(--line);border-radius:7px;
        margin:0 0 12px;overflow:hidden}
@@ -158,7 +166,12 @@
   <button data-set="es">ES</button><button data-set="en">EN</button>
 </div>
 
-<a class="back" href="../"><span data-l="es">← Volver al índice</span><span data-l="en">← Back to the index</span></a>
+<nav class="nav">
+    <a href="../"><span data-l="es">Índice</span><span data-l="en">Index</span></a>
+    <a href="../plan/"><span data-l="es">Plan</span><span data-l="en">Plan</span></a>
+    <span class="on"><span data-l="es">Alternativas</span><span data-l="en">Alternatives</span></span>
+    <a href="../todo/"><span data-l="es">Reservas</span><span data-l="en">Bookings</span></a>
+  </nav>
 
 <h1><span data-l="es">Queensland — alternativas día a día</span><span data-l="en">Queensland — day-by-day alternatives</span></h1>
 <p class="sub">Sabas, Nico, Frodo &amp; Javi · 9–25 <span data-l="es">octubre</span><span data-l="en">October</span> 2026</p>

@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css?v=b63ad968">
+<link rel="stylesheet" href="../base.css?v=b2d9bbc5">
 <style>
   .ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:14px 0 10px}
   .ctlg{display:flex;align-items:center;gap:0;border:1px solid var(--line);
@@ -36,7 +36,12 @@
 
 <div class="langsel"><button data-set="es">ES</button><button data-set="en">EN</button></div>
 
-<a class="back" href="../"><span data-l="es">← Volver al índice</span><span data-l="en">← Back to the index</span></a>
+<nav class="nav">
+    <a href="../"><span data-l="es">Índice</span><span data-l="en">Index</span></a>
+    <a href="../plan/"><span data-l="es">Plan</span><span data-l="en">Plan</span></a>
+    <a href="../itinerary/"><span data-l="es">Alternativas</span><span data-l="en">Alternatives</span></a>
+    <span class="on"><span data-l="es">Reservas</span><span data-l="en">Bookings</span></span>
+  </nav>
 
 <h2><span data-l="es">Quién reserva qué</span><span data-l="en">Who books what</span></h2>
 
