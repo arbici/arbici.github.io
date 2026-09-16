@@ -12,10 +12,11 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="base.css?v=f378a328">
+<link rel="stylesheet" href="base.css?v=19444782">
 </head>
 <body class="home">
 <div class="shots" id="shots"></div>
+<div class="shotname" id="shotname"></div>
 <div class="scrim"></div>
 
 <div class="page">
@@ -42,15 +43,15 @@
   <span class="arw">→</span>
 </a>
 
-<a class="cta" href="./itinerary/">
-  <span><b><span data-l="es">Alternativas día a día</span><span data-l="en">Day-by-day alternatives</span></b>
-  <span><span data-l="es">Todo lo que se barajó en cada sitio, con descripciones, duraciones y fotos. Y los votos.</span><span data-l="en">Everything that was on offer in each place, with descriptions, durations and photos. And the votes.</span></span></span>
-  <span class="arw">→</span>
-</a>
-
 <a class="cta" href="./todo/">
   <span><b><span data-l="es">Reservas y presupuesto</span><span data-l="en">Bookings and budget</span></b>
   <span><span data-l="es">Quién reserva qué, qué falta y cuánto sale por persona. Se puede filtrar y ordenar.</span><span data-l="en">Who books what, what is outstanding and what it costs each. Filterable and sortable.</span></span></span>
+  <span class="arw">→</span>
+</a>
+
+<a class="cta" href="./itinerary/">
+  <span><b><span data-l="es">Alternativas día a día</span><span data-l="en">Day-by-day alternatives</span></b>
+  <span><span data-l="es">Todo lo que se barajó en cada sitio, con descripciones, duraciones y fotos. Y los votos.</span><span data-l="en">Everything that was on offer in each place, with descriptions, durations and photos. And the votes.</span></span></span>
   <span class="arw">→</span>
 </a>
 
@@ -64,23 +65,50 @@
 // Home slideshow. Photos live in img/ and are listed here. Anything that fails
 // to load is skipped, so the hero degrades to its gradient rather than breaking.
 (function(){
-  const FILES = ['cape-trib.jpg','daintree.jpg','mossman.jpg','port-douglas.jpg',
-                 'cairns.jpg','atherton.jpg','mission-beach.jpg','magnetic-island.jpg',
-                 'whitsundays.jpg','whitehaven.jpg','airlie-night.jpg','festival.jpg',
-                 'party-1.jpg','party-2.jpg'];
+  // filename: [Spanish, English]. Add a file and a caption together.
+  const FILES = {
+    'cape-trib.jpg':       ['Cape Tribulation', 'Cape Tribulation'],
+    'daintree.jpg':        ['El Daintree', 'The Daintree'],
+    'mossman.jpg':         ['Mossman Gorge', 'Mossman Gorge'],
+    'port-douglas.jpg':    ['Port Douglas', 'Port Douglas'],
+    'cairns.jpg':          ['Cairns', 'Cairns'],
+    'atherton.jpg':        ['Meseta de Atherton', 'Atherton Tablelands'],
+    'mission-beach.jpg':   ['Mission Beach', 'Mission Beach'],
+    'magnetic-island.jpg': ['Magnetic Island', 'Magnetic Island'],
+    'whitsundays.jpg':     ['Las Whitsundays', 'The Whitsundays'],
+    'whitehaven.jpg':      ['Whitehaven Beach', 'Whitehaven Beach'],
+    'airlie-night.jpg':    ['Airlie Beach', 'Airlie Beach'],
+    'festival.jpg':        ['Earth Frequency', 'Earth Frequency'],
+    'party-1.jpg':         ['Fiesta en Cairns', 'Cairns party'],
+    'party-2.jpg':         ['La hospitalidad australiana', "Australia's welcoming people"]
+  };
   const box = document.getElementById('shots');
   if (!box) return;
   const mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   const still = !!(mq && mq.matches);
-  const order = FILES.slice().sort(() => Math.random() - 0.5);
+  const order = Object.keys(FILES).sort(() => Math.random() - 0.5);
+  const cap = document.getElementById('shotname');
   const layers = [];
   let i = 0, timer = null;
+
+  // Both languages go in the markup, so the caption follows the ES/EN toggle.
+  function say(f){
+    if (!cap) return;
+    const n = FILES[f];
+    if (!n) return;
+    cap.classList.remove('on');
+    setTimeout(() => {
+      cap.innerHTML = '<span data-l="es">' + n[0] + '</span><span data-l="en">' + n[1] + '</span>';
+      cap.classList.add('on');
+    }, 700);
+  }
 
   function step(){
     if (layers.length < 2) return;
     layers[i].classList.remove('on');
     i = (i + 1) % layers.length;
     layers[i].classList.add('on');
+    say(layers[i].dataset.name);
   }
 
   function load(f){
@@ -88,10 +116,11 @@
     im.onload = () => {
       const el = document.createElement('div');
       el.className = 'shot';
+      el.dataset.name = f;
       el.style.backgroundImage = 'url("' + src + '")';
       box.appendChild(el);
       layers.push(el);
-      if (layers.length === 1) el.classList.add('on');
+      if (layers.length === 1) { el.classList.add('on'); say(f); }
       if (!still && !timer && layers.length > 1) timer = setInterval(step, 6500);
     };
     im.src = src;                 // a file that fails is simply never added
