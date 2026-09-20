@@ -12,19 +12,23 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css?v=d32faa37">
+<link rel="stylesheet" href="../base.css?v=7f1164e5">
 </head>
 <body>
 <div class="page">
 
 <div class="langsel"><button data-set="es">ES</button><button data-set="en">EN</button></div>
 
-<nav class="nav">
-    <a href="../"><span data-l="es">Home</span><span data-l="en">Home</span></a>
-    <span class="on"><span data-l="es">Plan</span><span data-l="en">Plan</span></span>
-    <a href="../itinerary/"><span data-l="es">Alternativas</span><span data-l="en">Alternatives</span></a>
-    <a href="../todo/"><span data-l="es">Reservas</span><span data-l="en">Bookings</span></a>
-  </nav>
+<div class="crumb">
+  <a class="up" href="../">&larr; <span data-l="es">Queensland roadtrip</span><span data-l="en">Queensland roadtrip</span></a>
+  <a href="../todo/"><span data-l="es">Reservas</span><span data-l="en">Bookings</span></a>
+</div>
+
+<a class="cta" href="../itinerary/">
+  <span><b><span data-l="es">Alternativas día a día</span><span data-l="en">Day-by-day alternatives</span></b>
+  <span><span data-l="es">Todo lo que se barajó en cada sitio, con descripciones, duraciones y fotos.</span><span data-l="en">Everything that was on offer in each place, with descriptions, durations and photos.</span></span></span>
+  <span class="arw">→</span>
+</a>
 
 <h2><span data-l="es">Plan final</span><span data-l="en">Final plan</span></h2>
 <p class="note" data-l="es">Lo que hacemos cada día, dónde dormimos y cuánto se conduce. Cada sitio con nombre abre Google Maps. Esta es la tabla para llevar en el móvil durante el viaje.</p>

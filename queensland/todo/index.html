@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="../base.css?v=d32faa37">
+<link rel="stylesheet" href="../base.css?v=7f1164e5">
 <style>
   .ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:14px 0 10px}
   .ctlg{display:flex;align-items:center;gap:0;border:1px solid var(--line);
@@ -36,12 +36,10 @@
 
 <div class="langsel"><button data-set="es">ES</button><button data-set="en">EN</button></div>
 
-<nav class="nav">
-    <a href="../"><span data-l="es">Home</span><span data-l="en">Home</span></a>
-    <a href="../plan/"><span data-l="es">Plan</span><span data-l="en">Plan</span></a>
-    <a href="../itinerary/"><span data-l="es">Alternativas</span><span data-l="en">Alternatives</span></a>
-    <span class="on"><span data-l="es">Reservas</span><span data-l="en">Bookings</span></span>
-  </nav>
+<div class="crumb">
+  <a class="up" href="../">&larr; <span data-l="es">Queensland roadtrip</span><span data-l="en">Queensland roadtrip</span></a>
+  <a href="../plan/"><span data-l="es">Plan final</span><span data-l="en">Final plan</span></a>
+</div>
 
 <h2><span data-l="es">Quién reserva qué</span><span data-l="en">Who books what</span></h2>
 
@@ -238,7 +236,6 @@
 <footer data-l="es">Actualizado el 31 de agosto de 2026. Verificado: presupuesto de Camperman, entrada de Earth Frequency, precio base del paracaidismo y normativa de carné de Queensland. Todo lo demás es orientativo.</footer>
 <footer data-l="en">Updated 31 August 2026. Verified: Camperman quote, Earth Frequency ticket, skydive base price, Queensland licence rules. Everything else indicative.</footer>
 
-
 </div>
 <script>
 document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
@@ -248,7 +245,6 @@ document.querySelectorAll('.langsel button').forEach(b => b.onclick = () => {
   try { localStorage.setItem('qld-lang', L); } catch(e){}
 });
 </script>
-
 
 <script>
 (function(){
@@ -553,7 +549,6 @@ function paintSettle(){
     settle.append(el);
   });
 }
-
 
 let state = {};
 let db = null, api = null, live = false;

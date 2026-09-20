@@ -12,7 +12,7 @@
     document.documentElement.setAttribute('lang', L);
   } catch (e) {}
 </script>
-<link rel="stylesheet" href="base.css?v=d32faa37">
+<link rel="stylesheet" href="base.css?v=7f1164e5">
 </head>
 <body class="home">
 <div class="shots" id="shots"></div>
@@ -44,12 +44,6 @@
   <span class="arw">→</span>
 </a>
 
-<a class="cta" href="./itinerary/">
-  <span><b><span data-l="es">Alternativas día a día</span><span data-l="en">Day-by-day alternatives</span></b>
-  <span><span data-l="es">Todo lo que se barajó en cada sitio, con descripciones, duraciones y fotos. Y los votos.</span><span data-l="en">Everything that was on offer in each place, with descriptions, durations and photos. And the votes.</span></span></span>
-  <span class="arw">→</span>
-</a>
-
 </div>
 
 </div>
@@ -57,29 +51,34 @@
 // Home slideshow. Photos live in img/ and are listed here. Anything that fails
 // to load is skipped, so the hero degrades to its gradient rather than breaking.
 (function(){
-  // filename: [Spanish, English]. Add a file and a caption together.
+  // Trip order, start to finish. Hospitality sits in the middle on purpose.
+  // Missing files are skipped, so the sequence holds either way.
   const FILES = {
-    'cape-trib.jpg':       ['Cape Tribulation', 'Cape Tribulation'],
-    'daintree.jpg':        ['El Daintree', 'The Daintree'],
-    'mossman.jpg':         ['Mossman Gorge', 'Mossman Gorge'],
-    'port-douglas.jpg':    ['Port Douglas', 'Port Douglas'],
-    'cairns.jpg':          ['Cairns', 'Cairns'],
-    'atherton.jpg':        ['Meseta de Atherton', 'Atherton Tablelands'],
-    'mission-beach.jpg':   ['Mission Beach', 'Mission Beach'],
-    'magnetic-island.jpg': ['Magnetic Island', 'Magnetic Island'],
-    'great-barrier-reef.jpg': ['La Gran Barrera de Coral', 'The Great Barrier Reef'],
-    'whitsundays.jpg':     ['Las Whitsundays', 'The Whitsundays'],
-    'whitehaven.jpg':      ['Whitehaven Beach', 'Whitehaven Beach'],
-    'airlie-night.jpg':    ['Airlie Beach', 'Airlie Beach'],
-    'festival.jpg':        ['Earth Frequency Festival', 'Earth Frequency Festival'],
-    'party-1.jpg':         ['Fiesta en Cairns', 'Cairns party'],
-    'hospitality.jpg':     ['La hospitalidad australiana', "Australia's welcoming people"]
+    'cairns.jpg':            ['Cairns', 'Cairns'],
+    'cape-trib.jpg':         ['Cape Tribulation', 'Cape Tribulation'],
+    'daintree.jpg':          ['El Daintree', 'The Daintree'],
+    'mossman.jpg':           ['Mossman Gorge', 'Mossman Gorge'],
+    'port-douglas.jpg':      ['Port Douglas', 'Port Douglas'],
+    'party-1.jpg':           ['Fiesta en Cairns', 'Cairns party'],
+    'great-barrier-reef.jpg':['La Gran Barrera de Coral', 'The Great Barrier Reef'],
+    'hospitality.jpg':       ['La hospitalidad australiana', "Australia's welcoming people"],
+    'atherton.jpg':          ['Meseta de Atherton', 'Atherton Tablelands'],
+    'mission-beach.jpg':     ['Mission Beach', 'Mission Beach'],
+    'magnetic-island.jpg':   ['Magnetic Island', 'Magnetic Island'],
+    'whitsundays.jpg':       ['Las Whitsundays', 'The Whitsundays'],
+    'whitehaven.jpg':        ['Whitehaven Beach', 'Whitehaven Beach'],
+    'airlie-night.jpg':      ['Airlie Beach', 'Airlie Beach'],
+    'festival.jpg':          ['Earth Frequency Festival', 'Earth Frequency Festival']
   };
   const box = document.getElementById('shots');
   if (!box) return;
   const mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
   const still = !!(mq && mq.matches);
-  const order = Object.keys(FILES).sort(() => Math.random() - 0.5);
+  const order = Object.keys(FILES);                 // trip order, fixed
+  // Every visit enters the trip at a different point, then runs in order
+  // and wraps. Whichever of these loads first is the one you land on.
+  const from  = Math.floor(Math.random() * order.length);
+  const queue = order.slice(from).concat(order.slice(0, from));
   const cap  = document.getElementById('shotname');
   const dots = document.getElementById('shotdots');
   const layers = [];
@@ -141,10 +140,15 @@
       const el = document.createElement('div');
       el.className = 'shot';
       el.dataset.name = f;
+      el.dataset.idx = order.indexOf(f);
       el.style.backgroundImage = 'url("' + src + '")';
-      box.appendChild(el);
-      layers.push(el);
+      // Slot it into trip position rather than order of arrival.
+      const after = [...box.children].find(c => +c.dataset.idx > +el.dataset.idx);
+      box.insertBefore(el, after || null);
+      layers.length = 0;
+      layers.push(...box.children);
       if (layers.length === 1) { el.classList.add('on'); say(f); }
+      i = Math.max(0, layers.findIndex(c => c.classList.contains('on')));
       dot();
       if (!timer && layers.length > 1) run();
     };
@@ -154,8 +158,9 @@
   // The first two load at once so the hero fills straight away. The rest
   // trickle in afterwards, well before the slideshow gets to them, so the
   // page is not holding up a couple of megabytes on a phone.
-  order.slice(0, 2).forEach(load);
-  const later = () => order.slice(2).forEach((f, i) => setTimeout(() => load(f), i * 600));
+  queue.slice(0, 3).forEach(load);                   // three, so a gap in the
+  const later = () => queue.slice(3)                 // folder cannot leave it blank
+    .forEach((f, i) => setTimeout(() => load(f), i * 600));
   if (document.readyState === 'complete') setTimeout(later, 1200);
   else addEventListener('load', () => setTimeout(later, 1200));
 })();
