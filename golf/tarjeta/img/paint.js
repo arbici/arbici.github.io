@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v7';
+const PAINT_VERSION = 'paint-v8';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -16,7 +16,7 @@ function paintGolfers(x, S) {
   const poly = (pts, col) => { x.fillStyle = col; x.beginPath(); pts.forEach(([a, b], i) => i ? x.lineTo(a, b) : x.moveTo(a, b)); x.closePath(); x.fill(); };
   const line = (a, b, c, d, w, col) => { x.strokeStyle = col; x.lineWidth = w; x.lineCap = 'round'; x.beginPath(); x.moveTo(a, b); x.lineTo(c, d); x.stroke(); };
   const disc = (a, b, r, col) => { x.fillStyle = col; x.beginPath(); x.arc(a, b, r, 0, 7); x.fill(); };
-  const skin = '#c98f6b';
+  const skin = '#c98f6b', hair = '#4a3426';
   const shadow = (fx, fy, w) => { x.fillStyle = 'rgba(25,45,20,.45)'; x.beginPath(); x.ellipse(fx + w * .25, fy + w * .06, w, w * .2, 0, 0, 7); x.fill(); };
   // a man about to watch the drive: standing, turned towards the left, both hands on his driver, head resting on the grass
   const watcher = (fx, fy, h, shirt, pants, cap) => {
@@ -34,38 +34,42 @@ function paintGolfers(x, S) {
     disc(X(-5.8), Y(33), 1.9 * u, sh(skin, .95));
     line(X(-1), Y(55), X(-.5), Y(57.5), 2.4 * u, sh(skin, .85));                                    // neck
     disc(X(-.6), Y(61), 3.9 * u, skin); disc(X(1.2), Y(61), 2.6 * u, sh(skin, .82));                // head, lit from the left
-    poly([[X(0.5), Y(62.8)], [X(3.6), Y(62.8)], [X(3.4), Y(58.2)], [X(1.8), Y(57.6)]], '#4a3426');                 // dark hair at the back
-    poly([[X(-4.5), Y(62.5)], [X(3.8), Y(62.5)], [X(3.4), Y(65.3)], [X(-4.2), Y(65.3)]], cap);     // cap
-    poly([[X(-8), Y(62.2)], [X(-4), Y(62.2)], [X(-4), Y(61.2)], [X(-8), Y(61.4)]], sh(cap, .85));  // brim, facing left
+    poly([[X(0.5), Y(62.8)], [X(3.6), Y(62.8)], [X(3.4), Y(58.2)], [X(1.8), Y(57.6)]], hair);                 // dark hair at the back
+    // cap, head tipped back to follow the ball: crown towards the upper right, peak towards the upper left
+    { const hx = X(-.6), hy = Y(61), a = -2.25, c = a + Math.PI / 2;
+      x.fillStyle = cap; x.beginPath(); x.arc(hx, hy, 4.1 * u, c - Math.PI / 2 - .25, c + Math.PI / 2 + .25); x.fill();
+      x.save(); x.translate(hx + Math.cos(a) * 3.2 * u, hy + Math.sin(a) * 3.2 * u); x.rotate(a);
+      x.fillStyle = sh(cap, .85); x.fillRect(0, -.7 * u, 4.2 * u, 1.4 * u); x.restore(); }
     clubs.push([X(-5.8), Y(33), X(-11), Y(0.5), 1.1 * u, '#4b4943', [-1.6 * u, 0, 2.6 * u, 1.3 * u, 0]]);
   };
-  // the golfer at the top of his backswing, side on to the target line (seen a little from behind), facing
-  // right with the ball on his right; the target is up the picture and slightly right, and at the top the
-  // ball flies along that line (aim: photo direction (150, -51))
+  // the golfer holding his finish, seen from behind: weight on the left foot, right foot up on its toe
+  // with the sole showing, hands high over the left shoulder, club across behind his head, head turned
+  // up to watch the ball
   const golfer = (fx, fy, h, shirt, pants, cap) => {
     const u = h / 64, X = v => fx + v * u, Y = v => fy - v * u;
-    shadow(fx + 4 * u, fy, 12 * u);
-    poly([[X(-6), Y(31)], [X(-1.5), Y(32)], [X(2.5), Y(16)], [X(1.5), Y(1)], [X(-2), Y(1)], [X(-2), Y(16)]], sh(pants, .82));  // trail leg, knee flexed
-    poly([[X(-3), Y(31)], [X(1.5), Y(32)], [X(6), Y(17)], [X(5.5), Y(2.5)], [X(2), Y(2.5)], [X(1.5), Y(17)]], pants);          // lead leg, a step further away
-    poly([[X(-3), Y(1.5)], [X(3), Y(1.5)], [X(3.5), Y(-.5)], [X(-3), Y(-.5)]], '#2a241f');
-    poly([[X(1.5), Y(3)], [X(7.5), Y(3)], [X(8), Y(1)], [X(1.5), Y(1)]], '#2a241f');
-    poly([[X(-6.5), Y(33)], [X(0), Y(34)], [X(6.5), Y(52)], [X(-1), Y(54)]], shirt);                 // torso tilted towards the ball
-    poly([[X(-2), Y(33.5)], [X(0), Y(34)], [X(6.5), Y(52)], [X(3.5), Y(53)]], sh(shirt, .8));
-    poly([[X(-6.5), Y(33)], [X(0), Y(34)], [X(.5), Y(36)], [X(-6), Y(35.5)]], sh(pants, .65));      // belt
-    line(X(4), Y(51), X(-3), Y(60), 3.2 * u, sh(shirt, .85)); line(X(-3), Y(60), X(-6), Y(66), 2.6 * u, sh(skin, .9)); // lead arm up
-    line(X(1), Y(52), X(-4.5), Y(57), 3.2 * u, shirt); line(X(-4.5), Y(57), X(-6.5), Y(65), 2.6 * u, skin);              // trail arm folded
-    disc(X(-6.3), Y(66), 2 * u, skin);                                                                // hands at the top
-    line(X(5.5), Y(54), X(6.5), Y(56.5), 2.4 * u, sh(skin, .85));                                    // neck
-    disc(X(7.5), Y(59.5), 3.8 * u, skin); disc(X(9), Y(59), 2.4 * u, sh(skin, .85));                 // head, looking down at the ball
-    poly([[X(3.6), Y(61.2)], [X(6.4), Y(61.2)], [X(5.8), Y(57)], [X(3.9), Y(57.6)]], '#4a3426');                   // dark hair at the back
-    poly([[X(3.6), Y(61)], [X(11), Y(61.5)], [X(10.6), Y(64.2)], [X(4), Y(64)]], cap);
-    poly([[X(10.5), Y(61)], [X(14), Y(60)], [X(14), Y(59.2)], [X(10.5), Y(60)]], sh(cap, .85));       // brim towards the ball
-    x.fillStyle = '#e8dcc0'; x.fillRect(X(24.6), Y(1.4), .8 * u, 1.8 * u);                           // tee peg, a club length from his feet
-    disc(X(25), Y(2.5), 1.25 * u, '#fbfbf6');                                                         // ball
-    // club almost vertical at the top, leaning slightly right (photo direction (17, -40))
-    const L = 24, dx = .391 * L, dy = .920 * L;
-    clubs.push([X(-6.3), Y(66), X(-6.3 + dx), Y(66 + dy), 1.5 * u, '#3a3833', null]);
-    clubs.push([X(-6.3), Y(66), X(-6.3 + dx), Y(66 + dy), .7 * u, '#d8d8d0', [1.1 * u, -1.4 * u, 2.9 * u, 1.6 * u, -1.1]]);
+    shadow(fx + 2 * u, fy, 11 * u);
+    poly([[X(-5.5), Y(32)], [X(-1), Y(32)], [X(-2.5), Y(1)], [X(-6), Y(1)]], pants);                                          // left leg, straight
+    poly([[X(-.5), Y(32)], [X(4), Y(32)], [X(2.5), Y(16)], [X(8.5), Y(4)], [X(6), Y(2.5)], [X(-1), Y(15)]], sh(pants, .82));  // right knee in, heel up
+    poly([[X(-7), Y(1.5)], [X(-1.5), Y(1.5)], [X(-1.5), Y(-.5)], [X(-7.5), Y(-.5)]], '#2a241f');                            // left shoe
+    x.save(); x.translate(X(8.2), Y(2.4)); x.rotate(-1.05);                                                                    // right shoe on its toe
+    x.fillStyle = '#2a241f'; x.beginPath(); x.ellipse(0, 0, 3.2 * u, 1.5 * u, 0, 0, 7); x.fill();
+    x.fillStyle = '#6d655c'; x.beginPath(); x.ellipse(-.3 * u, .3 * u, 2.5 * u, .9 * u, 0, 0, 7); x.fill(); x.restore();
+    poly([[X(-6.5), Y(54)], [X(6), Y(53)], [X(4.8), Y(32)], [X(-5), Y(32)]], shirt);                                          // back, turned to the target
+    poly([[X(1.5), Y(53.5)], [X(6), Y(53)], [X(4.8), Y(32)], [X(1.8), Y(32)]], sh(shirt, .8));
+    line(X(-1), Y(50), X(0), Y(38), 1 * u, sh(shirt, .7));                                                                     // crease down the back
+    poly([[X(-5), Y(34)], [X(4.8), Y(34)], [X(4.8), Y(32)], [X(-5), Y(32)]], sh(pants, .6));                                  // belt
+    line(X(-5.5), Y(52), X(-9), Y(59), 3.3 * u, shirt); line(X(-9), Y(59), X(-6.5), Y(66), 2.7 * u, skin);                   // left arm up
+    line(X(5), Y(52), X(-1), Y(60), 3.3 * u, sh(shirt, .85)); line(X(-1), Y(60), X(-5), Y(66), 2.7 * u, sh(skin, .9));      // right arm across
+    disc(X(-5.8), Y(67), 2.1 * u, skin);                                                                                        // hands
+    line(X(.3), Y(54.5), X(.5), Y(57), 2.6 * u, sh(skin, .85));                                                               // neck
+    disc(X(.6), Y(60), 3.9 * u, sh(skin, .9));
+    x.fillStyle = hair; x.beginPath(); x.arc(X(.6), Y(60), 3.9 * u, .2, Math.PI - .2); x.fill();                             // back of the head
+    x.fillStyle = cap; x.beginPath(); x.arc(X(.6), Y(60.8), 4.1 * u, Math.PI + .15, -.35); x.fill();                        // cap from behind
+    x.save(); x.translate(X(3.8), Y(63.4)); x.rotate(-.9); x.fillStyle = sh(cap, .85); x.fillRect(0, -.7 * u, 3.6 * u, 1.4 * u); x.restore(); // peak up to the right
+    x.fillStyle = '#e8dcc0'; x.fillRect(X(-.4), Y(1.6), .8 * u, 1.8 * u);                                                    // empty tee peg in front
+    // club behind the head, clubhead out to the right
+    clubs.push([X(-5.8), Y(67), X(26), Y(60.5), 1.5 * u, '#3a3833', null]);
+    clubs.push([X(-5.8), Y(67), X(26), Y(60.5), .7 * u, '#d8d8d0', [1.8 * u, 1.2 * u, 3 * u, 1.7 * u, .5]]);
   };
   // tee markers
   const marker = (mx, my, r) => {
@@ -75,8 +79,9 @@ function paintGolfers(x, S) {
   };
   // markers where the tee is in use; the golfer tees up between them, just behind their line
   marker(...P(124, 210), 3.9 * S); marker(...P(223, 208.5), 3.9 * S);
-  const g = P(162, 213);
+  const g = P(172, 213);
   golfer(g[0], g[1], 57 * S, '#f1eee6', '#2e3a52', '#2f5a3a');
+  ballInAir = P(265, 57);
   // the other three to his right and a little behind him, facing him
   watcher(...P(262, 234), 58 * S, '#2f4a6e', '#8c8474', '#6b2e2b');
   watcher(...P(286, 239), 60 * S, '#a7c1d9', '#b19c73', '#27344f');
@@ -89,8 +94,16 @@ function paintClubs(x) {
     x.strokeStyle = col; x.lineWidth = w; x.beginPath(); x.moveTo(ax, ay); x.lineTo(bx, by); x.stroke();
     if (head) { x.fillStyle = '#1e1e1c'; x.beginPath(); x.ellipse(bx + head[0], by + head[1], head[2], head[3], head[4], 0, 7); x.fill(); }
   }
+  if (ballInAir) {
+    const [bx, by] = ballInAir;
+    x.strokeStyle = 'rgba(255,255,255,.55)'; x.lineWidth = 1.4; x.shadowBlur = 0;
+    x.beginPath(); x.moveTo(bx - 26, by + 40); x.quadraticCurveTo(bx - 10, by + 8, bx - 3, by + 3); x.stroke();   // faint trail
+    x.fillStyle = '#ffffff'; x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = 2;
+    x.beginPath(); x.arc(bx, by, 3.4, 0, 7); x.fill();
+  }
   x.restore();
 }
+let ballInAir = null;
 function blurred(src, W, H, r) {
   const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
   x.filter = `blur(${r}px)`; x.drawImage(src, 0, 0); return x.getImageData(0, 0, W, H).data;
