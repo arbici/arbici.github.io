@@ -197,7 +197,7 @@
 // Scorecard for any round: up to four players, a course library with par and
 // handicap index per hole, and three formats (stroke play, Stableford, match play).
 // Shared through Firebase under the /golf node the ledger page already uses:
-//   golf/courses/<id> = { name, holes: [{par, si}], created }
+//   golf/courses/<id> = { name, region, holes: [{par, si}], created }
 //   golf/people/<id>  = { name, hcp, created }   the player list; hcp is the current handicap
 //   golf/rounds/<id>  = { created, date, course: {id, name, holes}, players: [{id, name, hcp}],
 //                         format: "medal" | "stableford" | "match" | "sindicato", teams: [[0,1],[2,3]] | [[0],[1]],
@@ -445,16 +445,27 @@ function roundCard(id, r) {
         <div class="m"><b>${esc(headline(r))}</b></div>
       </a>`;
 }
+// Courses grouped by region, in a fixed order for the regions we play most; new regions follow
+// alphabetically and courses without one go last under "Otros".
+const REGION_ORDER = ['Madrid', 'Costa del Sol', 'Sotogrande', 'Cataluña', 'Mallorca', 'Galicia', 'Cantabria', 'Navarra'];
+function coursesByRegion() {
+  const groups = {};
+  for (const [id, c] of Object.entries(S.courses)) (groups[(c.region || '').trim() || 'Otros'] ??= []).push([id, c]);
+  const rank = r => r === 'Otros' ? 999 : REGION_ORDER.includes(r) ? REGION_ORDER.indexOf(r) : 100;
+  return Object.keys(groups).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b, 'es'))
+    .map(r => [r, groups[r].sort((a, b) => a[1].name.localeCompare(b[1].name, 'es'))]);
+}
+const regionNames = () => [...new Set([...REGION_ORDER, ...Object.values(S.courses).map(c => (c.region || '').trim()).filter(Boolean)])];
 function vCourses() {
   const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name, 'es'));
   app.innerHTML = `
     <a class="back" href="#/">‹ Partidas en juego</a>
     <h1>Campos</h1>
-    ${courses.length ? courses.map(([id, c]) => `
+    ${courses.length ? coursesByRegion().map(([region, list]) => `<h2>${esc(region)}</h2>` + list.map(([id, c]) => `
       <a class="card" href="#/campo/${esc(id)}">
         <div class="row"><div class="t">${esc(c.name)}</div><span class="m" style="margin:0">Editar</span></div>
         <div class="m">${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</div>
-      </a>`).join('') : '<div class="empty">No hay campos todavía.</div>'}
+      </a>`).join('')).join('') : '<div class="empty">No hay campos todavía.</div>'}
     <button class="btn light full" data-go="#/campo/nuevo" style="margin-top:4px">Añadir campo</button>`;
 }
 function vDone() {
@@ -493,7 +504,7 @@ let draft = null, lastCourse = null;
 const emptyRow = () => ({ id: null, name: '', hcp: '' });
 const personRow = id => ({ id, name: S.people[id].name, hcp: S.people[id].hcp ?? 0 });
 function newDraft() {
-  const ids = Object.keys(S.courses).sort((a, b) => S.courses[a].name.localeCompare(S.courses[b].name));
+  const ids = coursesByRegion().flatMap(([, list]) => list.map(([id]) => id));
   // Start from the players of the most recent round, with their current handicaps.
   const last = Object.values(S.rounds).sort((a, b) => (b.created || 0) - (a.created || 0))[0];
   const rows = (last?.players || []).filter(p => p.id && S.people[p.id]).map(p => personRow(p.id));
@@ -521,7 +532,8 @@ function vSetup() {
     <h1>Nueva partida</h1>
     ${d.err ? `<div class="err">${esc(d.err)}</div>` : ''}
     <div class="f"><label for="sc">Campo</label>
-      <select id="sc">${courses.map(([id, c]) => `<option value="${esc(id)}" ${id === d.courseId ? 'selected' : ''}>${esc(c.name)} · ${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</option>`).join('')}</select>
+      <select id="sc">${coursesByRegion().map(([region, list]) => `<optgroup label="${esc(region)}">${list.map(([id, c]) =>
+        `<option value="${esc(id)}" ${id === d.courseId ? 'selected' : ''}>${esc(c.name)} · ${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</option>`).join('')}</optgroup>`).join('')}</select>
       <div class="hint"><a href="#/campo/nuevo">Añadir otro campo</a></div></div>
     ${S.courses[d.courseId]?.holes.length === 18 ? `
     <div class="f"><div class="lab">Hoyos</div>
@@ -666,8 +678,8 @@ let cdraft = null;
 function vCourse({ id }) {
   if (!cdraft) {
     const c = S.courses[id];
-    cdraft = c ? { id, name: c.name, holes: structuredClone(c.holes).map(h => ({ par: h.par, si: h.si || '' })), err: '' }
-               : { id: null, name: '', holes: Array.from({ length: 18 }, () => ({ par: 4, si: '' })), err: '' };
+    cdraft = c ? { id, name: c.name, region: c.region || '', holes: structuredClone(c.holes).map(h => ({ par: h.par, si: h.si || '' })), err: '' }
+               : { id: null, name: '', region: '', holes: Array.from({ length: 18 }, () => ({ par: 4, si: '' })), err: '' };
   }
   const d = cdraft, n = d.holes.length;
   const pars = d.holes.map(h => h.par);
@@ -680,6 +692,9 @@ function vCourse({ id }) {
     <h1>${d.id ? 'Editar campo' : 'Añadir campo'}</h1>
     ${d.err ? `<div class="err">${esc(d.err)}</div>` : ''}
     <div class="f"><label for="cn">Nombre</label><input id="cn" value="${esc(d.name)}" maxlength="50" placeholder="Nombre del campo"></div>
+    <div class="f"><label for="cr">Zona</label><input id="cr" value="${esc(d.region)}" maxlength="30" list="regions" placeholder="Por ejemplo Madrid" autocomplete="off">
+      <datalist id="regions">${regionNames().map(r => `<option value="${esc(r)}">`).join('')}</datalist>
+      <div class="hint">Agrupa los campos en la lista. Elige una zona o escribe una nueva.</div></div>
     <div class="f"><div class="lab">Hoyos</div>
       <div class="seg"><button data-n="9" class="${n === 9 ? 'on' : ''}">9 hoyos</button><button data-n="18" class="${n === 18 ? 'on' : ''}">18 hoyos</button></div></div>
     <div class="f"><label for="cq">Pares seguidos (atajo)</label>
@@ -690,7 +705,7 @@ function vCourse({ id }) {
       ${head}<div class="cg">${d.holes.slice(0, 9).map((_, i) => cell(i)).join('')}</div>
       ${n === 18 ? `<div class="hint" style="margin:12px 0 6px">Vuelta</div>${head}<div class="cg">${d.holes.slice(9).map((_, i) => cell(i + 9)).join('')}</div>` : ''}
       <p class="ptot">Par ${n === 18 ? `ida ${sum(pars.slice(0, 9))}, vuelta ${sum(pars.slice(9))}, total ` : ''}<b>${sum(pars)}</b></p>
-      <div class="hint">Índice: el hándicap de cada hoyo que viene en la tarjeta del campo (1 el más difícil). Hace falta para repartir los golpes de hándicap.</div>
+      <div class="hint">Índice: el hándicap de cada hoyo que viene en la tarjeta del campo (1 el más difícil). Hace falta para repartir los golpes por hándicap.</div>
     </div>
     <button class="btn full" data-csave>Guardar campo</button>
     ${d.id ? '<button class="btn danger full" data-cdel style="margin-top:10px">Borrar campo</button>' : ''}`;
@@ -705,7 +720,8 @@ async function saveCourse() {
     d.err = `El índice tiene que tener cada número del 1 al ${n} una sola vez, o dejarse vacío en todos los hoyos.`;
     return render();
   }
-  const c = { name, holes: d.holes.map((h, i) => filled.length ? { par: h.par, si: sis[i] } : { par: h.par }), created: S.courses[d.id]?.created || Date.now() };
+  const c = { ...(S.courses[d.id] || {}), name, region: (d.region || '').trim(),
+              holes: d.holes.map((h, i) => filled.length ? { par: h.par, si: sis[i] } : { par: h.par }), created: S.courses[d.id]?.created || Date.now() };
   const id = d.id || store.key('golf/courses');
   if (await save('golf/courses/' + id, c)) {
     cdraft = null;
@@ -911,6 +927,7 @@ app.addEventListener('input', ev => {
   }
   if (cur.v === 'course') {
     if (t.id === 'cn') cdraft.name = t.value;
+    if (t.id === 'cr') cdraft.region = t.value;
     if (ds.si !== undefined) cdraft.holes[+ds.si].si = t.value;
     if (t.id === 'cq') {
       const digits = t.value.replace(/[^3-6]/g, '').slice(0, cdraft.holes.length);
