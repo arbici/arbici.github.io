@@ -85,6 +85,10 @@
   .sug button:last-child{border-bottom:0}
   .sug button.new{color:var(--green2);font-weight:600}
   .sug .none{padding:12px 14px;font-size:14px;color:var(--light)}
+  .sug.wide{right:0;max-height:340px;overflow-y:auto}
+  .sug .grp{padding:8px 14px 4px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--light);font-weight:700;
+            background:#f6f7f7;position:sticky;top:0}
+  .sug button.cur{background:#f3faf6;font-weight:600}
   .pgrid{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center}
   .hc{display:flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0}
   .hc span{font-size:13px;color:var(--light);font-weight:600}
@@ -531,10 +535,10 @@ function vSetup() {
     <a class="back" href="#/">‹ Partidas</a>
     <h1>Nueva partida</h1>
     ${d.err ? `<div class="err">${esc(d.err)}</div>` : ''}
-    <div class="f"><label for="sc">Campo</label>
-      <select id="sc">${coursesByRegion().map(([region, list]) => `<optgroup label="${esc(region)}">${list.map(([id, c]) =>
-        `<option value="${esc(id)}" ${id === d.courseId ? 'selected' : ''}>${esc(c.name)} · ${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</option>`).join('')}</optgroup>`).join('')}</select>
-      <div class="hint"><a href="#/campo/nuevo">Añadir otro campo</a></div></div>
+    <div class="f"><label for="scs">Campo</label>
+      <div class="pick-wrap"><input id="scs" value="${esc(S.courses[d.courseId]?.name || '')}" class="${S.courses[d.courseId] ? 'ok' : ''}"
+           placeholder="Busca un campo o una zona" autocomplete="off" maxlength="50"><div class="sug wide" id="csug" hidden></div></div>
+      <div class="hint">${S.courses[d.courseId] ? `${esc(S.courses[d.courseId].region || 'Otros')} · ${S.courses[d.courseId].holes.length} hoyos · par ${sum(S.courses[d.courseId].holes.map(h => h.par))} · ` : ''}<a href="#/campo/nuevo">Añadir otro campo</a></div></div>
     ${S.courses[d.courseId]?.holes.length === 18 ? `
     <div class="f"><div class="lab">Hoyos</div>
       <div class="seg"><button data-nine="0" class="${d.nine ? '' : 'on'}">18 hoyos</button><button data-nine="1" class="${d.nine ? 'on' : ''}">9 hoyos</button></div></div>
@@ -626,6 +630,20 @@ function suggest(i) {
   box.innerHTML = html;
   box.hidden = !html || document.activeElement !== input;
 }
+// Course search: matches on course or region name, grouped by region like the course list.
+function suggestCourse(showAll) {
+  const input = document.getElementById('scs'), box = document.getElementById('csug');
+  if (!input || !box) return;
+  const q = showAll ? '' : norm(input.value);
+  const groups = coursesByRegion().map(([region, list]) => [region, list.filter(([, c]) => !q || norm(c.name).includes(q) || norm(region).includes(q))])
+    .filter(([, list]) => list.length);
+  let html = groups.map(([region, list]) => `<div class="grp">${esc(region)}</div>` + list.map(([id, c]) =>
+    `<button type="button" data-pickc="${esc(id)}" class="${id === draft.courseId ? 'cur' : ''}"><span>${esc(c.name)}</span><span class="muted">par ${sum(c.holes.map(h => h.par))}</span></button>`).join('')).join('');
+  if (q) html += `<button type="button" class="new" data-newc>+ Añadir «${esc(input.value.trim())}» como campo nuevo</button>`;
+  box.innerHTML = html || '<div class="none">No hay campos todavía.</div>';
+  box.hidden = document.activeElement !== input;
+}
+let newCourseName = '';
 async function addPerson(i) {
   const row = draft.players[i], name = row.name.trim();
   if (!name) return;
@@ -679,7 +697,8 @@ function vCourse({ id }) {
   if (!cdraft) {
     const c = S.courses[id];
     cdraft = c ? { id, name: c.name, region: c.region || '', holes: structuredClone(c.holes).map(h => ({ par: h.par, si: h.si || '' })), err: '' }
-               : { id: null, name: '', region: '', holes: Array.from({ length: 18 }, () => ({ par: 4, si: '' })), err: '' };
+               : { id: null, name: newCourseName, region: '', holes: Array.from({ length: 18 }, () => ({ par: 4, si: '' })), err: '' };
+    newCourseName = '';
   }
   const d = cdraft, n = d.holes.length;
   const pars = d.holes.map(h => h.par);
@@ -881,6 +900,8 @@ app.addEventListener('click', ev => {
   if (cur.v === 'setup') {
     if (ds.add !== undefined) { draft.players.push(emptyRow()); render(); document.querySelector(`[data-pn="${draft.players.length - 1}"]`)?.focus(); return; }
     if (ds.pickp !== undefined) { draft.players[+ds.pickp] = personRow(ds.pid); draft.err = ''; return render(); }
+    if (ds.pickc) { draft.courseId = ds.pickc; draft.err = ''; document.activeElement?.blur(); return render(); }
+    if (ds.newc !== undefined) { newCourseName = document.getElementById('scs').value.trim(); return go('#/campo/nuevo'); }
     if (ds.newp !== undefined) return addPerson(+ds.newp);
     if (ds.rm !== undefined) { if (draft.players.length > 2) draft.players.splice(+ds.rm, 1); return render(); }
     if (ds.fmt) { draft.format = ds.fmt; return render(); }
@@ -923,6 +944,7 @@ app.addEventListener('input', ev => {
       suggest(i);
     }
     if (ds.ph !== undefined) draft.players[+ds.ph].hcp = t.value;
+    if (t.id === 'scs') { t.classList.remove('ok'); suggestCourse(false); }
     if (t.id === 'sd') draft.date = t.value;
   }
   if (cur.v === 'course') {
@@ -942,7 +964,6 @@ app.addEventListener('input', ev => {
 app.addEventListener('change', ev => {
   const t = ev.target;
   if (cur.v === 'setup') {
-    if (t.id === 'sc') { draft.courseId = t.value; render(); }
     if (t.dataset.ph !== undefined) {
       const row = draft.players[+t.dataset.ph];
       if (row.id && t.value !== '') save(`golf/people/${row.id}/hcp`, Math.max(0, Math.min(54, +t.value)));
@@ -958,10 +979,18 @@ app.addEventListener('change', ev => {
 });
 app.addEventListener('focusin', ev => {
   if (cur.v === 'setup' && ev.target.dataset.pn !== undefined) suggest(+ev.target.dataset.pn);
+  // Focusing the course field shows every course; typing replaces the current name and filters.
+  if (cur.v === 'setup' && ev.target.id === 'scs') { ev.target.select(); suggestCourse(true); }
 });
 app.addEventListener('focusout', ev => {
   const i = ev.target.dataset?.pn;
   if (cur.v === 'setup' && i !== undefined) setTimeout(() => { const b = document.querySelector(`[data-sug="${i}"]`); if (b) b.hidden = true; }, 200);
+  // Leaving the course field without picking puts the chosen course's name back.
+  if (cur.v === 'setup' && ev.target.id === 'scs') setTimeout(() => {
+    const b = document.getElementById('csug'), inp = document.getElementById('scs');
+    if (b) b.hidden = true;
+    if (inp && document.activeElement !== inp) { inp.value = S.courses[draft.courseId]?.name || ''; inp.classList.toggle('ok', !!S.courses[draft.courseId]); }
+  }, 200);
 });
 // Keep focus in the name field while a suggestion is being picked with a mouse.
 app.addEventListener('mousedown', ev => { if (ev.target.closest('.sug')) ev.preventDefault(); });
