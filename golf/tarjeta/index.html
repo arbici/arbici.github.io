@@ -69,6 +69,9 @@
   .f{margin:0 0 16px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .prow{display:grid;grid-template-columns:14px 1fr 78px 36px;gap:8px;align-items:center;margin:0 0 8px}
+  .team{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 10px 2px}
+  .team .th{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green2);margin:0 0 8px}
+  .vs2{text-align:center;font-family:var(--serif);font-style:italic;color:var(--light);margin:4px 0}
   .prow .x{border:0;background:none;font-size:20px;color:var(--light);padding:0}
   .seg{display:grid;gap:6px;grid-auto-flow:column;grid-auto-columns:1fr}
   .seg button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 6px;font-size:14px;font-weight:600;color:var(--mid)}
@@ -181,7 +184,6 @@ import { connect } from '../../queensland/firebase-config.js';
 
 const DEMO = new URLSearchParams(location.search).has('demo');
 const COLORS = ['var(--p0)', 'var(--p1)', 'var(--p2)', 'var(--p3)'];
-const PAIRINGS = [[[0, 1], [2, 3]], [[0, 2], [1, 3]], [[0, 3], [1, 2]]];
 const FORMAT = { medal: 'Juego por golpes', stableford: 'Stableford', match: 'Match play' };
 const app = document.getElementById('app');
 const S = { courses: {}, rounds: {}, names: null, loaded: false };
@@ -399,7 +401,7 @@ function newDraft() {
   const n = S.names || {};
   return { courseId: lastCourse && S.courses[lastCourse] ? lastCourse : ids[0], date: today(),
            players: [{ name: n.a || 'Javi', hcp: '' }, { name: n.b || 'Hugo', hcp: '' }],
-           format: 'stableford', pairing: 0, useHcp: true, start: 0, worst: false, err: '' };
+           format: 'stableford', useHcp: true, start: 0, worst: false, err: '' };
 }
 function vSetup() {
   if (!draft) draft = newDraft();
@@ -407,7 +409,13 @@ function vSetup() {
   const matchOk = np === 2 || np === 4;
   if (d.format === 'match' && !matchOk) d.format = 'stableford';
   const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name));
-  const name = i => esc(d.players[i]?.name || `Jugador ${i + 1}`);
+  const teams4 = d.format === 'match' && np === 4;
+  const prow = i => { const p = d.players[i]; return `
+        <div class="prow"><span class="pdot" style="background:${COLORS[i]}"></span>
+          <input data-pn="${i}" value="${esc(p.name)}" maxlength="16" placeholder="Nombre" aria-label="Nombre del jugador ${i + 1}">
+          <input data-ph="${i}" value="${esc(p.hcp)}" type="number" inputmode="numeric" min="0" max="54" placeholder="hcp" aria-label="Hándicap del jugador ${i + 1}">
+          ${np > 1 ? `<button class="x" data-rm="${i}" aria-label="Quitar jugador">×</button>` : '<span></span>'}
+        </div>`; };
   app.innerHTML = `
     <a class="back" href="#/">‹ Partidas</a>
     <h1>Nueva partida</h1>
@@ -423,16 +431,6 @@ function vSetup() {
       <div class="seg"><button data-start-hole="0" class="${d.start ? '' : 'on'}">Hoyo 1</button><button data-start-hole="9" class="${d.start ? 'on' : ''}">Hoyo 10</button></div></div>` : ''}
     <div class="f"><label for="sd">Fecha</label><input type="date" id="sd" value="${esc(d.date)}"></div>
 
-    <div class="f"><div class="lab">Jugadores y hándicap de juego</div>
-      ${d.players.map((p, i) => `
-        <div class="prow"><span class="pdot" style="background:${COLORS[i]}"></span>
-          <input data-pn="${i}" value="${esc(p.name)}" maxlength="16" placeholder="Nombre" aria-label="Nombre del jugador ${i + 1}">
-          <input data-ph="${i}" value="${esc(p.hcp)}" type="number" inputmode="numeric" min="0" max="54" placeholder="hcp" aria-label="Hándicap del jugador ${i + 1}">
-          ${np > 1 ? `<button class="x" data-rm="${i}" aria-label="Quitar jugador">×</button>` : '<span></span>'}
-        </div>`).join('')}
-      ${np < 4 ? '<button class="link" data-add>+ Añadir jugador</button>' : ''}
-    </div>
-
     <div class="f"><div class="lab">Modalidad</div>
       <div class="seg">
         <button data-fmt="medal" class="${d.format === 'medal' ? 'on' : ''}">Golpes</button>
@@ -445,12 +443,17 @@ function vSetup() {
         : 'Uno contra uno, hoyo a hoyo.'}${matchOk ? '' : ' Match play necesita 2 o 4 jugadores.'}</div>
     </div>
 
+    <div class="f"><div class="lab">Jugadores y hándicap de juego</div>
+      ${teams4 ? `
+        <div class="team"><div class="th">Pareja 1</div>${prow(0)}${prow(1)}</div>
+        <div class="vs2">contra</div>
+        <div class="team"><div class="th">Pareja 2</div>${prow(2)}${prow(3)}</div>`
+      : d.players.map((_, i) => prow(i)).join('')}
+      ${np < 4 ? '<button class="link" data-add>+ Añadir jugador</button>' : ''}
+    </div>
+
+
     ${d.format === 'match' && np === 4 ? `
-    <div class="f"><div class="lab">Parejas</div>
-      <div style="display:grid;gap:6px">
-        ${PAIRINGS.map((pr, k) => `<button class="card" data-pair="${k}" style="margin:0;text-align:left;${d.pairing === k ? 'border-color:var(--green);box-shadow:0 0 0 1px var(--green)' : ''}">
-          <b>${name(pr[0][0])} y ${name(pr[0][1])}</b> <span class="muted">contra</span> <b>${name(pr[1][0])} y ${name(pr[1][1])}</b></button>`).join('')}
-      </div></div>
     <div class="f"><label class="check"><input type="checkbox" id="sworst" ${d.worst ? 'checked' : ''}> Desempata la mala</label>
       <div class="hint">Si las mejores bolas empatan, el hoyo es para la pareja con mejor segunda bola.</div></div>` : ''}
 
@@ -464,7 +467,7 @@ async function startRound() {
   const c = S.courses[d.courseId];
   const players = d.players.map((p, i) => ({ name: p.name.trim() || `Jugador ${i + 1}`, hcp: Math.max(0, Math.min(54, +p.hcp || 0)) }));
   if (!c) { d.err = 'Elige un campo.'; return render(); }
-  const teams = d.format === 'match' ? (players.length === 4 ? PAIRINGS[d.pairing] : [[0], [1]]) : null;
+  const teams = d.format === 'match' ? (players.length === 4 ? [[0, 1], [2, 3]] : [[0], [1]]) : null;
   const r = { created: Date.now(), date: d.date || today(), course: { id: d.courseId, name: c.name, holes: c.holes },
               players, format: d.format, useHcp: !!d.useHcp, start: c.holes.length === 18 ? d.start : 0 };
   if (teams) r.teams = teams;
@@ -675,9 +678,8 @@ app.addEventListener('click', ev => {
   // setup
   if (cur.v === 'setup') {
     if (ds.add !== undefined) { draft.players.push({ name: '', hcp: '' }); return render(); }
-    if (ds.rm !== undefined) { draft.players.splice(+ds.rm, 1); draft.pairing = 0; return render(); }
+    if (ds.rm !== undefined) { draft.players.splice(+ds.rm, 1); return render(); }
     if (ds.fmt) { draft.format = ds.fmt; return render(); }
-    if (ds.pair !== undefined) { draft.pairing = +ds.pair; return render(); }
     if (ds.course) { draft.courseId = ds.course; return render(); }
     if (ds.startHole !== undefined) { draft.start = +ds.startHole; return render(); }
     if (ds.start !== undefined) return startRound();
