@@ -297,6 +297,11 @@
 //                         front: {w, m}, back: {w, m}, total: {w, m} }
 // Match play. w is the winner of that bet: "a" | "b" | "h" (halved); m is holes up (0 when halved).
 // stake is the amount on each of the three bets.
+// Rounds scored on the Tarjeta page (golf/rounds) where both players took part are added here
+// automatically once all 18 holes are in: each bet is decided scratch, hole by hole between the two,
+// whatever format the round itself was played in. golf/link = { a: <person id>, b: <person id> } says
+// which Tarjeta players are a and b; golf/imported/<round id> marks rounds already added, so a round
+// is only added once, even if its entry is deleted here later.
 // Open with ?demo to see the page filled with sample rounds (nothing is saved).
 import { connect } from '../queensland/firebase-config.js';
 
@@ -308,6 +313,7 @@ let db = null, api = null;
 let players = { ...DEFAULT_NAMES };
 let entries = {};
 let lastBalance = null;
+const T = { rounds: null, link: null, imported: null, entries: false };
 
 const eur = n => '€' + Math.round(Math.abs(n)).toLocaleString('de-DE');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -494,6 +500,40 @@ function fmtDate(d) {
   return new Date(d + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+// ---------- rounds from the Tarjeta page ----------
+// Scratch match play between players pa and pb over an 18-hole round: + means a won the hole.
+// A picked-up ball (-1) loses the hole to any score; two picked-up balls halve it.
+function fromRound(r, pa, pb) {
+  const hs = r.course?.holes || [];
+  if (hs.length !== 18 || r.half) return null;
+  const sc = (p, i) => { const v = r.scores?.[p]?.[i]; return v == null ? null : v; };
+  if (hs.some((_, i) => sc(pa, i) === null || sc(pb, i) === null)) return null;
+  const hole = i => { const a = sc(pa, i) > 0 ? sc(pa, i) : Infinity, b = sc(pb, i) > 0 ? sc(pb, i) : Infinity; return a < b ? 1 : b < a ? -1 : 0; };
+  const bet = (from, to) => { let n = 0; for (let i = from; i < to; i++) n += hole(i); return { w: n > 0 ? 'a' : n < 0 ? 'b' : 'h', m: Math.abs(n) }; };
+  return { front: bet(0, 9), back: bet(9, 18), total: bet(0, 18) };
+}
+// The stake of the most recent round in the ledger, used for rounds that come from the Tarjeta page.
+function usualStake() {
+  const last = Object.values(entries).sort((x, y) => (y.date || '').localeCompare(x.date || '') || (y.created || 0) - (x.created || 0))[0];
+  return last ? +last.stake || 0 : 0;
+}
+async function importRounds() {
+  if (!db || !T.entries || !T.rounds || !T.link?.a || !T.link?.b || !T.imported) return;
+  const add = {};
+  for (const [rid, r] of Object.entries(T.rounds)) {
+    if (T.imported[rid] || !Array.isArray(r.players)) continue;
+    const pa = r.players.findIndex(p => p.id === T.link.a), pb = r.players.findIndex(p => p.id === T.link.b);
+    if (pa < 0 || pb < 0) continue;
+    const bets = fromRound(r, pa, pb);
+    if (!bets) continue;
+    add['entries/t_' + rid] = { date: r.date, stake: usualStake(), note: '', created: r.created || Date.now(), source: rid, ...bets };
+    add['imported/' + rid] = true;
+  }
+  if (!Object.keys(add).length) return;
+  try { await api.update(api.ref(db, 'golf'), add); }
+  catch (e) { shout('No se han podido añadir las partidas de la tarjeta.'); }
+}
+
 function paintLog(s) {
   const log = $('log');
   if (!s.list.length) { log.innerHTML = '<li class="empty">No hay partidas. Pulsa “Apuntar partida” después de jugar.</li>'; return; }
@@ -512,7 +552,7 @@ function paintLog(s) {
     return `<li class="row ${n > 0 ? 'wa' : n < 0 ? 'wb' : ''}">${date}<div class="mid">
       <div class="head"><div class="course">Partida ${s.list.indexOf(e) + 1}</div>${pill}</div>
       <div class="bets">${bets}</div>
-      <div class="tail"><div class="note">${e.note ? `“${esc(e.note)}”` : ''}</div>${del}</div>
+      <div class="tail"><div class="note">${e.note ? `“${esc(e.note)}”` : e.source ? 'Desde la tarjeta' : ''}</div>${del}</div>
     </div></li>`;
   }).join('');
 }
@@ -684,7 +724,6 @@ if (DEMO) {
   if (!c) { ready('sin conexión', 'down', false); shout('No se puede conectar con la base de datos, así que ahora mismo no se guarda nada.'); }
   else {
     ({ db, api } = c);
-    // Only players and entries: /golf also holds the scorecard page's courses and rounds.
     const onErr = err => {
       ready('desconectado', 'down', false);
       shout(isDenied(err)
@@ -697,9 +736,14 @@ if (DEMO) {
     }, onErr);
     api.onValue(api.ref(db, 'golf/entries'), snap => {
       entries = snap.val() || {};
+      T.entries = true;
       ready('en directo', 'live', true);
       paint();
+      importRounds();
     }, onErr);
+    api.onValue(api.ref(db, 'golf/link'), snap => { T.link = snap.val(); importRounds(); }, onErr);
+    api.onValue(api.ref(db, 'golf/imported'), snap => { T.imported = snap.val() || {}; importRounds(); }, onErr);
+    api.onValue(api.ref(db, 'golf/rounds'), snap => { T.rounds = snap.val() || {}; importRounds(); }, onErr);
   }
 }
 </script>
