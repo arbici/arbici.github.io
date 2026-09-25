@@ -57,6 +57,8 @@
   .tag{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:99px;
        background:#e7f3ec;color:var(--green2);white-space:nowrap}
   .tag.done{background:#eef0f2;color:var(--mid)}
+  .tag.fin{background:var(--ink);color:#fff;font-size:12px;padding:4px 10px}
+  .rhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .tag.live{background:#1f9d57;color:#fff}
   .tag.live::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#c8ffd9;margin-right:6px;
        vertical-align:1px;animation:pulse 1.6s ease-in-out infinite}
@@ -396,6 +398,8 @@ const shape = (s, par) => s === null ? '' : s < 0 ? 'pu' : s - par <= -2 ? 'eagl
 const order = r => { const n = holesOf(r).length, st = r.start === 9 && n === 18 ? 9 : 0; return holesOf(r).map((_, k) => (st + k) % n); };
 const firstOpen = r => { const o = order(r); return o.find(i => r.players.some((_, p) => scoreOf(r, p, i) === null)) ?? o.at(-1); };
 const roundDone = r => r.format === 'match' ? matchState(r).done : holesOf(r).every((_, i) => r.players.every((_, p) => scoreOf(r, p, i) !== null));
+// Shown inside a round (hole entry and full scorecard) once it is over.
+const finBadge = r => roundDone(r) ? '<span class="tag fin">🏁 Terminada</span>' : '';
 const fmtLabel = r => (r.format === 'match' ? (r.teams[0].length === 2 ? 'Match play parejas' : 'Match play') : FORMAT[r.format])
   + (r.half ? ` · hoyos ${holeNo(r, 0)} a ${holeNo(r, holesOf(r).length - 1)}` : '');
 
@@ -795,7 +799,7 @@ function vPlay({ id, hole }) {
   }).join('');
   app.innerHTML = `
     <div class="hd"><a class="back" href="#/">‹ Partidas</a><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></div>
-    <div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>
+    <div class="rhead"><div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>${finBadge(r)}</div>
     ${summaryBox(r)}
     <div class="strip">${o.map(j => {
       const done = r.players.every((_, k) => scoreOf(r, k, j) !== null);
@@ -878,7 +882,7 @@ function vCard({ id }) {
   }).join('');
   app.innerHTML = `
     <div class="hd"><a class="back" href="#/r/${esc(id)}">‹ Volver a la partida</a></div>
-    <h1 style="font-size:24px">${esc(r.course.name)}</h1>
+    <div class="rhead"><h1 style="font-size:24px">${esc(r.course.name)}</h1>${finBadge(r)}</div>
     <div class="muted" style="font-size:14px">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))}${r.useHcp ? ' · con hándicap' : ''}</div>
     ${standings}
     <div class="tw"><table class="sc num">
