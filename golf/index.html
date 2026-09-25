@@ -109,26 +109,31 @@
   .empty{color:var(--mid);text-align:center;padding:38px 10px;font-size:15px}
 
   .log{list-style:none;margin:0;padding:0}
-  .row{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:0 0 8px;
-       display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:12px;padding:12px 14px;
+  .row{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:0 0 10px;
+       display:grid;grid-template-columns:56px 1fr;gap:12px;padding:14px 14px 12px;
        position:relative;overflow:hidden}
   .row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--halve)}
   .row.wa::before{background:var(--a)} .row.wb::before{background:var(--b)}
-  .row.pay{background:transparent;border-style:dashed}
-  .row.pay::before{display:none}
-  .date{text-align:center;line-height:1.1}
-  .date b{display:block;font-family:var(--serif);font-size:24px;font-weight:400}
+  .date{text-align:center;line-height:1.1;padding-top:2px}
+  .date b{display:block;font-family:var(--serif);font-size:26px;font-weight:400}
   .date span{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--light)}
   .mid{min-width:0}
+  .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .course{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .card{display:flex;gap:14px;font-size:14px;color:var(--mid);margin-top:2px;flex-wrap:wrap}
-  .card .w{color:var(--ink);font-weight:600}
-  .note{font-size:13px;color:var(--light);font-style:italic;margin-top:2px}
-  .right{text-align:right}
   .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
   .pill.a{background:#fbf0d6;color:var(--adeep)} .pill.b{background:#e2f1fb;color:var(--bdeep)}
   .pill.h{background:#eef0f2;color:var(--mid)}
-  .del{border:0;background:none;color:var(--light);font-size:12px;padding:4px 0 0;display:block;margin-left:auto}
+  .bets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+  .bet{border-radius:9px;padding:7px 9px 6px;background:#f3f4f5;border-top:3px solid var(--halve);min-width:0}
+  .bet.a{background:#fdf6e6;border-top-color:var(--a)} .bet.b{background:#ecf6fd;border-top-color:var(--b)}
+  .bet .lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--light);font-weight:700}
+  .bet .who{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bet.a .who{color:var(--adeep)} .bet.b .who{color:var(--bdeep)} .bet.h .who{color:var(--mid)}
+  .bet .sc{font-size:12px;color:var(--mid)}
+  .bet .sc b{color:var(--ink)}
+  .tail{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:6px}
+  .note{font-size:13px;color:var(--light);font-style:italic;min-width:0}
+  .del{border:0;background:none;color:var(--light);font-size:12px;padding:0;margin-left:auto;flex:none}
   .del:hover{color:#c0392b}
 
   .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--light);
@@ -138,25 +143,28 @@
          margin:0 0 18px;font-size:14px}
 
   /* ---------- dialogs ---------- */
-  dialog{border:0;border-radius:18px;padding:0;width:min(440px,calc(100vw - 32px));
+  dialog{border:0;border-radius:18px;padding:0;width:min(460px,calc(100vw - 24px));
          box-shadow:0 30px 80px rgba(0,0,0,.35)}
   dialog::backdrop{background:rgba(8,30,23,.55);backdrop-filter:blur(3px)}
-  .dlg{padding:22px 20px 18px}
+  .dlg{padding:22px 18px 18px}
   .dlg h3{font-family:var(--serif);font-weight:400;font-size:26px;margin:0 0 16px}
-  label{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);font-weight:600;margin:0 0 5px}
-  input,select{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);
+  label,.lab{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);font-weight:600;margin:0 0 5px}
+  input{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);
          border-radius:10px;background:#fafafa;color:var(--ink)}
-  input:focus,select:focus{outline:2px solid var(--fair);outline-offset:1px;background:#fff}
+  input:focus{outline:2px solid var(--fair);outline-offset:1px;background:#fff}
+  input[readonly]{background:#eef0f2;color:var(--mid)}
   .f{margin:0 0 14px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-  .seg button{border:1px solid var(--line);background:#fafafa;border-radius:10px;padding:10px 6px;font-size:14px;
-              font-weight:600;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .seg button.on.a{background:var(--a);border-color:var(--a);color:var(--green)}
-  .seg button.on.b{background:var(--b);border-color:var(--b);color:var(--green)}
-  .seg button.on.h{background:var(--halve);border-color:var(--halve);color:#fff}
-  .seg.two2{grid-template-columns:1fr 1fr}
-  .hint{font-size:12px;color:var(--light);margin-top:5px}
+  .sheet{display:grid;grid-template-columns:62px 1fr 1fr 92px;gap:6px;align-items:center}
+  .sheet .lab{margin:0;font-size:11px}
+  .sheet .colh{text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sheet input{text-align:center;padding:10px 4px}
+  .chip{border:1px solid var(--line);background:#fafafa;border-radius:10px;padding:10px 4px;font-size:13px;
+        font-weight:700;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip.a{background:var(--a);border-color:var(--a);color:var(--green)}
+  .chip.b{background:var(--b);border-color:var(--b);color:var(--green)}
+  .chip.h{background:var(--halve);border-color:var(--halve);color:#fff}
+  .hint{font-size:12px;color:var(--light);margin-top:8px}
   .row2{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
   .row2 .btn{box-shadow:none}
   .btn.go{background:var(--green);color:#fff}
@@ -173,8 +181,10 @@
     .wins{font-size:52px}
     .avatar{width:62px;height:62px;font-size:28px}
     .vs{padding-bottom:34px}
-    .row{grid-template-columns:48px 1fr auto;gap:10px;padding:11px 12px}
-    .date b{font-size:20px}
+    .row{grid-template-columns:1fr;gap:0;padding:12px 12px 10px 16px}
+    .date{display:flex;gap:6px;align-items:baseline;text-align:left;padding:0 0 4px}
+    .date b{font-size:15px;font-family:var(--sans);font-weight:600;color:var(--mid)}
+    .sheet{grid-template-columns:56px 1fr 1fr 80px}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -193,13 +203,13 @@
     <div class="player a">
       <div class="avatar"><span id="ia">J</span></div>
       <div class="pname" id="na">Javi</div>
-      <div class="wins num" id="wa">0<small>wins</small></div>
+      <div class="wins num" id="wa">0<small>bets won</small></div>
     </div>
     <div class="vs">vs</div>
     <div class="player b">
-      <div class="avatar"><span id="ib">F</span></div>
-      <div class="pname" id="nb">Friend</div>
-      <div class="wins num" id="wb">0<small>wins</small></div>
+      <div class="avatar"><span id="ib">H</span></div>
+      <div class="pname" id="nb">Hugo</div>
+      <div class="wins num" id="wb">0<small>bets won</small></div>
     </div>
   </div>
 
@@ -220,7 +230,6 @@
 <main class="page">
   <div class="actions">
     <button class="btn primary" id="addgame" disabled>⛳ Log a round</button>
-    <button class="btn ghost" id="settleup" disabled>💸 Settle up</button>
   </div>
 
   <div id="shoutslot"></div>
@@ -235,7 +244,7 @@
   <ul class="log" id="log"></ul>
 
   <div class="foot">
-    <span id="footnote">Lower score takes the pot. A halved round moves no money.</span>
+    <span>Three bets a round: front 9, back 9 and 18 holes. Lower score wins each one, and a halved bet moves no money.</span>
     <button id="editnames" disabled>Change names</button>
   </div>
 </main>
@@ -246,48 +255,37 @@
     <h3>Log a round</h3>
     <div class="two f">
       <div><label for="gdate">Date</label><input type="date" id="gdate" required></div>
-      <div><label for="gstake">Stake €</label><input type="number" id="gstake" min="0" step="1" inputmode="decimal" placeholder="20"></div>
+      <div><label for="gstake">€ per bet</label><input type="number" id="gstake" min="0" step="1" inputmode="decimal" placeholder="10"></div>
     </div>
     <div class="f"><label for="gcourse">Course</label><input id="gcourse" maxlength="60" placeholder="Where did it happen?"></div>
-    <div class="two f">
-      <div><label for="gsa" class="lna">Javi</label><input type="number" id="gsa" min="1" max="200" inputmode="numeric" placeholder="strokes"></div>
-      <div><label for="gsb" class="lnb">Friend</label><input type="number" id="gsb" min="1" max="200" inputmode="numeric" placeholder="strokes"></div>
-    </div>
     <div class="f">
-      <label>Who took the money</label>
-      <div class="seg" id="gwin">
-        <button type="button" data-w="a" class="a lna">Javi</button>
-        <button type="button" data-w="h" class="h">Halved</button>
-        <button type="button" data-w="b" class="b lnb">Friend</button>
+      <div class="sheet" id="sheet">
+        <span></span>
+        <span class="lab colh lna">Javi</span>
+        <span class="lab colh lnb">Hugo</span>
+        <span class="lab colh">Won by</span>
+
+        <span class="lab">Front 9</span>
+        <input type="number" id="front_a" min="1" max="99" inputmode="numeric" aria-label="Front 9 strokes, player one">
+        <input type="number" id="front_b" min="1" max="99" inputmode="numeric" aria-label="Front 9 strokes, player two">
+        <button type="button" class="chip h" data-seg="front">Halved</button>
+
+        <span class="lab">Back 9</span>
+        <input type="number" id="back_a" min="1" max="99" inputmode="numeric" aria-label="Back 9 strokes, player one">
+        <input type="number" id="back_b" min="1" max="99" inputmode="numeric" aria-label="Back 9 strokes, player two">
+        <button type="button" class="chip h" data-seg="back">Halved</button>
+
+        <span class="lab">18 holes</span>
+        <input type="number" id="total_a" min="1" max="199" inputmode="numeric" aria-label="18 hole strokes, player one">
+        <input type="number" id="total_b" min="1" max="199" inputmode="numeric" aria-label="18 hole strokes, player two">
+        <button type="button" class="chip h" data-seg="total">Halved</button>
       </div>
-      <div class="hint">Picked from the scores. Tap to override for match play or a side bet.</div>
+      <div class="hint">18 holes adds up the two nines. Each winner is picked from the scores; tap it to change.</div>
     </div>
     <div class="f"><label for="gnote">Trash talk (optional)</label><input id="gnote" maxlength="120" placeholder="Three-putted the 18th. Twice."></div>
     <div class="row2">
       <button type="button" class="btn cancel" data-close>Cancel</button>
       <button type="submit" class="btn go">Save round</button>
-    </div>
-  </form>
-</dialog>
-
-<!-- settle up -->
-<dialog id="dpay">
-  <form class="dlg" method="dialog" id="fpay">
-    <h3>Settle up</h3>
-    <div class="f">
-      <label>Who paid</label>
-      <div class="seg two2" id="pfrom">
-        <button type="button" data-w="a" class="a lna">Javi</button>
-        <button type="button" data-w="b" class="b lnb">Friend</button>
-      </div>
-    </div>
-    <div class="two f">
-      <div><label for="pamt">Amount €</label><input type="number" id="pamt" min="1" step="1" inputmode="decimal" required></div>
-      <div><label for="pdate">Date</label><input type="date" id="pdate" required></div>
-    </div>
-    <div class="row2">
-      <button type="button" class="btn cancel" data-close>Cancel</button>
-      <button type="submit" class="btn go">Record payment</button>
     </div>
   </form>
 </dialog>
@@ -309,16 +307,20 @@
 
 <script type="module">
 // Shared state lives at /golf in the same Firebase project as the Queensland pages:
-//   golf/players = { a: "Javi", b: "..." }
-//   golf/entries/<id> = { type:"game", date, course, sa, sb, winner:"a"|"b"|"h", stake, note, created }
-//                     | { type:"pay",  date, from:"a"|"b", amount, created }
+//   golf/players = { a: "Javi", b: "Hugo" }
+//   golf/entries/<id> = { date, course, stake, note, created,
+//                         front: {a, b, w}, back: {a, b, w}, total: {a, b, w} }
+// a/b are strokes (optional), w is the winner of that bet: "a" | "b" | "h" (halved).
+// stake is the amount on each of the three bets.
 // Open with ?demo to see the page filled with sample rounds (nothing is saved).
 import { connect } from '../queensland/firebase-config.js';
 
 const $ = id => document.getElementById(id);
 const DEMO = new URLSearchParams(location.search).has('demo');
+const SEGS = [['front', 'Front 9'], ['back', 'Back 9'], ['total', '18 holes']];
+const DEFAULT_NAMES = { a: 'Javi', b: 'Hugo' };
 let db = null, api = null;
-let players = { a: 'Javi', b: 'Friend' };
+let players = { ...DEFAULT_NAMES };
 let entries = {};
 let lastBalance = null;
 
@@ -326,60 +328,64 @@ const eur = n => '€' + Math.round(Math.abs(n)).toLocaleString('de-DE');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const other = k => k === 'a' ? 'b' : 'a';
 const today = () => new Date().toISOString().slice(0, 10);
-const nm = k => players[k] || (k === 'a' ? 'Gold' : 'Blue');
+const nm = k => players[k] || DEFAULT_NAMES[k];
+const lead = (x, y) => x > y ? 'a' : y > x ? 'b' : null;
+
+// Net money for one round, from player a's side: + means b owes a.
+function net(e) {
+  const st = +e.stake || 0;
+  return SEGS.reduce((n, [k]) => n + (e[k]?.w === 'a' ? st : e[k]?.w === 'b' ? -st : 0), 0);
+}
 
 // ---------- derived numbers ----------
 function crunch() {
   const list = Object.entries(entries).map(([id, e]) => ({ id, ...e }))
     .sort((x, y) => (x.date || '').localeCompare(y.date || '') || (x.created || 0) - (y.created || 0));
-  let bal = 0;                              // > 0 means b owes a
-  const series = [0];
-  const s = { list, wins: { a: 0, b: 0 }, halves: 0, games: 0, won: { a: 0, b: 0 },
-              best: { a: null, b: null }, strokes: { a: [], b: [] }, pot: null, streak: null, bigStreak: null };
-  let run = null;
+  const s = { list, games: list.length, bets: { a: 0, b: 0 }, halves: 0, seg: {}, sweeps: { a: 0, b: 0 },
+              best: { a: null, b: null }, strokes: { a: [], b: [] }, series: [0], streak: null };
+  SEGS.forEach(([k]) => s.seg[k] = { a: 0, b: 0, h: 0 });
+  let bal = 0, run = null;
   for (const e of list) {
-    if (e.type === 'pay') {
-      bal += e.from === 'a' ? +e.amount : -e.amount;
-    } else {
-      s.games++;
-      const st = +e.stake || 0;
-      if (e.winner === 'a' || e.winner === 'b') {
-        s.wins[e.winner]++;
-        s.won[e.winner] += st;
-        bal += e.winner === 'a' ? st : -st;
-        run = run && run.k === e.winner ? { k: e.winner, n: run.n + 1 } : { k: e.winner, n: 1 };
-        if (!s.bigStreak || run.n > s.bigStreak.n) s.bigStreak = { ...run };
-        if (!s.pot || st > s.pot.stake) s.pot = e;
-      } else {
-        s.halves++;
-        run = null;
-      }
-      for (const k of ['a', 'b']) {
-        const v = +e['s' + k];
-        if (v > 0) { s.strokes[k].push(v); if (s.best[k] === null || v < s.best[k]) s.best[k] = v; }
-      }
+    const ws = SEGS.map(([k]) => e[k]?.w || 'h');
+    SEGS.forEach(([k], i) => {
+      const w = ws[i];
+      s.seg[k][w]++;
+      if (w === 'h') s.halves++; else s.bets[w]++;
+    });
+    if (ws.every(w => w === 'a')) s.sweeps.a++;
+    if (ws.every(w => w === 'b')) s.sweeps.b++;
+    // streak follows the 18-hole bet
+    const tw = e.total?.w;
+    if (tw === 'a' || tw === 'b') run = run && run.k === tw ? { k: tw, n: run.n + 1 } : { k: tw, n: 1 };
+    else run = null;
+    for (const k of ['a', 'b']) {
+      const v = +e.total?.[k];
+      if (v > 0) { s.strokes[k].push(v); if (s.best[k] === null || v < s.best[k]) s.best[k] = v; }
     }
-    e._bal = bal;
-    series.push(bal);
+    e._net = net(e);
+    bal += e._net;
+    s.series.push(bal);
   }
   s.streak = run;
   s.balance = bal;
-  s.series = series;
   return s;
 }
 
 // ---------- quips ----------
 function quip(s) {
-  const up = s.balance > 0 ? 'a' : s.balance < 0 ? 'b' : null;
   if (!s.games) return 'No rounds yet. Somebody book a tee time.';
-  if (!up) return 'Dead even. The next round is for everything.';
-  const w = nm(up), l = nm(other(up)), amt = Math.abs(s.balance);
+  const last = s.list[s.list.length - 1];
+  const ws = SEGS.map(([k]) => last[k]?.w);
+  const swept = ws.every(w => w === 'a') ? 'a' : ws.every(w => w === 'b') ? 'b' : null;
+  const up = s.balance > 0 ? 'a' : s.balance < 0 ? 'b' : null;
+  const amt = Math.abs(s.balance);
   const pick = [
-    s.streak && s.streak.n >= 3 && `${nm(s.streak.k)} has won ${s.streak.n} in a row. Somebody stop this.`,
-    amt >= 100 && `${l}, that is a lot of range balls.`,
-    amt >= 50 && `${w} is ordering the expensive beer.`,
-    s.streak && s.streak.k !== up && `${nm(s.streak.k)} is clawing it back.`,
-    `${l} buys the first round at the clubhouse.`,
+    swept && `${nm(swept)} took all three bets last time. Brutal.`,
+    s.streak && s.streak.n >= 3 && `${nm(s.streak.k)} has won the 18 ${s.streak.n} times in a row. Somebody stop this.`,
+    !up && 'Dead even. The next round is for everything.',
+    up && amt >= 100 && `${nm(other(up))}, that is a lot of range balls.`,
+    up && amt >= 50 && `${nm(up)} is ordering the expensive beer.`,
+    up && `${nm(other(up))} buys the first round at the clubhouse.`,
   ].filter(Boolean);
   return pick[0];
 }
@@ -390,13 +396,13 @@ function paint() {
   for (const k of ['a', 'b']) {
     $('n' + k).textContent = nm(k);
     $('i' + k).textContent = (nm(k)[0] || '?').toUpperCase();
-    $('w' + k).innerHTML = s.wins[k] + '<small>wins</small>';
+    $('w' + k).innerHTML = s.bets[k] + '<small>bets won</small>';
     document.querySelectorAll('.ln' + k).forEach(el => el.textContent = nm(k));
     const av = document.querySelector('.player.' + k + ' .avatar');
-    const lead = s.wins[k] > s.wins[other(k)];
-    let c = av.querySelector('.crown');
-    if (lead && !c) av.insertAdjacentHTML('beforeend', '<span class="crown">👑</span>');
-    if (!lead && c) c.remove();
+    const leads = s.bets[k] > s.bets[other(k)];
+    const c = av.querySelector('.crown');
+    if (leads && !c) av.insertAdjacentHTML('beforeend', '<span class="crown">👑</span>');
+    if (!leads && c) c.remove();
   }
 
   // money headline
@@ -439,18 +445,23 @@ function countTo(el, from, to) {
 
 function paintTiles(s) {
   const avg = k => s.strokes[k].length ? (s.strokes[k].reduce((x, y) => x + y, 0) / s.strokes[k].length).toFixed(1) : '·';
+  const rec = k => {
+    const r = s.seg[k], l = lead(r.a, r.b);
+    return [`<span class="dot a"></span>${r.a} - ${r.b}<span class="dot b" style="margin:0 0 0 6px"></span>`,
+            l ? `${esc(nm(l))} leads${r.h ? `, ${r.h} halved` : ''}` : s.games ? `level${r.h ? `, ${r.h} halved` : ''}` : 'no rounds yet'];
+  };
   const streak = s.streak
     ? `<span class="dot ${s.streak.k}"></span>${s.streak.n}${s.streak.n >= 3 ? ' 🔥' : ''}`
     : '·';
   const tiles = [
-    ['Rounds', s.games, `${s.halves} halved`],
-    ['Record', `${s.wins.a} - ${s.wins.b}`, `${esc(nm('a'))} first`],
-    ['Hot streak', streak, s.streak ? `${esc(nm(s.streak.k))} in a row` : 'nobody on a run'],
-    ['Biggest pot', s.pot ? eur(s.pot.stake) : '·', s.pot ? `${esc(nm(s.pot.winner))}, ${esc(s.pot.course || fmtDate(s.pot.date))}` : 'no money moved yet'],
-    ['Best round', `<span class="dot a"></span>${s.best.a ?? '·'}`, `${esc(nm('a'))}, avg ${avg('a')}`],
-    ['Best round', `<span class="dot b"></span>${s.best.b ?? '·'}`, `${esc(nm('b'))}, avg ${avg('b')}`],
-    ['Won in total', `<span class="dot a"></span>${eur(s.won.a)}`, `by ${esc(nm('a'))}`],
-    ['Won in total', `<span class="dot b"></span>${eur(s.won.b)}`, `by ${esc(nm('b'))}`],
+    ['Rounds', s.games, `${s.games * 3} bets, ${s.halves} halved`],
+    ['Front 9', ...rec('front')],
+    ['Back 9', ...rec('back')],
+    ['18 holes', ...rec('total')],
+    ['Hot streak', streak, s.streak ? `${esc(nm(s.streak.k))} winning the 18` : 'nobody on a run'],
+    ['Clean sweeps', `<span class="dot a"></span>${s.sweeps.a} · <span class="dot b"></span>${s.sweeps.b}`, 'all three bets in one round'],
+    ['Best 18', `<span class="dot a"></span>${s.best.a ?? '·'}`, `${esc(nm('a'))}, avg ${avg('a')}`],
+    ['Best 18', `<span class="dot b"></span>${s.best.b ?? '·'}`, `${esc(nm('b'))}, avg ${avg('b')}`],
   ];
   $('tiles').innerHTML = tiles.map(([k, v, sub]) =>
     `<div class="tile"><div class="k">${k}</div><div class="v num">${v}</div><div class="s">${sub}</div></div>`).join('');
@@ -468,9 +479,10 @@ function paintChart(s) {
   const area = `${line} L${x(s.series.length - 1)} ${H / 2} L${x(0)} ${H / 2} Z`;
   const last = pts[pts.length - 1];
   const dots = pts.slice(1).map((p, i) => {
-    const e = s.list[i];
-    const c = e.type === 'pay' ? '#fff' : e.winner === 'a' ? 'var(--a)' : e.winner === 'b' ? 'var(--b)' : 'var(--halve)';
-    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${c}" stroke="var(--green)" stroke-width="1.2" vector-effect="non-scaling-stroke"><title>${esc(fmtDate(e.date))}: ${s.series[i + 1] === 0 ? 'even' : esc(nm(s.series[i + 1] > 0 ? 'a' : 'b')) + ' up ' + eur(s.series[i + 1])}</title></circle>`;
+    const e = s.list[i], n = e._net;
+    const c = n > 0 ? 'var(--a)' : n < 0 ? 'var(--b)' : 'var(--halve)';
+    const v = s.series[i + 1];
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${c}" stroke="var(--green)" stroke-width="1.2"><title>${esc(fmtDate(e.date))}: ${v === 0 ? 'even' : esc(nm(v > 0 ? 'a' : 'b')) + ' up ' + eur(v)}</title></circle>`;
   }).join('');
   box.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running balance after each round">
@@ -480,20 +492,19 @@ function paintChart(s) {
         <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9b44c" stop-opacity=".55"/><stop offset="1" stop-color="#e9b44c" stop-opacity=".05"/></linearGradient>
         <linearGradient id="gb" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#6fb7e8" stop-opacity=".55"/><stop offset="1" stop-color="#6fb7e8" stop-opacity=".05"/></linearGradient>
       </defs>
-      <line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#d5dadd" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+      <line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#d5dadd" stroke-dasharray="4 4"/>
       <path d="${area}" fill="url(#ga)" clip-path="url(#up)"/>
       <path d="${area}" fill="url(#gb)" clip-path="url(#dn)"/>
-      <path d="${line}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <path d="${line}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linejoin="round"/>
       ${dots}
-      <circle cx="${last[0]}" cy="${last[1]}" r="6" fill="none" stroke="var(--green)" stroke-width="1.5" vector-effect="non-scaling-stroke" opacity=".4"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="6" fill="none" stroke="var(--green)" stroke-width="1.5" opacity=".4"/>
     </svg>
     <div class="legend"><span><span class="dot a"></span>above the line, ${esc(nm('a'))} is up</span><span><span class="dot b"></span>below, ${esc(nm('b'))} is up</span></div>`;
 }
 
 function fmtDate(d) {
   if (!d) return '';
-  const dt = new Date(d + 'T12:00:00');
-  return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function paintLog(s) {
@@ -502,19 +513,22 @@ function paintLog(s) {
   log.innerHTML = s.list.slice().reverse().map(e => {
     const dt = new Date((e.date || today()) + 'T12:00:00');
     const date = `<div class="date"><b>${dt.getDate()}</b><span>${dt.toLocaleDateString('en-GB', { month: 'short' })} ${String(dt.getFullYear()).slice(2)}</span></div>`;
+    const st = +e.stake || 0, n = e._net;
+    const pill = n === 0 ? '<span class="pill h">Even</span>'
+      : `<span class="pill ${n > 0 ? 'a' : 'b'}">${esc(nm(n > 0 ? 'a' : 'b'))} +${eur(n)}</span>`;
+    const bets = SEGS.map(([k, label]) => {
+      const b = e[k] || {}, w = b.w || 'h';
+      const sa = b.a ? (w === 'a' ? `<b>${esc(b.a)}</b>` : esc(b.a)) : '';
+      const sb = b.b ? (w === 'b' ? `<b>${esc(b.b)}</b>` : esc(b.b)) : '';
+      const sc = sa || sb ? `${sa || '·'} v ${sb || '·'}` : (w === 'h' ? '' : st ? '+' + eur(st) : '');
+      return `<div class="bet ${w}"><div class="lbl">${label}</div><div class="who">${w === 'h' ? 'Halved' : esc(nm(w))}</div><div class="sc num">${sc || '&nbsp;'}</div></div>`;
+    }).join('');
     const del = db || DEMO ? `<button class="del" data-del="${esc(e.id)}">remove</button>` : '';
-    if (e.type === 'pay') {
-      return `<li class="row pay">${date}<div class="mid"><div class="course">💸 ${esc(nm(e.from))} paid ${esc(nm(other(e.from)))}</div>
-        <div class="card">Balance after: ${e._bal === 0 ? 'all square' : esc(nm(e._bal > 0 ? 'a' : 'b')) + ' up ' + eur(e._bal)}</div></div>
-        <div class="right"><span class="pill h">${eur(e.amount)}</span>${del}</div></li>`;
-    }
-    const w = e.winner, st = +e.stake || 0;
-    const sc = k => e['s' + k] ? `<span class="${w === k ? 'w' : ''}">${esc(nm(k))} ${esc(e['s' + k])}</span>` : '';
-    const pill = w === 'h' ? '<span class="pill h">Halved</span>'
-      : `<span class="pill ${w}">${esc(nm(w))}${st ? ' +' + eur(st) : ''}</span>`;
-    return `<li class="row w${w}">${date}<div class="mid"><div class="course">${esc(e.course || 'Somewhere green')}</div>
-      <div class="card">${sc('a')}${sc('b')}</div>${e.note ? `<div class="note">“${esc(e.note)}”</div>` : ''}</div>
-      <div class="right">${pill}${del}</div></li>`;
+    return `<li class="row ${n > 0 ? 'wa' : n < 0 ? 'wb' : ''}">${date}<div class="mid">
+      <div class="head"><div class="course">${esc(e.course || 'Somewhere green')}</div>${pill}</div>
+      <div class="bets">${bets}</div>
+      <div class="tail"><div class="note">${e.note ? `“${esc(e.note)}”` : ''}</div>${del}</div>
+    </div></li>`;
   }).join('');
 }
 
@@ -548,7 +562,7 @@ function shout(msg) {
 }
 async function write(path, value) {
   if (DEMO) {
-    const [, id] = path.split('/');
+    const id = path.split('/')[1];
     if (path === 'players') players = value;
     else if (value === null) delete entries[id];
     else entries[id] = value;
@@ -566,107 +580,119 @@ async function write(path, value) {
 }
 const newId = () => DEMO ? 'd' + Date.now() : api.push(api.ref(db, 'golf/entries')).key;
 
-// ---------- dialogs ----------
+// ---------- log a round ----------
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
 
-let gWin = 'h', gTouched = false;
-function setSeg(seg, v) { seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.w === v)); }
-function autoWin() {
-  if (gTouched) return;
-  const a = +$('gsa').value, b = +$('gsb').value;
-  gWin = a && b ? (a < b ? 'a' : b < a ? 'b' : 'h') : gWin;
-  setSeg($('gwin'), gWin);
+const CYCLE = { a: 'b', b: 'h', h: 'a' };
+const win = { front: 'h', back: 'h', total: 'h' };
+const touched = { front: false, back: false, total: false };
+const chip = k => document.querySelector(`.chip[data-seg="${k}"]`);
+const val = id => +$(id).value || 0;
+
+function paintChip(k) {
+  const c = chip(k);
+  c.className = 'chip ' + win[k];
+  c.textContent = win[k] === 'h' ? 'Halved' : nm(win[k]);
 }
-$('gsa').addEventListener('input', autoWin);
-$('gsb').addEventListener('input', autoWin);
-$('gwin').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; gWin = b.dataset.w; gTouched = true; setSeg($('gwin'), gWin); });
+function recalc() {
+  // 18 holes is the sum of the nines when all four are filled; otherwise typed by hand.
+  const all = ['front_a', 'front_b', 'back_a', 'back_b'].every(id => val(id));
+  for (const p of ['a', 'b']) {
+    const t = $('total_' + p);
+    t.readOnly = all;
+    if (all) t.value = val('front_' + p) + val('back_' + p);
+  }
+  for (const [k] of SEGS) {
+    if (touched[k]) continue;
+    const a = val(k + '_a'), b = val(k + '_b');
+    if (a && b) win[k] = a < b ? 'a' : b < a ? 'b' : 'h';
+    paintChip(k);
+  }
+}
+document.querySelectorAll('#sheet input').forEach(i => i.addEventListener('input', recalc));
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+  const k = c.dataset.seg;
+  win[k] = CYCLE[win[k]]; touched[k] = true; paintChip(k);
+}));
 
 $('addgame').addEventListener('click', () => {
-  const lastStake = crunch().list.filter(e => e.type === 'game').pop()?.stake;
-  $('fgame').reset(); $('gdate').value = today(); $('gstake').value = lastStake ?? '';
-  const lastCourse = crunch().list.filter(e => e.type === 'game').pop()?.course;
-  $('gcourse').value = lastCourse || '';
-  gWin = 'h'; gTouched = false; setSeg($('gwin'), gWin);
+  const prev = crunch().list.pop();
+  $('fgame').reset();
+  $('gdate').value = today();
+  $('gstake').value = prev?.stake ?? '';
+  $('gcourse').value = prev?.course || '';
+  for (const [k] of SEGS) { win[k] = 'h'; touched[k] = false; }
+  recalc();
   $('dgame').showModal();
 });
 $('fgame').addEventListener('submit', async ev => {
   ev.preventDefault();
-  const e = { type: 'game', date: $('gdate').value || today(), course: $('gcourse').value.trim(),
-              winner: gWin, stake: Math.max(0, +$('gstake').value || 0), note: $('gnote').value.trim(),
-              created: Date.now() };
-  if (+$('gsa').value) e.sa = +$('gsa').value;
-  if (+$('gsb').value) e.sb = +$('gsb').value;
-  if (await write('entries/' + newId(), e)) { $('dgame').close(); if (e.winner !== 'h') confetti(e.winner); }
+  const e = { date: $('gdate').value || today(), course: $('gcourse').value.trim(),
+              stake: Math.max(0, +$('gstake').value || 0), note: $('gnote').value.trim(), created: Date.now() };
+  for (const [k] of SEGS) {
+    e[k] = { w: win[k] };
+    if (val(k + '_a')) e[k].a = val(k + '_a');
+    if (val(k + '_b')) e[k].b = val(k + '_b');
+  }
+  if (await write('entries/' + newId(), e)) {
+    $('dgame').close();
+    const n = net(e);
+    if (n) confetti(n > 0 ? 'a' : 'b');
+  }
 });
 
-let pFrom = 'b';
-$('pfrom').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pFrom = b.dataset.w; setSeg($('pfrom'), pFrom); });
-$('settleup').addEventListener('click', () => {
-  const bal = crunch().balance;
-  pFrom = bal < 0 ? 'a' : 'b'; setSeg($('pfrom'), pFrom);
-  $('pamt').value = bal ? Math.abs(bal) : ''; $('pdate').value = today();
-  $('dpay').showModal();
-});
-$('fpay').addEventListener('submit', async ev => {
-  ev.preventDefault();
-  const amount = +$('pamt').value;
-  if (!(amount > 0)) return;
-  const e = { type: 'pay', date: $('pdate').value || today(), from: pFrom, amount, created: Date.now() };
-  if (await write('entries/' + newId(), e)) $('dpay').close();
-});
-
-$('editnames').addEventListener('click', () => { $('xna').value = players.a; $('xnb').value = players.b; $('dnames').showModal(); });
+$('editnames').addEventListener('click', () => { $('xna').value = nm('a'); $('xnb').value = nm('b'); $('dnames').showModal(); });
 $('fnames').addEventListener('submit', async ev => {
   ev.preventDefault();
-  const p = { a: $('xna').value.trim() || 'Gold', b: $('xnb').value.trim() || 'Blue' };
+  const p = { a: $('xna').value.trim() || DEFAULT_NAMES.a, b: $('xnb').value.trim() || DEFAULT_NAMES.b };
   if (await write('players', p)) $('dnames').close();
 });
 
 $('log').addEventListener('click', async e => {
   const b = e.target.closest('[data-del]'); if (!b) return;
-  if (confirm('Remove this entry for both of you?')) await write('entries/' + b.dataset.del, null);
+  if (confirm('Remove this round for both of you?')) await write('entries/' + b.dataset.del, null);
 });
 
 // ---------- boot ----------
-function ready(label, kind) {
+function ready(label, kind, enable) {
   $('conn').textContent = label; $('conn').className = 'conn ' + kind;
-  const on = kind === 'live';
-  ['addgame', 'settleup', 'editnames'].forEach(id => $(id).disabled = !on);
+  ['addgame', 'editnames'].forEach(id => $(id).disabled = !enable);
 }
 
 if (DEMO) {
-  players = { a: 'Javi', b: 'Marco' };
-  const d = (date, course, sa, sb, stake, note) => ({ type: 'game', date, course, sa, sb, stake, note,
-    winner: sa < sb ? 'a' : sb < sa ? 'b' : 'h', created: Date.parse(date) });
-  entries = {
-    g1: d('2026-04-12', 'Golfclub Wannsee', 94, 99, 20, 'Beginner’s luck, apparently.'),
-    g2: d('2026-04-26', 'Berliner GC Stolper Heide', 97, 92, 20),
-    g3: d('2026-05-10', 'Golfclub Wannsee', 91, 91, 20, 'Nobody wanted to putt.'),
-    g4: d('2026-05-31', 'Motzener See', 89, 95, 30),
-    g5: d('2026-06-14', 'Motzener See', 90, 93, 30, 'Lost four balls in the lake. Still won.'),
-    p1: { type: 'pay', date: '2026-06-20', from: 'b', amount: 40, created: Date.parse('2026-06-20') },
-    g6: d('2026-07-05', 'Golfclub Wannsee', 96, 90, 25),
-    g7: d('2026-08-02', 'Bad Saarow Faldo', 88, 94, 50, 'Birdie on 17. Unbearable afterwards.'),
-    g8: d('2026-08-30', 'Golfclub Wannsee', 87, 92, 25),
-    g9: d('2026-09-20', 'Motzener See', 90, 96, 25),
+  const r = (date, course, stake, fa, fb, ba, bb, note) => {
+    const w = (x, y) => x < y ? 'a' : y < x ? 'b' : 'h';
+    return { date, course, stake, note, created: Date.parse(date),
+      front: { a: fa, b: fb, w: w(fa, fb) }, back: { a: ba, b: bb, w: w(ba, bb) },
+      total: { a: fa + ba, b: fb + bb, w: w(fa + ba, fb + bb) } };
   };
-  ready('demo, not saving', 'down');
-  ['addgame', 'settleup', 'editnames'].forEach(id => $(id).disabled = false);
+  entries = {
+    g1: r('2026-04-12', 'Golfclub Wannsee', 10, 46, 49, 48, 50, 'Beginner’s luck, apparently.'),
+    g2: r('2026-04-26', 'Berliner GC Stolper Heide', 10, 47, 45, 50, 47),
+    g3: r('2026-05-10', 'Golfclub Wannsee', 10, 44, 46, 47, 45, 'Nobody wanted to putt.'),
+    g4: r('2026-05-31', 'Motzener See', 15, 43, 47, 46, 48),
+    g5: r('2026-06-14', 'Motzener See', 15, 45, 44, 45, 49, 'Lost four balls in the lake. Still won.'),
+    g6: r('2026-07-05', 'Golfclub Wannsee', 10, 48, 45, 48, 45),
+    g7: r('2026-08-02', 'Bad Saarow Faldo', 20, 43, 47, 45, 47, 'Birdie on 17. Unbearable afterwards.'),
+    g8: r('2026-08-30', 'Golfclub Wannsee', 10, 44, 44, 43, 48),
+    g9: r('2026-09-20', 'Motzener See', 10, 46, 45, 44, 48),
+  };
+  ready('demo, not saving', 'down', true);
   paint();
 } else {
   paint();
   const c = await connect();
-  if (!c) { ready('offline', 'down'); shout('Could not reach the database, so nothing can be saved right now.'); }
+  if (!c) { ready('offline', 'down', false); shout('Could not reach the database, so nothing can be saved right now.'); }
   else {
     ({ db, api } = c);
     api.onValue(api.ref(db, 'golf'), snap => {
       const v = snap.val() || {};
-      players = { a: 'Javi', b: 'Friend', ...(v.players || {}) };
+      players = { ...DEFAULT_NAMES, ...(v.players || {}) };
       entries = v.entries || {};
-      ready('live', 'live');
+      ready('live', 'live', true);
       paint();
     }, err => {
-      ready('not connected', 'down');
+      ready('not connected', 'down', false);
       shout(isDenied(err)
         ? 'The database is refusing to share /golf. The Firebase rules need read and write on /golf.'
         : 'Lost the connection to the database.');
