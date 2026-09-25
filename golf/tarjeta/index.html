@@ -311,7 +311,7 @@ function vsHandicap(r, p) {
   });
   return played ? v : null;
 }
-const vsHcpLabel = v => v === null ? '' : v === 0 ? 'a su hándicap' : v > 0 ? `${v} sobre su hándicap` : `${-v} bajo su hándicap`;
+const vsHcpLabel = v => v === null ? '' : `${v > 0 ? '+' + v : v < 0 ? '−' + (-v) : '0'} vs hándicap`;
 function sindPoints(r, i) {
   if (r.players.some((_, p) => scoreOf(r, p, i) === null)) return null;
   const net = r.players.map((_, p) => { const s = scoreOf(r, p, i); return s > 0 ? s - received(r, p, i) : Infinity; });
@@ -872,7 +872,7 @@ function vCard({ id }) {
     return `<div class="card" style="margin:0 0 6px;padding:10px 14px"><div class="row">
       <span><span class="pdot" style="background:${COLORS[k]}"></span><b>${esc(p.name)}</b> <span class="muted">${hcpLabel(r, k)}</span></span>
       <span class="num">${st.played ? `${st.gross} golpes (${signed(st.vsPar)})` : ''}${st.complete && r.useHcp ? ` · neto ${st.net}` : ''}${st.pu ? ` · ${st.pu} X` : ''}</span></div>
-      ${vsHandicap(r, k) === null ? '' : `<div class="m vsh ${vsHandicap(r, k) > 0 ? 'over' : vsHandicap(r, k) < 0 ? 'under' : 'even'}" style="margin:3px 0 0 17px">${vsHcpLabel(vsHandicap(r, k))}</div>`}</div>`;
+      ${vsHandicap(r, k) === null ? '' : `<div class="m vsh ${vsHandicap(r, k) > 0 ? 'over' : vsHandicap(r, k) < 0 ? 'under' : 'even'}" style="margin:3px 0 0;text-align:right">${vsHcpLabel(vsHandicap(r, k))}</div>`}</div>`;
   }).join('');
   app.innerHTML = `
     <div class="hd"><a class="back" href="#/r/${esc(id)}">‹ Volver a la partida</a></div>
