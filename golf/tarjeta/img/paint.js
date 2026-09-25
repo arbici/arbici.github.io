@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v11';
+const PAINT_VERSION = 'paint-v14';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -68,31 +68,30 @@ function paintGolfers(x, S) {
     const u = h / 64, X = v => fx + v * u, Y = v => fy - v * u;
     shadow(fx + 2 * u, fy, 11 * u);
     poly([[X(-5.5), Y(32)], [X(-1), Y(32)], [X(-2.5), Y(1)], [X(-6), Y(1)]], pants);                                          // left leg, straight
-    poly([[X(-.5), Y(32)], [X(4), Y(32)], [X(2.5), Y(16)], [X(8.5), Y(4)], [X(6), Y(2.5)], [X(-1), Y(15)]], sh(pants, .82));  // right knee in, heel up
+    // right leg as in the reference: thigh down from the hip, knee turned in towards the left leg, shin
+    // running down and out to the right to a foot a little nearer to us, up on its toe
+    poly([[X(.2), Y(32)], [X(4.8), Y(32)], [X(2.6), Y(16.5)], [X(9), Y(1.6)], [X(5.8), Y(.2)], [X(-1.4), Y(15)]], sh(pants, .7));
+    line(X(-1.2), Y(15.6), X(2.4), Y(16.4), .8 * u, sh(pants, .5));                                                           // crease at the knee
     poly([[X(-7), Y(1.5)], [X(-1.5), Y(1.5)], [X(-1.5), Y(-.5)], [X(-7.5), Y(-.5)]], '#2a241f');                            // left shoe
-    x.save(); x.translate(X(8.2), Y(2.4)); x.rotate(-1.05);                                                                    // right shoe on its toe
-    x.fillStyle = '#2a241f'; x.beginPath(); x.ellipse(0, 0, 3.2 * u, 1.5 * u, 0, 0, 7); x.fill();
-    x.fillStyle = '#6d655c'; x.beginPath(); x.ellipse(-.3 * u, .3 * u, 2.5 * u, .9 * u, 0, 0, 7); x.fill(); x.restore();
+    x.save(); x.translate(X(7.8), Y(-1.2)); x.rotate(-1.3);                                                                    // right shoe on its toe, sole to us
+    x.fillStyle = '#2a241f'; x.beginPath(); x.ellipse(0, 0, 3.1 * u, 1.6 * u, 0, 0, 7); x.fill();
+    x.fillStyle = '#6d655c'; x.beginPath(); x.ellipse(.2 * u, .35 * u, 2.4 * u, 1 * u, 0, 0, 7); x.fill(); x.restore();
     poly([[X(-6.5), Y(54)], [X(6), Y(53)], [X(4.8), Y(32)], [X(-5), Y(32)]], shirt);                                          // back, turned to the target
     poly([[X(1.5), Y(53.5)], [X(6), Y(53)], [X(4.8), Y(32)], [X(1.8), Y(32)]], sh(shirt, .8));
     line(X(-1), Y(50), X(0), Y(38), 1 * u, sh(shirt, .7));                                                                     // crease down the back
     poly([[X(-5), Y(34)], [X(4.8), Y(34)], [X(4.8), Y(32)], [X(-5), Y(32)]], sh(pants, .6));                                  // belt
-    line(X(-5.5), Y(52), X(-9), Y(58), 3.3 * u, shirt); line(X(-9), Y(58), X(-6.8), Y(63), 2.7 * u, skin);                   // left arm up
-    line(X(5), Y(52), X(-1), Y(58.5), 3.3 * u, sh(shirt, .85)); line(X(-1), Y(58.5), X(-5.4), Y(63), 2.7 * u, sh(skin, .9)); // right arm across
-    disc(X(-6), Y(63.5), 2.1 * u, skin);                                                                                        // hands, by his left ear
+    line(X(-5.5), Y(52), X(-9), Y(58), 3.3 * u, shirt); line(X(-9), Y(57), X(-6.8), Y(61), 2.7 * u, skin);                   // left arm up
+    line(X(5), Y(52), X(-1), Y(58.5), 3.3 * u, sh(shirt, .85)); line(X(-1), Y(57.5), X(-5.4), Y(61), 2.7 * u, sh(skin, .9)); // right arm across
+    disc(X(-6), Y(61.5), 2.1 * u, skin);                                                                                        // hands, by his left ear
     line(X(.3), Y(54.5), X(.5), Y(57), 2.6 * u, sh(skin, .85));                                                               // neck
     disc(X(.6), Y(60), 3.9 * u, sh(skin, .9));
     x.fillStyle = hair; x.beginPath(); x.arc(X(.6), Y(60), 3.9 * u, .2, Math.PI - .2); x.fill();                             // back of the head
     x.fillStyle = cap; x.beginPath(); x.arc(X(.6), Y(60.8), 4.1 * u, Math.PI + .15, -.35); x.fill();                        // cap from behind
     x.save(); x.translate(X(3.8), Y(63.4)); x.rotate(-.9); x.fillStyle = sh(cap, .85); x.fillRect(0, -.7 * u, 3.6 * u, 1.4 * u); x.restore(); // peak up to the right
     x.fillStyle = '#e8dcc0'; x.fillRect(X(-.4), Y(1.6), .8 * u, 1.8 * u);                                                    // empty tee peg in front
-    // club across behind the head, clubhead out to the right: the shaft is left out where it crosses the head
-    const cy = v => 63.5 + (v + 6) * (55 - 63.5) / 32;                  // shaft height at a given x
-    const gapL = -3.4, gapR = 4.5;                                        // where the head hides it
-    for (const [a, b, head] of [[-6, gapL, null], [gapR, 26, [1.8 * u, 1.2 * u, 3 * u, 1.7 * u, .5]]]) {
-      clubs.push([X(a), Y(cy(a)), X(b), Y(cy(b)), 1.5 * u, '#3a3833', null]);
-      clubs.push([X(a), Y(cy(a)), X(b), Y(cy(b)), .7 * u, '#d8d8d0', head]);
-    }
+    // club resting across the back of his neck: seen from behind it lies in front of his head, unbroken
+    clubs.push([X(-6), Y(61.5), X(26), Y(50.5), 1.5 * u, '#3a3833', null]);
+    clubs.push([X(-6), Y(61.5), X(26), Y(50.5), .7 * u, '#d8d8d0', [1.8 * u, 1.2 * u, 3 * u, 1.7 * u, .5]]);
   };
   // tee markers
   const marker = (mx, my, r) => {
