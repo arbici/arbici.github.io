@@ -155,15 +155,22 @@
   input[readonly]{background:#eef0f2;color:var(--mid)}
   .f{margin:0 0 14px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .sheet{display:grid;grid-template-columns:62px 1fr 1fr 92px;gap:6px;align-items:center}
-  .sheet .lab{margin:0;font-size:11px}
-  .sheet .colh{text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sheet input{text-align:center;padding:10px 4px}
-  .chip{border:1px solid var(--line);background:#fafafa;border-radius:10px;padding:10px 4px;font-size:13px;
-        font-weight:700;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .chip.a{background:var(--a);border-color:var(--a);color:var(--green)}
-  .chip.b{background:var(--b);border-color:var(--b);color:var(--green)}
-  .chip.h{background:var(--halve);border-color:var(--halve);color:#fff}
+  .betin{border:1px solid var(--line);border-radius:12px;padding:10px;margin:0 0 8px;background:#fcfcfb}
+  .betin.miss{border-color:#e7a08f;background:#fff6f3}
+  .betin .top2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+  .betin .lab{margin:0}
+  .step{display:flex;align-items:center;gap:6px}
+  .step button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;
+               font-size:18px;line-height:1;color:var(--green);padding:0}
+  .step button:disabled{opacity:.35;cursor:default}
+  .step output{min-width:58px;text-align:center;font-weight:700;font-size:15px}
+  .step.off output{color:var(--light);font-weight:500}
+  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .seg button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 4px;font-size:14px;
+              font-weight:600;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .seg button.on.a{background:var(--a);border-color:var(--a);color:var(--green)}
+  .seg button.on.b{background:var(--b);border-color:var(--b);color:var(--green)}
+  .seg button.on.h{background:var(--halve);border-color:var(--halve);color:#fff}
   .hint{font-size:12px;color:var(--light);margin-top:8px}
   .row2{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
   .row2 .btn{box-shadow:none}
@@ -184,7 +191,6 @@
     .row{grid-template-columns:1fr;gap:0;padding:12px 12px 10px 16px}
     .date{display:flex;gap:6px;align-items:baseline;text-align:left;padding:0 0 4px}
     .date b{font-size:15px;font-family:var(--sans);font-weight:600;color:var(--mid)}
-    .sheet{grid-template-columns:56px 1fr 1fr 80px}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -244,7 +250,7 @@
   <ul class="log" id="log"></ul>
 
   <div class="foot">
-    <span>Three bets a round: front 9, back 9 and 18 holes. Lower score wins each one, and a halved bet moves no money.</span>
+    <span>Match play, three bets a round: front 9, back 9 and 18 holes. A halved bet moves no money.</span>
     <button id="editnames" disabled>Change names</button>
   </div>
 </main>
@@ -258,30 +264,8 @@
       <div><label for="gstake">€ per bet</label><input type="number" id="gstake" min="0" step="1" inputmode="decimal" placeholder="10"></div>
     </div>
     <div class="f"><label for="gcourse">Course</label><input id="gcourse" maxlength="60" placeholder="Where did it happen?"></div>
-    <div class="f">
-      <div class="sheet" id="sheet">
-        <span></span>
-        <span class="lab colh lna">Javi</span>
-        <span class="lab colh lnb">Hugo</span>
-        <span class="lab colh">Won by</span>
-
-        <span class="lab">Front 9</span>
-        <input type="number" id="front_a" min="1" max="99" inputmode="numeric" aria-label="Front 9 strokes, player one">
-        <input type="number" id="front_b" min="1" max="99" inputmode="numeric" aria-label="Front 9 strokes, player two">
-        <button type="button" class="chip h" data-seg="front">Halved</button>
-
-        <span class="lab">Back 9</span>
-        <input type="number" id="back_a" min="1" max="99" inputmode="numeric" aria-label="Back 9 strokes, player one">
-        <input type="number" id="back_b" min="1" max="99" inputmode="numeric" aria-label="Back 9 strokes, player two">
-        <button type="button" class="chip h" data-seg="back">Halved</button>
-
-        <span class="lab">18 holes</span>
-        <input type="number" id="total_a" min="1" max="199" inputmode="numeric" aria-label="18 hole strokes, player one">
-        <input type="number" id="total_b" min="1" max="199" inputmode="numeric" aria-label="18 hole strokes, player two">
-        <button type="button" class="chip h" data-seg="total">Halved</button>
-      </div>
-      <div class="hint">18 holes adds up the two nines. Each winner is picked from the scores; tap it to change.</div>
-    </div>
+    <div id="betsin"></div>
+    <div class="hint" id="betshint" style="margin:0 0 14px">18 holes fills in from the two nines. Change it if the match ended early.</div>
     <div class="f"><label for="gnote">Trash talk (optional)</label><input id="gnote" maxlength="120" placeholder="Three-putted the 18th. Twice."></div>
     <div class="row2">
       <button type="button" class="btn cancel" data-close>Cancel</button>
@@ -309,8 +293,8 @@
 // Shared state lives at /golf in the same Firebase project as the Queensland pages:
 //   golf/players = { a: "Javi", b: "Hugo" }
 //   golf/entries/<id> = { date, course, stake, note, created,
-//                         front: {a, b, w}, back: {a, b, w}, total: {a, b, w} }
-// a/b are strokes (optional), w is the winner of that bet: "a" | "b" | "h" (halved).
+//                         front: {w, m}, back: {w, m}, total: {w, m} }
+// Match play. w is the winner of that bet: "a" | "b" | "h" (halved); m is holes up (0 when halved).
 // stake is the amount on each of the three bets.
 // Open with ?demo to see the page filled with sample rounds (nothing is saved).
 import { connect } from '../queensland/firebase-config.js';
@@ -342,7 +326,7 @@ function crunch() {
   const list = Object.entries(entries).map(([id, e]) => ({ id, ...e }))
     .sort((x, y) => (x.date || '').localeCompare(y.date || '') || (x.created || 0) - (y.created || 0));
   const s = { list, games: list.length, bets: { a: 0, b: 0 }, halves: 0, seg: {}, sweeps: { a: 0, b: 0 },
-              best: { a: null, b: null }, strokes: { a: [], b: [] }, series: [0], streak: null };
+              big: { a: null, b: null }, series: [0], streak: null };
   SEGS.forEach(([k]) => s.seg[k] = { a: 0, b: 0, h: 0 });
   let bal = 0, run = null;
   for (const e of list) {
@@ -358,10 +342,9 @@ function crunch() {
     const tw = e.total?.w;
     if (tw === 'a' || tw === 'b') run = run && run.k === tw ? { k: tw, n: run.n + 1 } : { k: tw, n: 1 };
     else run = null;
-    for (const k of ['a', 'b']) {
-      const v = +e.total?.[k];
-      if (v > 0) { s.strokes[k].push(v); if (s.best[k] === null || v < s.best[k]) s.best[k] = v; }
-    }
+    // biggest 18-hole win for each player
+    const tm = +e.total?.m || 0;
+    if ((tw === 'a' || tw === 'b') && (!s.big[tw] || tm > s.big[tw].m)) s.big[tw] = { m: tm, e };
     e._net = net(e);
     bal += e._net;
     s.series.push(bal);
@@ -444,7 +427,9 @@ function countTo(el, from, to) {
 }
 
 function paintTiles(s) {
-  const avg = k => s.strokes[k].length ? (s.strokes[k].reduce((x, y) => x + y, 0) / s.strokes[k].length).toFixed(1) : '·';
+  const big = k => s.big[k]
+    ? [`<span class="dot ${k}"></span>${s.big[k].m} up`, `${esc(nm(k))}, ${esc(s.big[k].e.course || fmtDate(s.big[k].e.date))}`]
+    : [`<span class="dot ${k}"></span>·`, `${esc(nm(k))}, no 18 won yet`];
   const rec = k => {
     const r = s.seg[k], l = lead(r.a, r.b);
     return [`<span class="dot a"></span>${r.a} - ${r.b}<span class="dot b" style="margin:0 0 0 6px"></span>`,
@@ -460,8 +445,8 @@ function paintTiles(s) {
     ['18 holes', ...rec('total')],
     ['Hot streak', streak, s.streak ? `${esc(nm(s.streak.k))} winning the 18` : 'nobody on a run'],
     ['Clean sweeps', `<span class="dot a"></span>${s.sweeps.a} · <span class="dot b"></span>${s.sweeps.b}`, 'all three bets in one round'],
-    ['Best 18', `<span class="dot a"></span>${s.best.a ?? '·'}`, `${esc(nm('a'))}, avg ${avg('a')}`],
-    ['Best 18', `<span class="dot b"></span>${s.best.b ?? '·'}`, `${esc(nm('b'))}, avg ${avg('b')}`],
+    ['Biggest 18 win', ...big('a')],
+    ['Biggest 18 win', ...big('b')],
   ];
   $('tiles').innerHTML = tiles.map(([k, v, sub]) =>
     `<div class="tile"><div class="k">${k}</div><div class="v num">${v}</div><div class="s">${sub}</div></div>`).join('');
@@ -518,10 +503,8 @@ function paintLog(s) {
       : `<span class="pill ${n > 0 ? 'a' : 'b'}">${esc(nm(n > 0 ? 'a' : 'b'))} +${eur(n)}</span>`;
     const bets = SEGS.map(([k, label]) => {
       const b = e[k] || {}, w = b.w || 'h';
-      const sa = b.a ? (w === 'a' ? `<b>${esc(b.a)}</b>` : esc(b.a)) : '';
-      const sb = b.b ? (w === 'b' ? `<b>${esc(b.b)}</b>` : esc(b.b)) : '';
-      const sc = sa || sb ? `${sa || '·'} v ${sb || '·'}` : (w === 'h' ? '' : st ? '+' + eur(st) : '');
-      return `<div class="bet ${w}"><div class="lbl">${label}</div><div class="who">${w === 'h' ? 'Halved' : esc(nm(w))}</div><div class="sc num">${sc || '&nbsp;'}</div></div>`;
+      const sc = w === 'h' ? 'all square' : `<b>${+b.m || 1} up</b>${st ? ' · ' + eur(st) : ''}`;
+      return `<div class="bet ${w}"><div class="lbl">${label}</div><div class="who">${w === 'h' ? 'Halved' : esc(nm(w))}</div><div class="sc num">${sc}</div></div>`;
     }).join('');
     const del = db || DEMO ? `<button class="del" data-del="${esc(e.id)}">remove</button>` : '';
     return `<li class="row ${n > 0 ? 'wa' : n < 0 ? 'wb' : ''}">${date}<div class="mid">
@@ -583,37 +566,54 @@ const newId = () => DEMO ? 'd' + Date.now() : api.push(api.ref(db, 'golf/entries
 // ---------- log a round ----------
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
 
-const CYCLE = { a: 'b', b: 'h', h: 'a' };
-const win = { front: 'h', back: 'h', total: 'h' };
-const touched = { front: false, back: false, total: false };
-const chip = k => document.querySelector(`.chip[data-seg="${k}"]`);
-const val = id => +$(id).value || 0;
+// Each bet needs a winner (or halved) and, if someone won, by how many holes.
+const MAX = { front: 9, back: 9, total: 18 };
+const bet = {};
+let totalTouched = false;
+const block = k => document.querySelector(`.betin[data-seg="${k}"]`);
 
-function paintChip(k) {
-  const c = chip(k);
-  c.className = 'chip ' + win[k];
-  c.textContent = win[k] === 'h' ? 'Halved' : nm(win[k]);
-}
-function recalc() {
-  // 18 holes is the sum of the nines when all four are filled; otherwise typed by hand.
-  const all = ['front_a', 'front_b', 'back_a', 'back_b'].every(id => val(id));
-  for (const p of ['a', 'b']) {
-    const t = $('total_' + p);
-    t.readOnly = all;
-    if (all) t.value = val('front_' + p) + val('back_' + p);
-  }
+$('betsin').innerHTML = SEGS.map(([k, label]) => `
+  <div class="betin" data-seg="${k}">
+    <div class="top2"><span class="lab">${label}</span>
+      <div class="step"><button type="button" data-d="-1" aria-label="One hole fewer">−</button><output></output><button type="button" data-d="1" aria-label="One hole more">+</button></div>
+    </div>
+    <div class="seg">
+      <button type="button" data-w="a" class="a lna">${esc(nm('a'))}</button>
+      <button type="button" data-w="h" class="h">Halved</button>
+      <button type="button" data-w="b" class="b lnb">${esc(nm('b'))}</button>
+    </div>
+  </div>`).join('');
+
+function paintBets() {
   for (const [k] of SEGS) {
-    if (touched[k]) continue;
-    const a = val(k + '_a'), b = val(k + '_b');
-    if (a && b) win[k] = a < b ? 'a' : b < a ? 'b' : 'h';
-    paintChip(k);
+    const { w, m } = bet[k], el = block(k), won = w === 'a' || w === 'b';
+    el.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.w === w));
+    el.querySelector('.step').classList.toggle('off', !won);
+    el.querySelector('output').textContent = won ? `${m} up` : w === 'h' ? 'all square' : 'who won?';
+    const [minus, plus] = el.querySelectorAll('.step button');
+    minus.disabled = !won || m <= 1;
+    plus.disabled = !won || m >= MAX[k];
   }
 }
-document.querySelectorAll('#sheet input').forEach(i => i.addEventListener('input', recalc));
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
-  const k = c.dataset.seg;
-  win[k] = CYCLE[win[k]]; touched[k] = true; paintChip(k);
-}));
+// The 18 is the two nines added up (holes up on the front, plus or minus the back),
+// until someone sets it by hand, e.g. when the match finished before the 18th.
+function suggestTotal() {
+  if (totalTouched) return;
+  const f = bet.front, b = bet.back;
+  if (!f.w || !b.w) return;
+  const sgn = w => w === 'a' ? 1 : w === 'b' ? -1 : 0;
+  const n = sgn(f.w) * f.m + sgn(b.w) * b.m;
+  bet.total = { w: n > 0 ? 'a' : n < 0 ? 'b' : 'h', m: Math.max(1, Math.abs(n)) };
+  block('total').classList.remove('miss');
+}
+$('betsin').addEventListener('click', ev => {
+  const btn = ev.target.closest('button'); if (!btn) return;
+  const k = btn.closest('.betin').dataset.seg;
+  if (btn.dataset.w) { bet[k].w = btn.dataset.w; btn.closest('.betin').classList.remove('miss'); }
+  if (btn.dataset.d) bet[k].m = Math.min(MAX[k], Math.max(1, bet[k].m + +btn.dataset.d));
+  if (k === 'total') totalTouched = true; else suggestTotal();
+  paintBets();
+});
 
 $('addgame').addEventListener('click', () => {
   const prev = crunch().list.pop();
@@ -621,19 +621,18 @@ $('addgame').addEventListener('click', () => {
   $('gdate').value = today();
   $('gstake').value = prev?.stake ?? '';
   $('gcourse').value = prev?.course || '';
-  for (const [k] of SEGS) { win[k] = 'h'; touched[k] = false; }
-  recalc();
+  for (const [k] of SEGS) { bet[k] = { w: null, m: 1 }; block(k).classList.remove('miss'); }
+  totalTouched = false;
+  paintBets();
   $('dgame').showModal();
 });
 $('fgame').addEventListener('submit', async ev => {
   ev.preventDefault();
+  const missing = SEGS.filter(([k]) => !bet[k].w);
+  if (missing.length) { missing.forEach(([k]) => block(k).classList.add('miss')); return; }
   const e = { date: $('gdate').value || today(), course: $('gcourse').value.trim(),
               stake: Math.max(0, +$('gstake').value || 0), note: $('gnote').value.trim(), created: Date.now() };
-  for (const [k] of SEGS) {
-    e[k] = { w: win[k] };
-    if (val(k + '_a')) e[k].a = val(k + '_a');
-    if (val(k + '_b')) e[k].b = val(k + '_b');
-  }
+  for (const [k] of SEGS) e[k] = { w: bet[k].w, m: bet[k].w === 'h' ? 0 : bet[k].m };
   if (await write('entries/' + newId(), e)) {
     $('dgame').close();
     const n = net(e);
@@ -660,22 +659,21 @@ function ready(label, kind, enable) {
 }
 
 if (DEMO) {
-  const r = (date, course, stake, fa, fb, ba, bb, note) => {
-    const w = (x, y) => x < y ? 'a' : y < x ? 'b' : 'h';
-    return { date, course, stake, note, created: Date.parse(date),
-      front: { a: fa, b: fb, w: w(fa, fb) }, back: { a: ba, b: bb, w: w(ba, bb) },
-      total: { a: fa + ba, b: fb + bb, w: w(fa + ba, fb + bb) } };
+  // front and back as signed holes up (+ Javi, - Hugo, 0 halved); the 18 is their sum
+  const r = (date, course, stake, f, b, note) => {
+    const bet = n => ({ w: n > 0 ? 'a' : n < 0 ? 'b' : 'h', m: Math.abs(n) });
+    return { date, course, stake, note, created: Date.parse(date), front: bet(f), back: bet(b), total: bet(f + b) };
   };
   entries = {
-    g1: r('2026-04-12', 'Golfclub Wannsee', 10, 46, 49, 48, 50, 'Beginner’s luck, apparently.'),
-    g2: r('2026-04-26', 'Berliner GC Stolper Heide', 10, 47, 45, 50, 47),
-    g3: r('2026-05-10', 'Golfclub Wannsee', 10, 44, 46, 47, 45, 'Nobody wanted to putt.'),
-    g4: r('2026-05-31', 'Motzener See', 15, 43, 47, 46, 48),
-    g5: r('2026-06-14', 'Motzener See', 15, 45, 44, 45, 49, 'Lost four balls in the lake. Still won.'),
-    g6: r('2026-07-05', 'Golfclub Wannsee', 10, 48, 45, 48, 45),
-    g7: r('2026-08-02', 'Bad Saarow Faldo', 20, 43, 47, 45, 47, 'Birdie on 17. Unbearable afterwards.'),
-    g8: r('2026-08-30', 'Golfclub Wannsee', 10, 44, 44, 43, 48),
-    g9: r('2026-09-20', 'Motzener See', 10, 46, 45, 44, 48),
+    g1: r('2026-04-12', 'Golfclub Wannsee', 10, 2, 1, 'Beginner’s luck, apparently.'),
+    g2: r('2026-04-26', 'Berliner GC Stolper Heide', 10, -1, -2),
+    g3: r('2026-05-10', 'Golfclub Wannsee', 10, 2, -2, 'Nobody wanted to putt.'),
+    g4: r('2026-05-31', 'Motzener See', 15, 3, 1),
+    g5: r('2026-06-14', 'Motzener See', 15, -1, 3, 'Lost four balls in the lake. Still won.'),
+    g6: r('2026-07-05', 'Golfclub Wannsee', 10, -2, -3),
+    g7: r('2026-08-02', 'Bad Saarow Faldo', 20, 4, 2, 'Birdie on 17. Unbearable afterwards.'),
+    g8: r('2026-08-30', 'Golfclub Wannsee', 10, 0, 4),
+    g9: r('2026-09-20', 'Motzener See', 10, -1, 2),
   };
   ready('demo, not saving', 'down', true);
   paint();
