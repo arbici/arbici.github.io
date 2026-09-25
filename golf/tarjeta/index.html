@@ -83,6 +83,45 @@
   .mp-t .st th{color:var(--mid)}
   .mp-s{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;color:var(--tc);font-weight:700}
   .mp-s.won{background:var(--tc);color:#fff}
+  /* hole entry page in the Augusta board look */
+  .aug{--ag:#006747;--agred:#c8102e;--agline:#d9dfdb}
+  .aug .aug-sum{margin:10px 0 14px;font-family:'Oswald','Arial Narrow',sans-serif}
+  .aug .summary{background:#fff;color:#1b1d1c;border:2px solid var(--agline);border-radius:4px;box-shadow:none;margin:0;padding:10px 14px}
+  .aug .summary .big{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:600;color:var(--ag);text-transform:uppercase;letter-spacing:.5px}
+  .aug .summary .small{color:var(--mid);opacity:1;font-family:var(--sans)}
+  .aug .lb{gap:0}
+  .aug .lb .it{border-top:1px solid #eef1ef;padding:5px 0}
+  .aug .lb .it:first-child{border-top:0}
+  .aug .lb .pos{color:var(--agred);opacity:1;font-weight:600;font-size:16px}
+  .aug .lb .it > span:nth-child(2){color:var(--ag);text-transform:uppercase;letter-spacing:.5px;font-weight:600;font-size:16px}
+  .aug .lb .val{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:600;font-size:22px;color:#1b1d1c}
+  .aug .lb .thru{color:var(--mid);opacity:1;text-transform:uppercase;letter-spacing:.5px}
+  .aug .under{color:var(--ag)!important}
+  .aug .even{color:#1b1d1c!important}
+  .aug .over{color:var(--agred)!important}
+  .aug .strip button{border-radius:3px;border:1px solid var(--agline);background:#fff;color:#1b1d1c;width:32px;height:34px;
+       font-family:'Oswald','Arial Narrow',sans-serif;font-size:15px;font-weight:500}
+  .aug .strip button.done{color:var(--ag);border-color:#bcd3c5;font-weight:600}
+  .aug .strip button.cur{background:var(--ag);border-color:var(--ag);color:#fff}
+  .aug .hole{background:#fff;border:2px solid var(--agline);border-radius:4px;padding:8px 12px;margin:10px 0 6px;
+       font-family:'Oswald','Arial Narrow',sans-serif;align-items:center}
+  .aug .hole .n{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:700;font-size:32px;text-transform:uppercase;letter-spacing:.5px}
+  .aug .hole .meta{font-size:15px;text-transform:uppercase;letter-spacing:.8px;color:var(--mid)}
+  .aug .hole .meta b{color:var(--ag);font-weight:600}
+  .aug .hres{font-family:'Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.6px;color:var(--ag);font-size:14px}
+  .aug .pl{border:2px solid var(--agline);border-left:6px solid var(--c);border-radius:4px;padding:10px 12px}
+  .aug .pl .nm{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--ag)}
+  .aug .pl .nm .muted{font-family:var(--sans);text-transform:none;letter-spacing:0}
+  .aug .pl .tot{font-family:'Oswald','Arial Narrow',sans-serif;font-size:14px;letter-spacing:.3px}
+  .aug .ctl button{border-radius:4px;border:1px solid var(--agline);background:#fff;color:var(--ag);font-family:'Oswald','Arial Narrow',sans-serif}
+  .aug .ctl .val{border:0;background:transparent}
+  .aug .ctl .val b{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:600;font-size:36px;color:#1b1d1c}
+  .aug .ctl .val span{font-family:'Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.6px;font-size:11.5px}
+  .aug .ctl .val.emp b{text-transform:uppercase;letter-spacing:.6px;font-size:15px;color:var(--light)}
+  .aug .ctl .pick.on{background:#fff1ee;border-color:#f3c2b8;color:var(--agred)}
+  .aug .nav .btn{border-radius:4px;font-family:'Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:1px;box-shadow:none;font-weight:500}
+  .aug .nav .btn:not(.light){background:var(--ag)}
+  .aug .nav .btn.light{border:2px solid var(--agline);color:var(--ag)}
   /* Augusta style leader board */
   .board{--ag:#006747;--agred:#c8102e;margin:6px 0 8px;font-family:'Oswald','Arial Narrow',sans-serif}
   .board-title{width:62%;margin:0 auto;background:#fff;border:2px solid #d9dfdb;border-bottom:0;border-radius:60px 60px 0 0/22px 22px 0 0;
@@ -830,7 +869,7 @@ function summaryBox(r) {
   return `<div class="summary"><div class="lb">${sorted.map((x, k) => `
     <div class="it"><span class="pos">${x.entered ? k + 1 : ''}</span>
       <span><span class="pdot" style="background:${COLORS[x.i]}"></span>${esc(r.players[x.i].name)}</span>
-      <span class="val num">${isPts(r) ? x.pts : x.entered ? signed(r.useHcp ? x.netVsPar : x.vsPar) : '·'}</span>
+      <span class="val num ${isPts(r) || !x.entered ? '' : (v => v < 0 ? 'under' : v === 0 ? 'even' : 'over')(r.useHcp ? x.netVsPar : x.vsPar)}">${isPts(r) ? x.pts : x.entered ? signed(r.useHcp ? x.netVsPar : x.vsPar) : '·'}</span>
       <span class="thru">${x.entered === n ? 'fin' : x.entered ? 'tras ' + x.entered : ''}</span></div>`).join('')}
     </div><div class="small" style="margin-top:8px">${isPts(r) ? `Puntos ${FORMAT[r.format]}` : r.useHcp ? 'Neto contra el par' : 'Contra el par'}</div></div>`;
 }
@@ -853,16 +892,16 @@ function vPlay({ id, hole }) {
         <button data-dec="${k}" aria-label="Un golpe menos">−</button>
         <button class="val ${s === null ? 'emp' : ''}" data-set="${k}">
           ${s === null ? '<b>toca para par</b>' : s < 0 ? '<b style="font-size:22px">X</b><span>levantada</span>'
-            : `<b class="num">${s}</b><span>${esc(scoreWord(s, h.par))}${isPts(r) && pts !== null ? ` · ${pts} ${ptsWord(pts)}` : ''}</span>`}
+            : `<b class="num ${s < h.par ? 'under' : s === h.par ? 'even' : 'over'}">${s}</b><span>${esc(scoreWord(s, h.par))}${isPts(r) && pts !== null ? ` · ${pts} ${ptsWord(pts)}` : ''}</span>`}
         </button>
         <button data-inc="${k}" aria-label="Un golpe más">+</button>
         <button class="pick ${s !== null && s < 0 ? 'on' : ''}" data-pick="${k}" aria-label="Bola levantada">X</button>
       </div></div>`;
   }).join('');
-  app.innerHTML = `
+  app.innerHTML = `<div class="aug">
     <div class="hd"><a class="back" href="#/">‹ Partidas</a><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></div>
     <div class="rhead"><div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>${finBadge(r)}</div>
-    ${summaryBox(r)}
+    <div class="aug-sum"><div class="board-title">${r.format === 'match' ? 'MATCH' : 'LEADERS'}</div>${summaryBox(r)}</div>
     <div class="strip">${o.map(j => {
       const done = r.players.every((_, k) => scoreOf(r, k, j) !== null);
       return `<button data-hole="${j}" class="${j === i ? 'cur' : done ? 'done' : ''}">${holeNo(r, j)}</button>`;
@@ -875,7 +914,7 @@ function vPlay({ id, hole }) {
       <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${holeNo(r, o[pos - 1])}` : '‹'}</button>
       ${pos < n - 1 ? `<button class="btn" data-hole="${o[pos + 1]}">Hoyo ${holeNo(r, o[pos + 1])} ›</button>` : `<button class="btn" data-go="#/r/${esc(id)}/tarjeta">Ver tarjeta</button>`}
     </div>
-    <p style="margin-top:30px;text-align:center"><button class="link" data-rdel="${esc(id)}">Borrar partida</button></p>`;
+    <p style="margin-top:30px;text-align:center"><button class="link" data-rdel="${esc(id)}">Borrar partida</button></p></div>`;
 }
 function setScore(k, delta) {
   const r = S.rounds[cur.id]; if (!r) return;
