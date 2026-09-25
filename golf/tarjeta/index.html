@@ -60,29 +60,58 @@
   .tag.done{background:#eef0f2;color:var(--mid)}
   .tag.fin{background:var(--ink);color:#fff;font-size:12px;padding:4px 10px}
   /* home */
-  .hero2{position:relative;overflow:hidden;border-radius:20px;color:#fff;margin:4px 0 8px;
-         background:radial-gradient(900px 300px at 80% -80px,rgba(255,255,255,.12),transparent 70%),
-                    repeating-linear-gradient(90deg,var(--green) 0 56px,#0f4233 56px 112px);
-         box-shadow:0 18px 40px rgba(13,59,46,.28)}
-  .hero2-in{position:relative;z-index:1;padding:26px 22px 96px}
-  .hero2 .kick{font-family:'Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:3px;font-size:12px;opacity:.7}
-  .hero2 h1{font-size:46px;margin:2px 0 6px;color:#fff}
-  .hero2 p{margin:0 0 18px;opacity:.85;font-size:15px;max-width:440px}
-  .hero-cta{background:#fff;color:var(--green);font-size:16px;padding:15px 26px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
-  .hstats{display:flex;gap:26px;margin-top:22px}
-  .hstats b{display:block;font-family:'Oswald','Arial Narrow',sans-serif;font-size:28px;font-weight:600;line-height:1}
-  .hstats span{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;opacity:.7}
-  .hero2-green{position:absolute;left:0;right:0;bottom:0;height:64px;border-radius:64px 64px 0 0;
-         background:repeating-linear-gradient(90deg,var(--fair) 0 40px,var(--fair2) 40px 80px);box-shadow:inset 0 8px 16px rgba(0,0,0,.18)}
-  .flag2{position:absolute;right:48px;bottom:30px;width:3px;height:66px;background:#f4f4f4;border-radius:2px}
-  .flag2 b{position:absolute;left:3px;top:0;width:32px;height:21px;background:#e9b44c;clip-path:polygon(0 0,100% 50%,0 100%);
-         transform-origin:left center;animation:wave2 1.6s ease-in-out infinite}
-  .flag2::after{content:'';position:absolute;left:-8px;bottom:-4px;width:19px;height:7px;border-radius:50%;background:rgba(0,0,0,.35)}
-  .ball2{position:absolute;right:120px;bottom:30px;width:20px;height:20px;border-radius:50%;
-         background:radial-gradient(circle at 35% 30%,#fff 0 35%,#e6e6e6 70%,#c9c9c9);box-shadow:0 4px 5px rgba(0,0,0,.35);
-         animation:roll2 3.2s ease-in-out infinite alternate}
-  @keyframes wave2{50%{transform:scaleX(.8) skewY(4deg)}}
-  @keyframes roll2{from{transform:translateX(-120px) rotate(-360deg)}to{transform:translateX(0) rotate(0)}}
+  .agh{position:relative;border-radius:20px;overflow:hidden;margin:4px 0 8px;background:linear-gradient(#cfe6f2,#eaf4f0 55%);
+       box-shadow:0 18px 40px rgba(0,58,34,.25);--ag:#006747;--agy:#fce300}
+  .agh-scene{position:relative;height:190px}
+  .pines{position:absolute;left:0;right:0;bottom:46px;width:100%;height:110px}
+  .azaleas{position:absolute;left:0;right:0;bottom:40px;height:24px}
+  .azaleas i{position:absolute;bottom:0;width:46px;height:22px;border-radius:50% 50% 40% 40%;
+       background:radial-gradient(circle at 30% 40%,#ff7fb4 0 22%,transparent 23%),radial-gradient(circle at 65% 35%,#ff5fa2 0 20%,transparent 21%),
+                  radial-gradient(circle at 50% 70%,#ff9cc6 0 24%,transparent 25%),#2f6b3a}
+  .azaleas i:nth-child(1){left:2%}.azaleas i:nth-child(2){left:14%;transform:scale(.8)}.azaleas i:nth-child(3){left:27%}
+  .azaleas i:nth-child(4){left:41%;transform:scale(.7)}.azaleas i:nth-child(5){left:55%}.azaleas i:nth-child(6){left:68%;transform:scale(.85)}
+  .azaleas i:nth-child(7){left:81%}.azaleas i:nth-child(8){left:92%;transform:scale(.75)}
+  .agh-green{position:absolute;left:-4%;right:-4%;bottom:0;height:54px;border-radius:50% 50% 0 0/100% 100% 0 0;
+       background:repeating-linear-gradient(90deg,#2f8a4b 0 36px,#3a9a58 36px 72px);box-shadow:inset 0 6px 12px rgba(0,0,0,.15)}
+  .hole-cup{position:absolute;left:79%;bottom:24px;width:16px;height:6px;border-radius:50%;background:#123524;margin-left:-8px}
+  .flag3{position:absolute;left:79%;bottom:27px;width:3px;height:80px;background:#f4f4f4;border-radius:2px}
+  .flag3 b{position:absolute;left:3px;top:0;width:38px;height:24px;background:var(--agy);clip-path:polygon(0 0,100% 50%,0 100%);
+       transform-origin:left center;animation:wave3 1.4s ease-in-out infinite}
+  @keyframes wave3{0%,100%{transform:scaleX(1) skewY(0)}50%{transform:scaleX(.82) skewY(5deg)}}
+  /* the shot: X moves across, the inner element handles the arc, bounce, roll and drop into the cup */
+  .shot{position:absolute;left:6%;bottom:27px;width:0;height:0;animation:shotx 6s linear infinite}
+  .shot-y{animation:shoty 6s infinite}
+  .ball3{position:absolute;left:-7px;bottom:0;width:14px;height:14px;border-radius:50%;
+       background:radial-gradient(circle at 35% 30%,#fff 0 35%,#e6e6e6 70%,#c4c4c4);box-shadow:0 2px 3px rgba(0,0,0,.25);animation:shotb 6s infinite}
+  .shot-shadow{position:absolute;left:6%;bottom:24px;width:12px;height:4px;margin-left:-6px;border-radius:50%;background:rgba(0,0,0,.25);animation:shotx 6s linear infinite, shots 6s infinite}
+  @keyframes shotx{0%{left:6%}8%{left:6%}45%{left:62%}58%{left:72%}70%{left:79%}100%{left:79%}}
+  @keyframes shoty{0%,8%{transform:translateY(0)}26%{transform:translateY(-120px);animation-timing-function:ease-in}45%{transform:translateY(0);animation-timing-function:ease-out}
+       51%{transform:translateY(-16px);animation-timing-function:ease-in}57%{transform:translateY(0)}100%{transform:translateY(0)}}
+  @keyframes shotb{0%,70%{opacity:1;transform:scale(1)}74%{opacity:0;transform:translateY(5px) scale(.4)}96%{opacity:0}100%{opacity:1;transform:scale(1)}}
+  @keyframes shots{0%,8%{opacity:1;transform:scale(1)}26%{opacity:.35;transform:scale(.5)}45%{opacity:1;transform:scale(1)}70%{opacity:1}74%,96%{opacity:0}100%{opacity:1}}
+  .agh-board{position:relative;margin:-10px 14px 16px;font-family:'Oswald','Arial Narrow',sans-serif}
+  .agh-arch{width:64%;margin:0 auto;background:#fff;border:3px solid var(--ag);border-bottom:0;border-radius:60px 60px 0 0/24px 24px 0 0;
+       text-align:center;font-weight:700;font-size:24px;letter-spacing:4px;color:var(--ag);padding:6px 0 2px}
+  .agh-body{background:#fff;border:3px solid var(--ag);border-radius:6px;padding:12px 14px 14px;text-align:center}
+  .agh-body p{font-family:var(--sans);font-size:14px;color:var(--mid);margin:0 0 12px}
+  .agh-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+  .agh-stats div{border:1px solid #dfe5e1;border-radius:3px;padding:6px 0 4px}
+  .agh-stats b{display:block;font-size:28px;font-weight:600;line-height:1.1;color:var(--ag)}
+  .agh-stats span{font-size:11px;letter-spacing:1.4px;color:#1b1d1c}
+  .agh-cta{width:100%;background:var(--ag);color:#fff;font-family:'Oswald','Arial Narrow',sans-serif;letter-spacing:2px;font-size:17px;
+       border-radius:4px;padding:14px;box-shadow:0 6px 0 #004d35}
+  .agh-cta:active{transform:translateY(3px);box-shadow:0 3px 0 #004d35}
+  @media (prefers-reduced-motion:reduce){.shot,.shot-y,.ball3,.shot-shadow,.flag3 b{animation:none}}
+  .lm{font-family:var(--sans);font-weight:500;font-size:11px;color:var(--mid);letter-spacing:0;text-transform:none}
+  .cmts{display:grid;gap:8px;margin-bottom:10px}
+  .cmt{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .cmt-h{display:flex;gap:10px;align-items:baseline;font-size:13px}
+  .cmt-h span{color:var(--light);flex:1}
+  .cmt-h .link{font-size:12px}
+  .cmt-t{margin-top:4px;white-space:pre-wrap;word-wrap:break-word}
+  .cform{display:grid;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+  .cform textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;resize:vertical}
+  .cform .btn{justify-self:end;padding:10px 20px}
   .lives{display:grid;gap:12px}
   .lcard{display:block;text-decoration:none;background:#fff;border:2px solid #d9dfdb;border-radius:6px;padding:12px 14px 8px;
         font-family:'Oswald','Arial Narrow',sans-serif;--ag:#006747;--agred:#c8102e;transition:transform .12s}
@@ -109,7 +138,6 @@
   .tiles2 .ic{font-size:24px;margin-bottom:4px}
   .tiles2 b{font-weight:600;font-size:15px}
   .tiles2 span:last-child{font-size:12px;color:var(--mid)}
-  @media (max-width:420px){ .hero2 h1{font-size:40px} .hstats{gap:18px} }
   /* match play panel */
   .mp{margin:10px 0 16px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
   .mp-head{display:grid;grid-template-columns:1fr auto 1fr;background:var(--green);color:#fff}
@@ -676,7 +704,8 @@ function liveBoard(id, r) {
     const m = matchState(r);
     const lead = m.closed ? (m.closed.up > 0 ? 0 : 1) : m.up > 0 ? 0 : m.up < 0 ? 1 : null;
     const big = m.closed ? (m.closed.left ? `${Math.abs(m.closed.up)}&${m.closed.left}` : `${Math.abs(m.closed.up)}UP`) : m.up === 0 ? 'AS' : `${Math.abs(m.up)}UP`;
-    rows = [0, 1].map(t => `<div class="lr"><span class="lp"></span><span class="ln">${esc(teamName(r, t).toUpperCase())}</span>
+    rows = [0, 1].map(t => `<div class="lr"><span class="lp"></span><span class="ln">${esc(teamName(r, t).toUpperCase())}${r.teams[t].length > 1
+        ? ` <small class="lm">(${r.teams[t].map(p => esc(shortName(r.players[p].name))).join(', ')})</small>` : ''}</span>
       <span class="lv ${lead === t ? 'under' : ''}">${lead === t || lead === null ? big : ''}</span><span class="lt">${m.played ? 'THRU ' + m.played : ''}</span></div>`).join('');
   } else {
     const st = r.players.map((p, k) => ({ k, ...playerStats(r, k) }));
@@ -699,19 +728,31 @@ function vHome() {
   const last = finished[0];
   const holesPlayed = all.reduce((t, [, r]) => t + holesOf(r).filter((_, i) => r.players.every((_, p) => scoreOf(r, p, i) !== null)).length, 0);
   app.innerHTML = `
-    <section class="hero2">
-      <div class="hero2-in">
-        <div class="kick">arbici golf</div>
-        <h1>Tarjeta</h1>
-        <p>Apunta cada golpe, sigue la partida en directo y guarda el historial. Golpes, Stableford, match play o Sindicato.</p>
-        <button class="btn hero-cta" data-go="#/nueva" ${nCourses ? '' : 'disabled'}>⛳ Nueva partida</button>
-        <div class="hstats">
-          <div><b>${rounds.length}</b><span>en juego</span></div>
-          <div><b>${all.length}</b><span>partidas</span></div>
-          <div><b>${holesPlayed}</b><span>hoyos jugados</span></div>
+    <section class="agh">
+      <div class="agh-scene" aria-hidden="true">
+        <svg class="pines" viewBox="0 0 400 120" preserveAspectRatio="none">
+          <path d="M0 120 L0 70 L14 40 L24 62 L36 22 L48 58 L60 30 L72 64 L86 18 L98 56 L110 34 L124 66 L138 14 L150 52 L162 28 L176 62 L190 20 L204 58 L216 36 L230 66 L244 16 L256 54 L268 30 L282 62 L296 24 L308 58 L320 38 L334 66 L348 20 L360 56 L372 32 L386 64 L400 28 L400 120 Z" fill="#0b3d2a"/>
+          <path d="M0 120 L0 86 L18 60 L30 80 L46 50 L58 78 L74 56 L88 82 L104 52 L118 80 L132 58 L148 84 L164 50 L178 78 L194 58 L208 84 L224 54 L238 80 L254 60 L268 84 L284 52 L298 80 L314 58 L328 84 L344 54 L358 80 L374 60 L390 82 L400 64 L400 120 Z" fill="#0e4a33"/>
+        </svg>
+        <div class="azaleas"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="agh-green"></div>
+        <div class="hole-cup"></div>
+        <div class="flag3"><b></b></div>
+        <div class="shot"><div class="shot-y"><i class="ball3"></i></div></div>
+        <div class="shot-shadow"></div>
+      </div>
+      <div class="agh-board">
+        <div class="agh-arch">TARJETA</div>
+        <div class="agh-body">
+          <p>Apunta cada golpe, sigue la partida en directo y guarda el historial.</p>
+          <div class="agh-stats">
+            <div><b>${rounds.length}</b><span>EN JUEGO</span></div>
+            <div><b>${all.length}</b><span>PARTIDAS</span></div>
+            <div><b>${holesPlayed}</b><span>HOYOS</span></div>
+          </div>
+          <button class="btn agh-cta" data-go="#/nueva" ${nCourses ? '' : 'disabled'}>NUEVA PARTIDA</button>
         </div>
       </div>
-      <div class="hero2-green" aria-hidden="true"><i class="flag2"><b></b></i><i class="ball2"></i></div>
     </section>
     ${nCourses ? '' : '<p class="hint">Primero añade un campo con su tarjeta.</p>'}
 
@@ -1023,7 +1064,7 @@ function vPlay({ id, hole }) {
       </div></div>`;
   }).join('');
   app.innerHTML = `<div class="aug">
-    <div class="hd"><a class="back" href="#/">‹ Partidas</a><span class="hd-r"><button class="gear" data-settings="${esc(id)}">⚙️ Ajustes</button><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></span></div>
+    <div class="hd"><a class="back" href="#/">‹ Inicio</a><span class="hd-r"><button class="gear" data-settings="${esc(id)}">⚙️ Ajustes</button><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></span></div>
     <div class="rhead"><div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>${finBadge(r)}</div>
     <div class="aug-sum"><div class="board-title">${r.format === 'match' ? 'MATCH' : 'LEADERS'}</div>${summaryBox(r)}</div>
     <div class="strip">${o.map(j => {
@@ -1151,6 +1192,33 @@ function matchPanel(r) {
     ${nines.map(table).join('')}
   </div>`;
 }
+// Comments on a round, stored with it (golf/rounds/<id>/comments/<key> = { by, text, created }).
+// Who is writing is picked from the round's players and remembered on this phone.
+let commentDraft = '', keepFocus = false;
+const meKey = 'tarjeta-me';
+const getMe = () => { try { return localStorage.getItem(meKey) || ''; } catch (e) { return ''; } };
+const setMe = v => { try { localStorage.setItem(meKey, v); } catch (e) {} };
+function commentsBlock(id, r) {
+  const list = Object.entries(r.comments || {}).sort((a, b) => (a[1].created || 0) - (b[1].created || 0));
+  const me = getMe(), names = r.players.map(p => p.name);
+  const when = t => new Date(t).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  return `<h2>Comentarios</h2>
+    <div class="cmts">${list.length ? list.map(([k, c]) => `<div class="cmt"><div class="cmt-h"><b>${esc(c.by)}</b><span>${esc(when(c.created))}</span>
+        <button class="link" data-cdel="${esc(k)}" aria-label="Borrar comentario">borrar</button></div><div class="cmt-t">${esc(c.text)}</div></div>`).join('')
+      : '<div class="empty" style="padding:16px">Aún no hay comentarios. El primero en picar.</div>'}</div>
+    <div class="cform">
+      <select id="cby" aria-label="Quién comenta">${names.map(n => `<option ${n === me ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
+      <textarea id="ctext" rows="2" maxlength="500" placeholder="Escribe un comentario…">${esc(commentDraft)}</textarea>
+      <button class="btn" data-csend="${esc(id)}">Comentar</button>
+    </div>`;
+}
+async function sendComment(id) {
+  const text = commentDraft.trim(); if (!text) return;
+  const by = document.getElementById('cby').value;
+  setMe(by);
+  const key = store.key(`golf/rounds/${id}/comments`);
+  if (await save(`golf/rounds/${id}/comments/${key}`, { by, text, created: Date.now() })) { commentDraft = ''; keepFocus = false; render(); }
+}
 function vCard({ id }) {
   const r = S.rounds[id];
   if (!r) { app.innerHTML = `<a class="back" href="#/">‹ Partidas</a><div class="empty">Esta partida no existe o se ha borrado.</div>`; return; }
@@ -1164,11 +1232,14 @@ function vCard({ id }) {
       || (isPts(r) ? b.st.pts - a.st.pts : a.st.vsPar - b.st.vsPar) || (a.vh ?? 0) - (b.vh ?? 0));
   const extra = leaderBoard(r, order);
   app.innerHTML = `
-    <div class="hd"><a class="back" href="#/r/${esc(id)}">‹ Volver a la partida</a></div>
+    <div class="hd"><a class="back" href="#/r/${esc(id)}">‹ Volver a la partida</a><button class="gear" data-settings="${esc(id)}">⚙️ Ajustes</button></div>
     <div class="rhead"><h1 style="font-size:24px">${esc(r.course.name)}</h1>${finBadge(r)}</div>
     <div class="muted" style="font-size:14px">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))}${r.useHcp ? ' · con hándicap' : ''}</div>
     ${standings}
-    <h2>Tarjeta</h2>${extra}`;
+    <h2>Tarjeta</h2>${extra}
+    ${commentsBlock(id, r)}`;
+  const ta = document.getElementById('ctext');
+  if (ta && keepFocus) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
 }
 
 // ---------- round settings ----------
@@ -1274,6 +1345,8 @@ app.addEventListener('click', ev => {
   if (ds.set !== undefined) return setScore(+ds.set, 'set');
   if (ds.pick !== undefined) return setScore(+ds.pick, 'pick');
   if (ds.settings) return openSettings(ds.settings);
+  if (ds.csend) return sendComment(ds.csend);
+  if (ds.cdel && cur.v === 'card') { if (confirm('¿Borrar este comentario?')) save(`golf/rounds/${cur.id}/comments/${ds.cdel}`, null); return; }
   // setup
   if (cur.v === 'setup') {
     if (ds.add !== undefined) { draft.players.push(emptyRow()); render(); document.querySelector(`[data-pn="${draft.players.length - 1}"]`)?.focus(); return; }
@@ -1320,6 +1393,7 @@ app.addEventListener('click', ev => {
 });
 app.addEventListener('input', ev => {
   const t = ev.target, ds = t.dataset;
+  if (t.id === 'ctext') commentDraft = t.value;
   if (cur.v === 'setup') {
     if (ds.pn !== undefined) {
       const i = +ds.pn;
@@ -1347,6 +1421,7 @@ app.addEventListener('input', ev => {
 });
 app.addEventListener('change', ev => {
   const t = ev.target;
+  if (t.id === 'cby') setMe(t.value);
   if (cur.v === 'setup') {
     if (t.dataset.ph !== undefined) {
       const row = draft.players[+t.dataset.ph];
@@ -1361,6 +1436,8 @@ app.addEventListener('change', ev => {
     if (id && t.dataset.f === 'name' && t.value.trim()) save(`golf/people/${id}/name`, t.value.trim());
   }
 });
+app.addEventListener('focusin', ev => { if (ev.target.id === 'ctext') keepFocus = true; });
+app.addEventListener('focusout', ev => { if (ev.target.id === 'ctext') setTimeout(() => { if (document.activeElement?.id !== 'ctext') keepFocus = false; }, 0); });
 app.addEventListener('focusin', ev => {
   if (cur.v === 'setup' && ev.target.dataset.pn !== undefined) suggest(+ev.target.dataset.pn);
   // Focusing the course field shows every course; typing replaces the current name and filters.
