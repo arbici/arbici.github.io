@@ -586,7 +586,7 @@ function matchState(r) {
     text = `${teamName(r, w)} gana ${closed.left ? `${c}&${closed.left}` : `${c}Up`}`;
     detail = 'Partido terminado';
   } else if (played === n) {
-    text = 'All Square'; detail = `Partido empatado tras ${n} hoyos`;
+    text = 'All Square'; detail = `Partido empatado · THRU ${n}`;
   } else if (up === 0) {
     text = played ? `All Square Thru ${played}` : 'All Square'; detail = played ? `quedan ${left}` : `${n} hoyos por jugar`;
   } else {
@@ -1038,7 +1038,7 @@ function summaryBox(r) {
     <div class="it"><span class="pos">${x.entered ? k + 1 : ''}</span>
       <span>${esc(r.players[x.i].name)}</span>
       <span class="val num ${isPts(r) || !x.entered ? '' : (v => v < 0 ? 'under' : v === 0 ? 'even' : 'over')(r.useHcp ? x.netVsPar : x.vsPar)}">${isPts(r) ? x.pts : x.entered ? signed(r.useHcp ? x.netVsPar : x.vsPar) : '·'}</span>
-      <span class="thru">${x.entered === n ? 'fin' : x.entered ? 'tras ' + x.entered : ''}</span></div>`).join('')}
+      <span class="thru">${x.entered === n ? 'F' : x.entered ? 'THRU ' + x.entered : ''}</span></div>`).join('')}
     </div><div class="small" style="margin-top:8px">${isPts(r) ? `Puntos ${FORMAT[r.format]}` : r.useHcp ? 'Neto contra el par' : 'Contra el par'}</div></div>`;
 }
 function vPlay({ id, hole }) {
