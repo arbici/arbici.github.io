@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v14';
+const PAINT_VERSION = 'paint-v15';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -68,12 +68,11 @@ function paintGolfers(x, S) {
     const u = h / 64, X = v => fx + v * u, Y = v => fy - v * u;
     shadow(fx + 2 * u, fy, 11 * u);
     poly([[X(-5.5), Y(32)], [X(-1), Y(32)], [X(-2.5), Y(1)], [X(-6), Y(1)]], pants);                                          // left leg, straight
-    // right leg as in the reference: thigh down from the hip, knee turned in towards the left leg, shin
-    // running down and out to the right to a foot a little nearer to us, up on its toe
-    poly([[X(.2), Y(32)], [X(4.8), Y(32)], [X(2.6), Y(16.5)], [X(9), Y(1.6)], [X(5.8), Y(.2)], [X(-1.4), Y(15)]], sh(pants, .7));
-    line(X(-1.2), Y(15.6), X(2.4), Y(16.4), .8 * u, sh(pants, .5));                                                           // crease at the knee
+    // right leg as in the reference: falling almost straight down from the hip, a slight bow at the knee,
+    // the foot landing just right of the left foot and a little nearer to us, up on its toe
+    poly([[X(.4), Y(32)], [X(4.8), Y(32)], [X(4.9), Y(16)], [X(3.2), Y(.6)], [X(.2), Y(.6)], [X(1.3), Y(16)]], sh(pants, .7));
     poly([[X(-7), Y(1.5)], [X(-1.5), Y(1.5)], [X(-1.5), Y(-.5)], [X(-7.5), Y(-.5)]], '#2a241f');                            // left shoe
-    x.save(); x.translate(X(7.8), Y(-1.2)); x.rotate(-1.3);                                                                    // right shoe on its toe, sole to us
+    x.save(); x.translate(X(1.9), Y(-1.4)); x.rotate(-1.35);                                                                    // right shoe on its toe, sole to us
     x.fillStyle = '#2a241f'; x.beginPath(); x.ellipse(0, 0, 3.1 * u, 1.6 * u, 0, 0, 7); x.fill();
     x.fillStyle = '#6d655c'; x.beginPath(); x.ellipse(.2 * u, .35 * u, 2.4 * u, 1 * u, 0, 0, 7); x.fill(); x.restore();
     poly([[X(-6.5), Y(54)], [X(6), Y(53)], [X(4.8), Y(32)], [X(-5), Y(32)]], shirt);                                          // back, turned to the target
