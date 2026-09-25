@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v4';
+const PAINT_VERSION = 'paint-v5';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -72,8 +72,8 @@ function paintGolfers(x, S) {
   };
   // markers where the tee is in use; the golfer tees up between them, just behind their line
   marker(...P(124, 210), 3.9 * S); marker(...P(223, 208.5), 3.9 * S);
-  const g = P(162, 222);
-  golfer(g[0], g[1], 58 * S, '#f1eee6', '#2e3a52', '#f1eee6');
+  const g = P(162, 213);
+  golfer(g[0], g[1], 57 * S, '#f1eee6', '#2e3a52', '#f1eee6');
   // the other three to his right and a little behind him, facing him
   watcher(...P(262, 234), 58 * S, '#2f4a6e', '#8c8474', '#f1eee6');
   watcher(...P(286, 239), 60 * S, '#a7c1d9', '#b19c73', '#27344f');
