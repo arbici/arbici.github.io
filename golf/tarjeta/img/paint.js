@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v9';
+const PAINT_VERSION = 'paint-v11';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -18,7 +18,8 @@ function paintGolfers(x, S) {
   const disc = (a, b, r, col) => { x.fillStyle = col; x.beginPath(); x.arc(a, b, r, 0, 7); x.fill(); };
   const skin = '#c98f6b', hair = '#4a3426';
   const shadow = (fx, fy, w) => { x.fillStyle = 'rgba(25,45,20,.45)'; x.beginPath(); x.ellipse(fx + w * .25, fy + w * .06, w, w * .2, 0, 0, 7); x.fill(); };
-  // a man watching the drive, seen from behind as he looks up after the ball. pose 'hold': both hands on
+  // a man watching the drive, seen from behind as he looks up after the ball. pose 'cheer': both arms up,
+  // driver raised in his right hand. pose 'hold': both hands on
   // his driver in front of him, only its head showing between his feet; pose 'lean': leaning on the
   // driver planted at his right side, left hand on his hip, legs crossed at the ankles
   const watcher = (fx, fy, h, shirt, pants, cap, pose = 'hold') => {
@@ -34,7 +35,7 @@ function paintGolfers(x, S) {
       poly([[X(.5), Y(33)], [X(4.5), Y(33)], [X(5), Y(1)], [X(1.5), Y(1)]], pants);
       poly([[X(-6.5), Y(1.5)], [X(-1.5), Y(1.5)], [X(-1.5), Y(-.5)], [X(-7), Y(-.5)]], '#2a241f');
       poly([[X(1), Y(1.5)], [X(6), Y(1.5)], [X(6), Y(-.5)], [X(.5), Y(-.5)]], '#2a241f');
-      clubs.push([X(-.2), Y(12), X(-.6), Y(1.2), .9 * u, '#4b4943', [-1.2 * u, 0, 2.2 * u, 1.1 * u, 0]]);   // driver between his feet
+      if (pose === 'hold') clubs.push([X(-.2), Y(12), X(-.6), Y(1.2), .9 * u, '#4b4943', [-1.2 * u, 0, 2.2 * u, 1.1 * u, 0]]);   // driver between his feet
     }
     const T = v => X(v + lean);                                                                                  // upper body leans towards the club
     poly([[T(-5.5), Y(54)], [T(5.5), Y(54.3)], [X(5), Y(32)], [X(-4.8), Y(32)]], shirt);                         // back
@@ -45,6 +46,12 @@ function paintGolfers(x, S) {
       line(T(5), Y(52), X(8.5), Y(42), 3.2 * u, sh(shirt, .85)); line(X(8.5), Y(42), X(9.5), Y(35), 2.6 * u, skin); // arm down to the grip
       disc(X(9.6), Y(34.5), 1.9 * u, skin);
       clubs.push([X(9.6), Y(34.5), X(11.5), Y(.8), 1.1 * u, '#4b4943', [1.6 * u, 0, 2.6 * u, 1.3 * u, 0]]);    // driver planted at his side
+    } else if (pose === 'cheer') {
+      // both arms thrown up in a V for the great shot, the driver raised in his right hand
+      line(T(-5), Y(52.5), X(-8.5), Y(62), 3.2 * u, shirt); line(X(-8.5), Y(62), X(-11), Y(71), 2.6 * u, skin);
+      line(T(5), Y(52.5), X(8.5), Y(62), 3.2 * u, sh(shirt, .85)); line(X(8.5), Y(62), X(11), Y(71), 2.6 * u, sh(skin, .9));
+      disc(X(-11.2), Y(71.8), 2 * u, skin); disc(X(11.2), Y(71.8), 2 * u, sh(skin, .95));
+      clubs.push([X(11.2), Y(71.8), X(24), Y(88), 1.1 * u, '#4b4943', [1.6 * u, -1.2 * u, 2.6 * u, 1.3 * u, -.9]]);
     } else {
       line(T(-5), Y(52), X(-6), Y(38), 3.2 * u, shirt); line(T(5), Y(52), X(5.5), Y(38), 3.2 * u, sh(shirt, .85));  // arms forward to the grip
     }
@@ -70,18 +77,22 @@ function paintGolfers(x, S) {
     poly([[X(1.5), Y(53.5)], [X(6), Y(53)], [X(4.8), Y(32)], [X(1.8), Y(32)]], sh(shirt, .8));
     line(X(-1), Y(50), X(0), Y(38), 1 * u, sh(shirt, .7));                                                                     // crease down the back
     poly([[X(-5), Y(34)], [X(4.8), Y(34)], [X(4.8), Y(32)], [X(-5), Y(32)]], sh(pants, .6));                                  // belt
-    line(X(-5.5), Y(52), X(-9), Y(59), 3.3 * u, shirt); line(X(-9), Y(59), X(-6.5), Y(66), 2.7 * u, skin);                   // left arm up
-    line(X(5), Y(52), X(-1), Y(60), 3.3 * u, sh(shirt, .85)); line(X(-1), Y(60), X(-5), Y(66), 2.7 * u, sh(skin, .9));      // right arm across
-    disc(X(-5.8), Y(67), 2.1 * u, skin);                                                                                        // hands
+    line(X(-5.5), Y(52), X(-9), Y(58), 3.3 * u, shirt); line(X(-9), Y(58), X(-6.8), Y(63), 2.7 * u, skin);                   // left arm up
+    line(X(5), Y(52), X(-1), Y(58.5), 3.3 * u, sh(shirt, .85)); line(X(-1), Y(58.5), X(-5.4), Y(63), 2.7 * u, sh(skin, .9)); // right arm across
+    disc(X(-6), Y(63.5), 2.1 * u, skin);                                                                                        // hands, by his left ear
     line(X(.3), Y(54.5), X(.5), Y(57), 2.6 * u, sh(skin, .85));                                                               // neck
     disc(X(.6), Y(60), 3.9 * u, sh(skin, .9));
     x.fillStyle = hair; x.beginPath(); x.arc(X(.6), Y(60), 3.9 * u, .2, Math.PI - .2); x.fill();                             // back of the head
     x.fillStyle = cap; x.beginPath(); x.arc(X(.6), Y(60.8), 4.1 * u, Math.PI + .15, -.35); x.fill();                        // cap from behind
     x.save(); x.translate(X(3.8), Y(63.4)); x.rotate(-.9); x.fillStyle = sh(cap, .85); x.fillRect(0, -.7 * u, 3.6 * u, 1.4 * u); x.restore(); // peak up to the right
     x.fillStyle = '#e8dcc0'; x.fillRect(X(-.4), Y(1.6), .8 * u, 1.8 * u);                                                    // empty tee peg in front
-    // club behind the head, clubhead out to the right
-    clubs.push([X(-5.8), Y(67), X(26), Y(60.5), 1.5 * u, '#3a3833', null]);
-    clubs.push([X(-5.8), Y(67), X(26), Y(60.5), .7 * u, '#d8d8d0', [1.8 * u, 1.2 * u, 3 * u, 1.7 * u, .5]]);
+    // club across behind the head, clubhead out to the right: the shaft is left out where it crosses the head
+    const cy = v => 63.5 + (v + 6) * (55 - 63.5) / 32;                  // shaft height at a given x
+    const gapL = -3.4, gapR = 4.5;                                        // where the head hides it
+    for (const [a, b, head] of [[-6, gapL, null], [gapR, 26, [1.8 * u, 1.2 * u, 3 * u, 1.7 * u, .5]]]) {
+      clubs.push([X(a), Y(cy(a)), X(b), Y(cy(b)), 1.5 * u, '#3a3833', null]);
+      clubs.push([X(a), Y(cy(a)), X(b), Y(cy(b)), .7 * u, '#d8d8d0', head]);
+    }
   };
   // tee markers
   const marker = (mx, my, r) => {
@@ -95,7 +106,7 @@ function paintGolfers(x, S) {
   golfer(g[0], g[1], 57 * S, '#f1eee6', '#2e3a52', '#2f5a3a');
   ballInAir = P(265, 57);
   // the other three to his right and a little behind him, backs to us, watching the ball
-  watcher(...P(262, 234), 58 * S, '#2f4a6e', '#8c8474', '#6b2e2b');
+  watcher(...P(262, 234), 58 * S, '#2f4a6e', '#8c8474', '#6b2e2b', 'cheer');
   watcher(...P(286, 239), 60 * S, '#a7c1d9', '#b19c73', '#27344f');
   watcher(...P(311, 232), 57 * S, '#9a4a45', '#3a3d45', '#3a3d45', 'lean');
 }
