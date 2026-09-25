@@ -59,6 +59,57 @@
        background:#e7f3ec;color:var(--green2);white-space:nowrap}
   .tag.done{background:#eef0f2;color:var(--mid)}
   .tag.fin{background:var(--ink);color:#fff;font-size:12px;padding:4px 10px}
+  /* home */
+  .hero2{position:relative;overflow:hidden;border-radius:20px;color:#fff;margin:4px 0 8px;
+         background:radial-gradient(900px 300px at 80% -80px,rgba(255,255,255,.12),transparent 70%),
+                    repeating-linear-gradient(90deg,var(--green) 0 56px,#0f4233 56px 112px);
+         box-shadow:0 18px 40px rgba(13,59,46,.28)}
+  .hero2-in{position:relative;z-index:1;padding:26px 22px 96px}
+  .hero2 .kick{font-family:'Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:3px;font-size:12px;opacity:.7}
+  .hero2 h1{font-size:46px;margin:2px 0 6px;color:#fff}
+  .hero2 p{margin:0 0 18px;opacity:.85;font-size:15px;max-width:440px}
+  .hero-cta{background:#fff;color:var(--green);font-size:16px;padding:15px 26px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+  .hstats{display:flex;gap:26px;margin-top:22px}
+  .hstats b{display:block;font-family:'Oswald','Arial Narrow',sans-serif;font-size:28px;font-weight:600;line-height:1}
+  .hstats span{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;opacity:.7}
+  .hero2-green{position:absolute;left:0;right:0;bottom:0;height:64px;border-radius:64px 64px 0 0;
+         background:repeating-linear-gradient(90deg,var(--fair) 0 40px,var(--fair2) 40px 80px);box-shadow:inset 0 8px 16px rgba(0,0,0,.18)}
+  .flag2{position:absolute;right:48px;bottom:30px;width:3px;height:66px;background:#f4f4f4;border-radius:2px}
+  .flag2 b{position:absolute;left:3px;top:0;width:32px;height:21px;background:#e9b44c;clip-path:polygon(0 0,100% 50%,0 100%);
+         transform-origin:left center;animation:wave2 1.6s ease-in-out infinite}
+  .flag2::after{content:'';position:absolute;left:-8px;bottom:-4px;width:19px;height:7px;border-radius:50%;background:rgba(0,0,0,.35)}
+  .ball2{position:absolute;right:120px;bottom:30px;width:20px;height:20px;border-radius:50%;
+         background:radial-gradient(circle at 35% 30%,#fff 0 35%,#e6e6e6 70%,#c9c9c9);box-shadow:0 4px 5px rgba(0,0,0,.35);
+         animation:roll2 3.2s ease-in-out infinite alternate}
+  @keyframes wave2{50%{transform:scaleX(.8) skewY(4deg)}}
+  @keyframes roll2{from{transform:translateX(-120px) rotate(-360deg)}to{transform:translateX(0) rotate(0)}}
+  .lives{display:grid;gap:12px}
+  .lcard{display:block;text-decoration:none;background:#fff;border:2px solid #d9dfdb;border-radius:6px;padding:12px 14px 8px;
+        font-family:'Oswald','Arial Narrow',sans-serif;--ag:#006747;--agred:#c8102e;transition:transform .12s}
+  .lcard:active{transform:scale(.99)}
+  .live-top{display:flex;align-items:center;gap:8px;font-size:17px}
+  .live-top b{font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1b1d1c}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:#1f9d57;box-shadow:0 0 0 3px rgba(31,157,87,.2);animation:pulse 1.6s ease-in-out infinite}
+  .live-h{font-size:12px;letter-spacing:1px;text-transform:uppercase;background:var(--ag);color:#fff;padding:2px 8px;border-radius:3px}
+  .live-sub{font-family:var(--sans);font-size:12.5px;color:var(--mid);margin:2px 0 6px}
+  .lr{display:grid;grid-template-columns:22px 1fr auto 58px;gap:8px;align-items:center;padding:5px 0;border-top:1px solid #eef1ef;font-size:16px}
+  .lp{color:var(--agred);font-weight:600}
+  .ln{color:var(--ag);font-weight:600;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lv{font-weight:600;font-size:18px;color:#1b1d1c}
+  .lv.under{color:var(--ag)} .lv.over{color:var(--agred)}
+  .lt{font-size:11px;letter-spacing:.8px;color:var(--mid);text-align:right}
+  .lastres{display:flex;align-items:center;gap:14px;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .trophy{font-size:30px;line-height:1}
+  .lr-t{flex:1;min-width:0}
+  .lr-t b{display:block;font-family:var(--serif);font-weight:400;font-size:20px}
+  .lr-t span{font-size:13px;color:var(--mid)}
+  .lastres .arw,.tiles2 .arw{color:var(--light);font-size:22px}
+  .tiles2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}
+  .tiles2 a{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 12px;text-decoration:none;display:flex;flex-direction:column;gap:2px}
+  .tiles2 .ic{font-size:24px;margin-bottom:4px}
+  .tiles2 b{font-weight:600;font-size:15px}
+  .tiles2 span:last-child{font-size:12px;color:var(--mid)}
+  @media (max-width:420px){ .hero2 h1{font-size:40px} .hstats{gap:18px} }
   /* match play panel */
   .mp{margin:10px 0 16px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
   .mp-head{display:grid;grid-template-columns:1fr auto 1fr;background:var(--green);color:#fff}
@@ -582,27 +633,70 @@ function vDone() {
     <p class="sub">${rounds.length} ${rounds.length === 1 ? 'partida' : 'partidas'}, de la más reciente a la más antigua.</p>
     ${rounds.length ? rounds.map(([id, r]) => roundCard(id, r)).join('') : '<div class="empty">Aún no hay partidas terminadas.</div>'}`;
 }
+// A live round as a small Augusta style board: standings, or the match status for match play.
+function liveBoard(id, r) {
+  const n = holesOf(r).length;
+  const surname = nm => String(nm).trim().split(/\s+/).pop().toUpperCase();
+  const cls = v => v < 0 ? 'under' : v === 0 ? 'even' : 'over';
+  let rows;
+  if (r.format === 'match') {
+    const m = matchState(r);
+    const lead = m.closed ? (m.closed.up > 0 ? 0 : 1) : m.up > 0 ? 0 : m.up < 0 ? 1 : null;
+    const big = m.closed ? (m.closed.left ? `${Math.abs(m.closed.up)}&${m.closed.left}` : `${Math.abs(m.closed.up)}UP`) : m.up === 0 ? 'AS' : `${Math.abs(m.up)}UP`;
+    rows = [0, 1].map(t => `<div class="lr"><span class="lp"></span><span class="ln">${esc(teamName(r, t).toUpperCase())}</span>
+      <span class="lv ${lead === t ? 'under' : ''}">${lead === t || lead === null ? big : ''}</span><span class="lt">${m.played ? 'THRU ' + m.played : ''}</span></div>`).join('');
+  } else {
+    const st = r.players.map((p, k) => ({ k, ...playerStats(r, k) }));
+    const val = x => isPts(r) ? x.pts : r.useHcp ? x.netVsPar : x.vsPar;
+    st.sort((a, b) => (b.entered ? 1 : 0) - (a.entered ? 1 : 0) || (isPts(r) ? val(b) - val(a) : val(a) - val(b)));
+    rows = st.map((x, i) => `<div class="lr"><span class="lp">${x.entered ? i + 1 : ''}</span><span class="ln">${esc(surname(r.players[x.k].name))}</span>
+      <span class="lv ${isPts(r) || !x.entered ? '' : cls(val(x))}">${!x.entered ? '' : isPts(r) ? x.pts + ' pts' : val(x) === 0 ? 'E' : signed(val(x))}</span>
+      <span class="lt">${x.entered === n ? 'F' : x.entered ? 'THRU ' + x.entered : ''}</span></div>`).join('');
+  }
+  return `<a class="lcard" href="#/r/${esc(id)}">
+    <div class="live-top"><span class="live-dot"></span><b>${esc(r.course.name)}</b><span class="live-h">Hoyo ${holeNo(r, firstOpen(r))}</span></div>
+    <div class="live-sub">${esc(fmtLabel(r))}${r.useHcp && !isPts(r) && r.format !== 'match' ? ' · neto' : ''}</div>
+    <div class="live-rows">${rows}</div></a>`;
+}
 function vHome() {
   const all = byNewest();
   const rounds = all.filter(([, r]) => !roundDone(r));
-  const closed = all.length - rounds.length;
-  const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name));
+  const finished = all.filter(([, r]) => roundDone(r));
+  const nCourses = Object.keys(S.courses).length, nPeople = Object.keys(S.people).length;
+  const last = finished[0];
+  const holesPlayed = all.reduce((t, [, r]) => t + holesOf(r).filter((_, i) => r.players.every((_, p) => scoreOf(r, p, i) !== null)).length, 0);
   app.innerHTML = `
-    <h1>Tarjeta</h1>
-    <p class="sub">Apunta la partida hoyo a hoyo. Hasta cuatro jugadores, en golpes, Stableford o match play.</p>
-    <button class="btn full" data-go="#/nueva" ${courses.length ? '' : 'disabled'}>Nueva partida</button>
-    ${courses.length ? '' : '<p class="hint">Primero añade un campo con su tarjeta.</p>'}
+    <section class="hero2">
+      <div class="hero2-in">
+        <div class="kick">arbici golf</div>
+        <h1>Tarjeta</h1>
+        <p>Apunta cada golpe, sigue la partida en directo y guarda el historial. Golpes, Stableford, match play o Sindicato.</p>
+        <button class="btn hero-cta" data-go="#/nueva" ${nCourses ? '' : 'disabled'}>⛳ Nueva partida</button>
+        <div class="hstats">
+          <div><b>${rounds.length}</b><span>en juego</span></div>
+          <div><b>${all.length}</b><span>partidas</span></div>
+          <div><b>${holesPlayed}</b><span>hoyos jugados</span></div>
+        </div>
+      </div>
+      <div class="hero2-green" aria-hidden="true"><i class="flag2"><b></b></i><i class="ball2"></i></div>
+    </section>
+    ${nCourses ? '' : '<p class="hint">Primero añade un campo con su tarjeta.</p>'}
 
     <h2>En juego</h2>
-    ${rounds.length ? rounds.map(([id, r]) => roundCard(id, r)).join('') : '<div class="empty">No hay ninguna partida en juego.</div>'}
+    ${rounds.length ? `<div class="lives">${rounds.map(([id, r]) => liveBoard(id, r)).join('')}</div>`
+      : '<div class="empty">No hay ninguna partida en juego. Empieza una y aparecerá aquí.</div>'}
 
-    <h2>Más</h2>
-    <a class="card" href="#/campos"><div class="row"><div class="t">Campos</div><span class="m" style="margin:0">${courses.length} ›</span></div>
-      <div class="m">Tarjetas de los campos: par e índice de cada hoyo.</div></a>
-    <a class="card" href="#/jugadores"><div class="row"><div class="t">Jugadores y hándicaps</div><span class="m" style="margin:0">${Object.keys(S.people).length} ›</span></div>
-      <div class="m">Cambia aquí el hándicap de cada uno cuando se mueva.</div></a>
+    ${last ? `<h2>Último resultado</h2>
+    <a class="lastres" href="#/r/${esc(last[0])}/tarjeta">
+      <span class="trophy">🏆</span>
+      <span class="lr-t"><b>${esc(headline(last[1]))}</b><span>${esc(last[1].course.name)} · ${esc(fmtDate(last[1].date))} · ${esc(fmtLabel(last[1]))}</span></span>
+      <span class="arw">›</span></a>` : ''}
 
-    <a class="card" href="#/terminadas"><div class="row"><div class="t">Partidas terminadas</div><span class="m" style="margin:0">${closed} ›</span></div></a>`;
+    <div class="tiles2">
+      <a href="#/campos"><span class="ic">🗺️</span><b>Campos</b><span>${nCourses} ${nCourses === 1 ? 'tarjeta' : 'tarjetas'}</span></a>
+      <a href="#/jugadores"><span class="ic">🏌️</span><b>Jugadores</b><span>${nPeople} con hándicap</span></a>
+      <a href="#/terminadas"><span class="ic">🏁</span><b>Terminadas</b><span>${finished.length} ${finished.length === 1 ? 'partida' : 'partidas'}</span></a>
+    </div>`;
 }
 
 // ---------- new round ----------
