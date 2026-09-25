@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v5';
+const PAINT_VERSION = 'paint-v6';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -40,7 +40,7 @@ function paintGolfers(x, S) {
   };
   // the golfer at the top of his backswing, side on to the target line (seen a little from behind), facing
   // right with the ball on his right; the target is up the picture and slightly right, and at the top the
-  // club points along that line (aim: photo direction (150, -51))
+  // ball flies along that line (aim: photo direction (150, -51))
   const golfer = (fx, fy, h, shirt, pants, cap) => {
     const u = h / 64, X = v => fx + v * u, Y = v => fy - v * u;
     shadow(fx + 4 * u, fy, 12 * u);
@@ -58,11 +58,12 @@ function paintGolfers(x, S) {
     disc(X(7.5), Y(59.5), 3.8 * u, skin); disc(X(9), Y(59), 2.4 * u, sh(skin, .85));                 // head, looking down at the ball
     poly([[X(3.6), Y(61)], [X(11), Y(61.5)], [X(10.6), Y(64.2)], [X(4), Y(64)]], cap);
     poly([[X(10.5), Y(61)], [X(14), Y(60)], [X(14), Y(59.2)], [X(10.5), Y(60)]], sh(cap, .85));       // brim towards the ball
-    x.fillStyle = '#e8dcc0'; x.fillRect(X(12.6), Y(1.4), .8 * u, 1.8 * u);                           // tee peg
-    disc(X(13), Y(2.5), 1.25 * u, '#fbfbf6');                                                         // ball
-    const L = 26, dx = .947 * L, dy = .322 * L;                                                        // club along the aim line
+    x.fillStyle = '#e8dcc0'; x.fillRect(X(17.6), Y(1.4), .8 * u, 1.8 * u);                           // tee peg, a club length from his feet
+    disc(X(18), Y(2.5), 1.25 * u, '#fbfbf6');                                                         // ball
+    // club almost vertical at the top, leaning slightly right (photo direction (17, -40))
+    const L = 24, dx = .391 * L, dy = .920 * L;
     clubs.push([X(-6.3), Y(66), X(-6.3 + dx), Y(66 + dy), 1.5 * u, '#3a3833', null]);
-    clubs.push([X(-6.3), Y(66), X(-6.3 + dx), Y(66 + dy), .7 * u, '#d8d8d0', [1.8 * u, -.8 * u, 2.9 * u, 1.6 * u, -.3]]);
+    clubs.push([X(-6.3), Y(66), X(-6.3 + dx), Y(66 + dy), .7 * u, '#d8d8d0', [1.1 * u, -1.4 * u, 2.9 * u, 1.6 * u, -1.1]]);
   };
   // tee markers
   const marker = (mx, my, r) => {
