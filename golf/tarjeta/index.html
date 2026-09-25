@@ -190,6 +190,18 @@
   .lboard td.over{color:var(--agred)}
   .lboard td.pu{color:#8a929a}
   .lboard .tot{min-width:52px;font-size:13px;letter-spacing:.5px}
+  .lboard td{position:relative;height:32px;min-width:28px}
+  .lboard .s{width:24px;height:24px;font-size:14px;font-weight:600}
+  .lboard .dots{position:absolute;left:0;right:0;bottom:0;font-style:normal;font-size:9px;line-height:9px;color:#8a929a;letter-spacing:-1px}
+  .lboard .sub{background:#f3f6f4;color:#1b1d1c;font-size:13px}
+  .lboard thead .sub{color:#1b1d1c}
+  .lboard .hcp td,.lboard .hcp th{color:var(--mid);font-weight:500;font-size:13px}
+  .lboard .pts-row td{height:22px;font-size:12px;color:var(--mid);font-weight:500}
+  .lboard .pts-row .nm{font-size:11px;color:var(--mid)}
+  .board-legend{--ag:#006747;--agred:#c8102e;font-family:var(--sans)}
+  .board-legend .under{color:var(--ag)} .board-legend .even{color:#1b1d1c} .board-legend .over{color:var(--agred)}
+  .board-legend .s.even{border:0}
+  .board-legend .dots{font-style:normal;color:#8a929a}
   dialog{border:0;border-radius:18px;padding:0;box-shadow:0 30px 80px rgba(0,0,0,.35)}
   dialog::backdrop{background:rgba(8,30,23,.55);backdrop-filter:blur(3px)}
   .dlg{padding:20px 18px 18px}
@@ -312,10 +324,10 @@
   .sc .pts td{font-size:12px;color:var(--mid)}
   /* score marks; the second ring of eagle and double bogey is drawn inside the box so neighbours never touch */
   .s{display:inline-grid;place-items:center;width:24px;height:24px;font-weight:600;font-size:13px;box-sizing:border-box}
-  .s.birdie{border:1.25px solid var(--ink);border-radius:50%}
-  .s.eagle{border:1.25px solid var(--ink);border-radius:50%;box-shadow:inset 0 0 0 1.75px #fff,inset 0 0 0 3px var(--ink)}
-  .s.bogey{border:1.25px solid var(--ink);border-radius:2px}
-  .s.double{border:1.25px solid var(--ink);border-radius:2px;box-shadow:inset 0 0 0 1.75px #fff,inset 0 0 0 3px var(--ink)}
+  .s.birdie{border:1.25px solid currentColor;border-radius:50%}
+  .s.eagle{border:1.25px solid currentColor;border-radius:50%;box-shadow:inset 0 0 0 1.75px #fff,inset 0 0 0 3px currentColor}
+  .s.bogey{border:1.25px solid currentColor;border-radius:2px}
+  .s.double{border:1.25px solid currentColor;border-radius:2px;box-shadow:inset 0 0 0 1.75px #fff,inset 0 0 0 3px currentColor}
   .s.pu{color:#b23a22}
   .mw{font-weight:700;font-size:12px}
   .vsh{font-weight:600}
@@ -1045,28 +1057,52 @@ function setScore(k, delta) {
 }
 
 // ---------- full scorecard ----------
-// The Golpes list as an Augusta style leader board: strokes on every hole, green under par for
-// that hole, black at par and red over, with totals at the end. Rows arrive ranked (ranked).
+// The scorecard as an Augusta style board: one row per player, strokes on every hole with the usual
+// marks (circle birdie, double circle eagle, box bogey, double box worse) coloured green under par,
+// black at par and red over, dots for handicap strokes, and Ida, Vuelta and totals. Rows arrive ranked.
 function leaderBoard(r, ranked) {
-  const hs = holesOf(r), seq = order(r);
+  const hs = holesOf(r), n = hs.length;
   const pos = [];
-  ranked.forEach((x, i) => pos.push(i && x.st.played && ranked[i - 1].st.played && x.st.vsPar === ranked[i - 1].st.vsPar ? pos[i - 1] : i + 1));
-  const cols = hs.map((_, i) => i);
-  const head = cols.map(i => `<th>${holeNo(r, i)}</th>`).join('');
-  const pars = cols.map(i => `<td>${hs[i].par}</td>`).join('');
-  const rows = ranked.map(({ k, st, vh }, n) => {
-    const cell = i => { const v = scoreOf(r, k, i); return v === null ? '<td></td>'
-      : v < 0 ? '<td class="pu">X</td>' : `<td class="${v < hs[i].par ? 'under' : v === hs[i].par ? 'even' : 'over'}">${v}</td>`; };
+  const key = x => isPts(r) ? x.st.pts : x.st.vsPar;
+  ranked.forEach((x, i) => pos.push(i && x.st.played && ranked[i - 1].st.played && key(x) === key(ranked[i - 1]) ? pos[i - 1] : i + 1));
+  // columns: hole indexes, with 'ida' after the front nine and 'vta' after the back on 18 holes
+  const cols = n === 18 ? [...hs.slice(0, 9).map((_, i) => i), 'ida', ...hs.slice(9).map((_, i) => i + 9), 'vta'] : hs.map((_, i) => i);
+  const range = c => c === 'ida' ? [0, 9] : [9, 18];
+  const colHead = c => typeof c === 'number' ? `<th>${holeNo(r, c)}</th>` : `<th class="sub">${c === 'ida' ? 'IDA' : 'VTA'}</th>`;
+  const parRow = cols.map(c => typeof c === 'number' ? `<td>${hs[c].par}</td>` : `<td class="sub">${sum(hs.slice(...range(c)).map(h => h.par))}</td>`).join('');
+  const hcpRow = cols.map(c => typeof c === 'number' ? `<td>${hs[c].sio || hs[c].si || ''}</td>` : '<td class="sub"></td>').join('');
+  const cls = v => v < 0 ? 'under' : v === 0 ? 'even' : 'over';
+  const signedE = v => v > 0 ? '+' + v : v < 0 ? '−' + (-v) : 'E';
+  const rows = ranked.map(({ k, st, vh }, row) => {
+    const gsum = c => { const v = hs.slice(...range(c)).map((_, j) => scoreOf(r, k, range(c)[0] + j)).filter(x => x > 0); return v.length ? sum(v) : ''; };
+    const cell = c => {
+      if (typeof c !== 'number') return `<td class="sub">${gsum(c)}</td>`;
+      const v = scoreOf(r, k, c), dots = received(r, k, c);
+      const d = dots ? `<i class="dots">${'•'.repeat(Math.min(dots, 3))}</i>` : '';
+      if (v === null) return `<td>${d}</td>`;
+      if (v < 0) return `<td class="pu">X${d}</td>`;
+      return `<td class="${v < hs[c].par ? 'under' : v === hs[c].par ? 'even' : 'over'}"><span class="s ${shape(v, hs[c].par)}">${v}</span>${d}</td>`;
+    };
     const name = r.players[k].name, last = String(name).trim().split(/\s+/).pop();
-    return `<tr><td class="pos">${st.played ? pos[n] : ''}</td><td class="nm" title="${esc(name)}">${esc(last.toUpperCase())}</td>${cols.map(cell).join('')}
+    let html = `<tr class="pl-row"><td class="pos">${st.played ? pos[row] : ''}</td><td class="nm" title="${esc(name)}">${esc(last.toUpperCase())}</td>${cols.map(cell).join('')}
       <td class="tot">${st.played ? st.gross : ''}</td>
-      <td class="tot ${st.played ? (st.vsPar < 0 ? 'under' : st.vsPar === 0 ? 'even' : 'over') : ''}">${st.played ? (st.vsPar > 0 ? '+' + st.vsPar : st.vsPar < 0 ? '−' + (-st.vsPar) : 'E') : ''}</td>
-      <td class="tot ${vh === null ? '' : vh < 0 ? 'under' : vh === 0 ? 'even' : 'over'}">${vh === null ? '' : vh > 0 ? '+' + vh : vh < 0 ? '−' + (-vh) : '0'}</td></tr>`;
+      <td class="tot ${st.played ? cls(st.vsPar) : ''}">${st.played ? signedE(st.vsPar) : ''}</td>
+      <td class="tot ${vh === null ? '' : cls(vh)}">${vh === null ? '' : vh > 0 ? '+' + vh : vh < 0 ? '−' + (-vh) : '0'}</td></tr>`;
+    if (isPts(r)) {
+      const ps = c => typeof c === 'number' ? (holePts(r, k, c) ?? '') : sum(hs.slice(...range(c)).map((_, j) => holePts(r, k, range(c)[0] + j) || 0));
+      html += `<tr class="pts-row"><td class="pos"></td><td class="nm">PUNTOS</td>${cols.map(c => `<td class="${typeof c === 'number' ? '' : 'sub'}">${ps(c)}</td>`).join('')}
+        <td class="tot">${st.pts}</td><td class="tot"></td><td class="tot"></td></tr>`;
+    }
+    return html;
   }).join('');
   return `<div class="board"><div class="board-title">LEADERS</div><div class="bw"><table class="lboard num">
-    <thead><tr><th class="pos"></th><th class="nm">HOLE</th>${head}<th class="tot">GOLPES</th><th class="tot">VS PAR</th><th class="tot">VS HCP</th></tr>
-      <tr class="par"><th class="pos"></th><th class="nm">PAR</th>${pars}<td class="tot">${sum(hs.map(h => h.par))}</td><td class="tot"></td><td class="tot"></td></tr></thead>
-    <tbody>${rows}</tbody></table></div></div>`;
+    <thead><tr><th class="pos"></th><th class="nm">HOLE</th>${cols.map(colHead).join('')}<th class="tot">GOLPES</th><th class="tot">VS PAR</th><th class="tot">VS HCP</th></tr>
+      <tr class="par"><th class="pos"></th><th class="nm">PAR</th>${parRow}<td class="tot">${sum(hs.map(h => h.par))}</td><td class="tot"></td><td class="tot"></td></tr>
+      ${hs.some(h => h.si) ? `<tr class="par hcp"><th class="pos"></th><th class="nm">HCP</th>${hcpRow}<td class="tot"></td><td class="tot"></td><td class="tot"></td></tr>` : ''}</thead>
+    <tbody>${rows}</tbody></table></div>
+    <div class="legend board-legend"><span><span class="s eagle under">3</span> eagle</span><span><span class="s birdie under">3</span> birdie</span>
+      <span><span class="s even">4</span> par</span><span><span class="s bogey over">5</span> bogey</span><span><span class="s double over">6</span> doble o más</span>
+      <span><i class="dots">•</i> golpe por hándicap</span><span>X bola levantada</span></div></div>`;
 }
 // Match play panel for the full scorecard: both sides with their handicap strokes, the result in the
 // middle, and per nine the best net ball of each side (filled when that side won the hole) and the
@@ -1119,53 +1155,20 @@ function vCard({ id }) {
   const r = S.rounds[id];
   if (!r) { app.innerHTML = `<a class="back" href="#/">‹ Partidas</a><div class="empty">Esta partida no existe o se ha borrado.</div>`; return; }
   const hs = holesOf(r), n = hs.length;
-  const halves = n === 18 ? [[0, 9, 'Ida'], [9, 18, 'Vuelta']] : [[0, n, 'Total']];
-  const cols = [];
-  halves.forEach(([a, b, lab]) => { for (let j = a; j < b; j++) cols.push(j); cols.push(lab); });
-  if (n === 18) cols.push('Total');
-  const rangeOf = lab => lab === 'Ida' ? [0, 9] : lab === 'Vuelta' ? [9, 18] : [0, n];
-  const rowFor = (label, fn, agg, cls = '') => `<tr class="${cls}"><td>${label}</td>${cols.map(c => typeof c === 'number'
-      ? `<td>${fn(c)}</td>` : `<td class="sum">${agg(...rangeOf(c))}</td>`).join('')}</tr>`;
-  const parSum = (a, b) => sum(hs.slice(a, b).map(h => h.par));
-  let body = rowFor('Par', j => hs[j].par, parSum, 'sub');
-  if (hs.some(h => h.si)) body += rowFor('Índice', j => hs[j].sio || hs[j].si || '', () => '', 'sub');
-  r.players.forEach((p, k) => {
-    const gsum = (a, b) => { const v = hs.slice(a, b).map((_, j) => scoreOf(r, k, a + j)).filter(s => s > 0); return v.length ? sum(v) : ''; };
-    body += rowFor(esc(p.name), j => {
-      const s = scoreOf(r, k, j);
-      const dots = received(r, k, j);
-      return s === null ? (dots ? `<span class="muted" style="font-size:10px">${'•'.repeat(Math.min(dots, 3))}</span>` : '')
-        : `<span class="s ${shape(s, hs[j].par)}">${s < 0 ? 'X' : s}</span>`;
-    }, gsum);
-    if (isPts(r))
-      body += rowFor('<span class="muted">puntos</span>', j => holePts(r, k, j) ?? '',
-        (a, b) => sum(hs.slice(a, b).map((_, j) => holePts(r, k, a + j) || 0)), 'pts');
-  });
-  if (r.format === 'match') {
-    const m = matchState(r);
-    const tc = t => t === 0 ? 'var(--green2)' : '#b07d1c';
-    body += rowFor('<span class="muted">gana</span>', j => { const w = m.res[j]; return w === null ? '' : w === 'h' ? '<span class="mw muted">=</span>'
-      : `<span class="mw" style="color:${tc(w)}">${esc(r.players[r.teams[w][0]].name[0])}${r.teams[w].length > 1 ? esc(r.players[r.teams[w][1]].name[0]) : ''}</span>`; }, () => '');
-  }
   // standings
   let standings;
   standings = r.format === 'match' ? matchPanel(r) : summaryBox(r);
-  // Best score of the day first: strokes against par on the holes played so far, then against handicap.
+  // Best first: points in Stableford and Sindicato, otherwise strokes against par so far; then against handicap.
   const order = r.players.map((_, k) => ({ k, st: playerStats(r, k), vh: vsHandicap(r, k) }))
-    .sort((a, b) => (b.st.played ? 1 : 0) - (a.st.played ? 1 : 0) || a.st.vsPar - b.st.vsPar || (a.vh ?? 0) - (b.vh ?? 0));
+    .sort((a, b) => (b.st.played ? 1 : 0) - (a.st.played ? 1 : 0)
+      || (isPts(r) ? b.st.pts - a.st.pts : a.st.vsPar - b.st.vsPar) || (a.vh ?? 0) - (b.vh ?? 0));
   const extra = leaderBoard(r, order);
   app.innerHTML = `
     <div class="hd"><a class="back" href="#/r/${esc(id)}">‹ Volver a la partida</a></div>
     <div class="rhead"><h1 style="font-size:24px">${esc(r.course.name)}</h1>${finBadge(r)}</div>
     <div class="muted" style="font-size:14px">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))}${r.useHcp ? ' · con hándicap' : ''}</div>
     ${standings}
-    <div class="tw"><table class="sc num">
-      <thead><tr><th>Hoyo</th>${cols.map(c => typeof c === 'number' ? `<th>${holeNo(r, c)}</th>` : `<th class="sum">${c}</th>`).join('')}</tr></thead>
-      <tbody>${body}</tbody></table></div>
-    <div class="legend"><span><span class="s eagle">3</span> eagle</span><span><span class="s birdie">3</span> birdie</span>
-      <span><span class="s bogey">5</span> bogey</span><span><span class="s double">6</span> doble o más</span><span>• golpe de hándicap</span></div>
-    <h2>Golpes</h2>${extra}
-    <div class="hint">Cada casilla son los golpes en ese hoyo: en verde bajo par, en negro al par y en rojo por encima. X es una bola levantada.</div>`;
+    <h2>Tarjeta</h2>${extra}`;
 }
 
 // ---------- round settings ----------
