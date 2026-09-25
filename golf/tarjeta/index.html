@@ -269,14 +269,21 @@ function playerStats(r, p) {
            net: played === hs.length ? gross - hcp : null, netVsPar: gross - par - hcp };
 }
 // Better ball: each side's best net score on the hole. Decided once everyone in the match has an entry.
+// Each side's net scores on the hole, best first. A picked-up ball counts as no score.
+const teamNets = (r, t, i) => r.teams[t].map(p => {
+  const s = scoreOf(r, p, i);
+  return s > 0 ? s - received(r, p, i) : Infinity;
+}).sort((a, b) => a - b);
+// With "desempata la mala" (r.worst), a tie on the best balls goes to the side with the better second ball.
 function holeWinner(r, i) {
   if (inMatch(r).some(p => scoreOf(r, p, i) === null)) return null;
-  const best = r.teams.map(t => Math.min(...t.map(p => {
-    const s = scoreOf(r, p, i);
-    return s > 0 ? s - received(r, p, i) : Infinity;
-  })));
-  return best[0] < best[1] ? 0 : best[1] < best[0] ? 1 : 'h';
+  const [a, b] = [teamNets(r, 0, i), teamNets(r, 1, i)];
+  if (a[0] !== b[0]) return a[0] < b[0] ? 0 : 1;
+  if (r.worst && a.length === 2 && a[1] !== b[1]) return a[1] < b[1] ? 0 : 1;
+  return 'h';
 }
+const wonByWorst = (r, i) => r.worst && holeWinner(r, i) !== 'h' && holeWinner(r, i) !== null && teamNets(r, 0, i)[0] === teamNets(r, 1, i)[0];
+const matchNote = r => (r.useHcp ? ' · con hándicap' : '') + (r.worst ? ' · desempata la mala' : '');
 const teamName = (r, t) => r.teams[t].map(p => r.players[p].name).join(' y ');
 function matchState(r) {
   const n = holesOf(r).length;
@@ -297,7 +304,7 @@ function matchState(r) {
   } else if (played === n) {
     text = 'Partido empatado'; detail = `Terminado tras ${n} hoyos`;
   } else if (up === 0) {
-    text = 'Empatados'; detail = played ? `tras ${played} hoyos, quedan ${left}` : `${n} hoyos por jugar`;
+    text = 'Empatados'; detail = played ? `tras ${played} ${played === 1 ? 'hoyo' : 'hoyos'}, quedan ${left}` : `${n} hoyos por jugar`;
   } else {
     text = `${teamName(r, lead)} ${a} arriba`;
     detail = (a === left ? 'dormie, ' : '') + `quedan ${left}`;
@@ -392,7 +399,7 @@ function newDraft() {
   const n = S.names || {};
   return { courseId: lastCourse && S.courses[lastCourse] ? lastCourse : ids[0], date: today(),
            players: [{ name: n.a || 'Javi', hcp: '' }, { name: n.b || 'Hugo', hcp: '' }],
-           format: 'stableford', pairing: 0, useHcp: true, start: 0, err: '' };
+           format: 'stableford', pairing: 0, useHcp: true, start: 0, worst: false, err: '' };
 }
 function vSetup() {
   if (!draft) draft = newDraft();
@@ -443,7 +450,9 @@ function vSetup() {
       <div style="display:grid;gap:6px">
         ${PAIRINGS.map((pr, k) => `<button class="card" data-pair="${k}" style="margin:0;text-align:left;${d.pairing === k ? 'border-color:var(--green);box-shadow:0 0 0 1px var(--green)' : ''}">
           <b>${name(pr[0][0])} y ${name(pr[0][1])}</b> <span class="muted">contra</span> <b>${name(pr[1][0])} y ${name(pr[1][1])}</b></button>`).join('')}
-      </div></div>` : ''}
+      </div></div>
+    <div class="f"><label class="check"><input type="checkbox" id="sworst" ${d.worst ? 'checked' : ''}> Desempata la mala</label>
+      <div class="hint">Si las mejores bolas empatan, el hoyo es para la pareja con mejor segunda bola.</div></div>` : ''}
 
     <div class="f"><label class="check"><input type="checkbox" id="suh" ${d.useHcp ? 'checked' : ''}> Jugar con hándicap</label>
       <div class="hint">${d.format === 'match' ? 'En match play se da la diferencia con el hándicap más bajo, repartida por el índice de cada hoyo.' : 'Cada jugador recibe sus golpes repartidos por el índice de cada hoyo.'}</div></div>
@@ -459,6 +468,7 @@ async function startRound() {
   const r = { created: Date.now(), date: d.date || today(), course: { id: d.courseId, name: c.name, holes: c.holes },
               players, format: d.format, useHcp: !!d.useHcp, start: c.holes.length === 18 ? d.start : 0 };
   if (teams) r.teams = teams;
+  if (teams && teams[0].length === 2) r.worst = !!d.worst;
   const id = store.key('golf/rounds');
   lastCourse = d.courseId;
   if (await save('golf/rounds/' + id, r)) { draft = null; go('#/r/' + id + '/' + (r.start + 1)); }
@@ -520,7 +530,7 @@ async function saveCourse() {
 function summaryBox(r) {
   if (r.format === 'match') {
     const m = matchState(r);
-    return `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}${r.useHcp ? ' · con hándicap' : ''}</div></div>`;
+    return `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}${matchNote(r)}</div></div>`;
   }
   const st = r.players.map((p, i) => ({ i, ...playerStats(r, i) }));
   const key = r.format === 'stableford' ? (a, b) => b.pts - a.pts
@@ -568,7 +578,7 @@ function vPlay({ id, hole }) {
       return `<button data-hole="${j}" class="${j === i ? 'cur' : done ? 'done' : ''}">${j + 1}</button>`;
     }).join('')}</div>
     <div class="hole"><span class="n">Hoyo ${i + 1}</span><span class="meta">Par <b>${h.par}</b>${h.si ? ` · índice ${h.si}` : ''}</span></div>
-    <div class="hres">${r.format === 'match' ? (w === null ? '' : w === 'h' ? 'Hoyo empatado' : `Hoyo para ${esc(teamName(r, w))}`) : ''}</div>
+    <div class="hres">${r.format === 'match' ? (w === null ? '' : w === 'h' ? 'Hoyo empatado' : `Hoyo para ${esc(teamName(r, w))}${wonByWorst(r, i) ? ', desempata la mala' : ''}`) : ''}</div>
     ${pcards}
     <div class="nav">
       <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${o[pos - 1] + 1}` : '‹'}</button>
@@ -629,7 +639,7 @@ function vCard({ id }) {
   let standings;
   if (r.format === 'match') {
     const m = matchState(r);
-    standings = `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}</div></div>`;
+    standings = `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}${matchNote(r)}</div></div>`;
   } else standings = summaryBox(r);
   const extra = r.players.map((p, k) => {
     const st = playerStats(r, k);
@@ -712,6 +722,7 @@ app.addEventListener('change', ev => {
   const t = ev.target;
   if (cur.v === 'setup') {
     if (t.id === 'suh') { draft.useHcp = t.checked; render(); }
+    if (t.id === 'sworst') draft.worst = t.checked;
   }
 });
 
