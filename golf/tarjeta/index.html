@@ -66,25 +66,9 @@
   .agh-sketch,.agh-ink{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
   .agh-sketch:not([src]){opacity:0}
   .agh-sketch{transition:opacity .6s ease}
-  /* pencil lines that shimmer slightly, as in hand drawn animation */
-  .agh-sketch,.agh-ink{animation:boil .6s steps(1) infinite}
-  @keyframes boil{0%{filter:url(#boil1)}33%{filter:url(#boil2)}66%{filter:url(#boil3)}}
   .flag4{position:absolute;left:74.1%;top:54.1%;width:0;height:0}
   .flag4 b{position:absolute;left:0;top:0;width:16px;height:10px;background:#f3dc5a;border:1px solid #4a4a44;border-left:0;
-       clip-path:polygon(0 0,100% 50%,0 100%);transform-origin:left center;animation:wave3 1.4s ease-in-out infinite}
-  @keyframes wave3{0%,100%{transform:scaleX(1) skewY(0)}50%{transform:scaleX(.8) skewY(5deg)}}
-  /* the drive from the tee (45% across, 24.5% up) to the far fairway by the flag (74%, 36%) */
-  .shot,.shot-shadow{position:absolute;top:0;bottom:0;width:0;left:45%;animation:shotx 6s linear infinite}
-  .shot-y{position:absolute;left:0;bottom:24.5%;animation:shoty 6s infinite}
-  .ball3{position:absolute;left:-5px;bottom:0;width:10px;height:10px;border-radius:50%;border:1.2px solid #4a4a44;box-sizing:border-box;
-       background:#fdfcf8;animation:shotb 6s infinite}
-  .shot-shadow i{position:absolute;left:-4px;bottom:23.8%;width:8px;height:2.5px;border-radius:50%;background:rgba(60,60,55,.35);animation:shots 6s infinite}
-  @keyframes shotx{0%,8%{left:45%}45%{left:70%}58%{left:72.6%}70%{left:74.1%}100%{left:74.1%}}
-  @keyframes shoty{0%,8%{bottom:24.5%;animation-timing-function:ease-out}26%{bottom:82%;animation-timing-function:ease-in}45%{bottom:35%;animation-timing-function:ease-out}
-       51%{bottom:39%;animation-timing-function:ease-in}57%{bottom:35.4%}70%{bottom:35.8%}100%{bottom:35.8%}}
-  @keyframes shotb{0%,8%{opacity:1;transform:scale(1)}45%{transform:scale(.6)}70%{opacity:1;transform:scale(.55)}74%{opacity:0;transform:translateY(2px) scale(.3)}97%{opacity:0}100%{opacity:1;transform:scale(1)}}
-  @keyframes shots{0%,8%{bottom:23.8%;opacity:.9;transform:scale(1)}26%{opacity:.2}45%{bottom:35%;opacity:.8;transform:scale(.6)}70%{bottom:35.5%;opacity:.8;transform:scale(.55)}74%,97%{opacity:0}100%{bottom:23.8%;opacity:.9;transform:scale(1)}}
-  @media (prefers-reduced-motion:reduce){.agh-sketch,.agh-ink{animation:none}}
+       clip-path:polygon(0 0,100% 50%,0 100%)}
   .agh-board{position:relative;margin:-10px 14px 16px;font-family:'Oswald','Arial Narrow',sans-serif}
   .agh-arch{width:64%;margin:0 auto;background:#fff;border:3px solid var(--ag);border-bottom:0;border-radius:60px 60px 0 0/24px 24px 0 0;
        text-align:center;font-weight:700;font-size:24px;letter-spacing:4px;color:var(--ag);padding:6px 0 2px}
@@ -97,7 +81,6 @@
   .agh-cta{width:100%;background:var(--ag);color:#fff;font-family:'Oswald','Arial Narrow',sans-serif;letter-spacing:2px;font-size:17px;
        border-radius:4px;padding:14px;box-shadow:0 6px 0 #004d35}
   .agh-cta:active{transform:translateY(3px);box-shadow:0 3px 0 #004d35}
-  @media (prefers-reduced-motion:reduce){.shot,.shot-y,.ball3,.shot-shadow i,.flag4 b{animation:none}}
   .lm{font-family:var(--sans);font-weight:500;font-size:11px;color:var(--mid);letter-spacing:0;text-transform:none}
   .cmts{display:grid;gap:8px;margin-bottom:10px}
   .cmt{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
@@ -396,11 +379,6 @@
 </div></header>
 <main id="app"></main>
 <dialog id="dset" aria-label="Ajustes de la partida"></dialog>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <filter id="boil1"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="1"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
-  <filter id="boil2"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
-  <filter id="boil3"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
-</defs></svg>
 
 <script type="module">
 // Scorecard for any round: up to four players, a course library with par and
@@ -702,7 +680,7 @@ function vDone() {
     <p class="sub">${rounds.length} ${rounds.length === 1 ? 'partida' : 'partidas'}, de la más reciente a la más antigua.</p>
     ${rounds.length ? rounds.map(([id, r]) => roundCard(id, r)).join('') : '<div class="empty">Aún no hay partidas terminadas.</div>'}`;
 }
-// The home page picture: the tee photo turned into a pencil sketch in the browser (colour dodge of the
+// The home page picture (still): the tee photo turned into a pencil sketch in the browser (colour dodge of the
 // grey image over its blurred negative, darkened, with paper grain and a faint trace of the colours).
 let sketchURL = null, sketching = false;
 async function makeSketch() {
@@ -775,14 +753,13 @@ function vHome() {
             <path d="M190 245 C190 238 199 238 199 245 Z" fill="#f3dc5a"/><path d="M188 246 q6 2 12 0" opacity=".5"/>
             <path d="M229 243 C229 236 238 236 238 243 Z" fill="#f3dc5a"/><path d="M227 244 q6 2 12 0" opacity=".5"/>
             <path d="M213.5 243.5 v4" stroke="#8a7a58" stroke-width="1.4"/>
+            <circle cx="213.5" cy="240.6" r="3" fill="#fdfcf8" stroke-width="1"/>
             <path d="M170 250 l6 -1 M246 252 l5 1 M205 256 l6 0" opacity=".6"/>
             <ellipse cx="352" cy="204" rx="4" ry="1.3" fill="#4a4a44" stroke="none" opacity=".7"/>
             <path d="M352 204 V172" stroke-width="1.1"/>
           </g>
         </svg>
         <div class="flag4"><b></b></div>
-        <div class="shot"><div class="shot-y"><i class="ball3"></i></div></div>
-        <div class="shot-shadow"><i></i></div>
       </div>
       <div class="agh-board">
         <div class="agh-arch">TARJETA</div>
