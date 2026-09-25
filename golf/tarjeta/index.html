@@ -282,7 +282,7 @@ function matchState(r) {
   const n = holesOf(r).length;
   let up = 0, played = 0, closed = null;
   const res = holesOf(r).map((_, i) => holeWinner(r, i));
-  res.forEach(w => {
+  order(r).map(i => res[i]).forEach(w => {
     if (w === null || closed) return;
     played++;
     up += w === 0 ? 1 : w === 1 ? -1 : 0;
@@ -314,7 +314,9 @@ function scoreWord(s, par) {
 }
 const shape = (s, par) => s === null ? '' : s < 0 ? 'pu' : s - par <= -2 ? 'eagle' : s - par === -1 ? 'birdie'
                           : s - par === 1 ? 'bogey' : s - par >= 2 ? 'double' : '';
-const firstOpen = r => { const i = holesOf(r).findIndex((_, i) => r.players.some((_, p) => scoreOf(r, p, i) === null)); return i < 0 ? holesOf(r).length - 1 : i; };
+// Holes in the order they are played: 1 to 18, or 10 to 18 then 1 to 9 when starting on the 10th.
+const order = r => { const n = holesOf(r).length, st = r.start === 9 && n === 18 ? 9 : 0; return holesOf(r).map((_, k) => (st + k) % n); };
+const firstOpen = r => { const o = order(r); return o.find(i => r.players.some((_, p) => scoreOf(r, p, i) === null)) ?? o.at(-1); };
 const roundDone = r => r.format === 'match' ? matchState(r).done : holesOf(r).every((_, i) => r.players.every((_, p) => scoreOf(r, p, i) !== null));
 const fmtLabel = r => r.format === 'match' ? (r.teams[0].length === 2 ? 'Match play parejas' : 'Match play') : FORMAT[r.format];
 
@@ -390,7 +392,7 @@ function newDraft() {
   const n = S.names || {};
   return { courseId: lastCourse && S.courses[lastCourse] ? lastCourse : ids[0], date: today(),
            players: [{ name: n.a || 'Javi', hcp: '' }, { name: n.b || 'Hugo', hcp: '' }],
-           format: 'stableford', pairing: 0, useHcp: true, err: '' };
+           format: 'stableford', pairing: 0, useHcp: true, start: 0, err: '' };
 }
 function vSetup() {
   if (!draft) draft = newDraft();
@@ -403,9 +405,15 @@ function vSetup() {
     <a class="back" href="#/">‹ Partidas</a>
     <h1>Nueva partida</h1>
     ${d.err ? `<div class="err">${esc(d.err)}</div>` : ''}
-    <div class="f"><label for="sc">Campo</label>
-      <select id="sc">${courses.map(([id, c]) => `<option value="${esc(id)}" ${id === d.courseId ? 'selected' : ''}>${esc(c.name)} (par ${sum(c.holes.map(h => h.par))})</option>`).join('')}</select>
+    <div class="f"><div class="lab">Campo</div>
+      <div style="display:grid;gap:6px">${courses.map(([id, c]) => `
+        <button class="card" data-course="${esc(id)}" style="margin:0;text-align:left;${id === d.courseId ? 'border-color:var(--green);box-shadow:0 0 0 1px var(--green)' : ''}">
+          <div class="row"><span class="t">${esc(c.name)}</span><span class="m" style="margin:0">${id === d.courseId ? '✓ ' : ''}${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</span></div></button>`).join('')}
+      </div>
       <div class="hint"><a href="#/campo/nuevo">Añadir otro campo</a></div></div>
+    ${S.courses[d.courseId]?.holes.length === 18 ? `
+    <div class="f"><div class="lab">Salida</div>
+      <div class="seg"><button data-start-hole="0" class="${d.start ? '' : 'on'}">Hoyo 1</button><button data-start-hole="9" class="${d.start ? 'on' : ''}">Hoyo 10</button></div></div>` : ''}
     <div class="f"><label for="sd">Fecha</label><input type="date" id="sd" value="${esc(d.date)}"></div>
 
     <div class="f"><div class="lab">Jugadores y hándicap de juego</div>
@@ -449,11 +457,11 @@ async function startRound() {
   if (!c) { d.err = 'Elige un campo.'; return render(); }
   const teams = d.format === 'match' ? (players.length === 4 ? PAIRINGS[d.pairing] : [[0], [1]]) : null;
   const r = { created: Date.now(), date: d.date || today(), course: { id: d.courseId, name: c.name, holes: c.holes },
-              players, format: d.format, useHcp: !!d.useHcp };
+              players, format: d.format, useHcp: !!d.useHcp, start: c.holes.length === 18 ? d.start : 0 };
   if (teams) r.teams = teams;
   const id = store.key('golf/rounds');
   lastCourse = d.courseId;
-  if (await save('golf/rounds/' + id, r)) { draft = null; go('#/r/' + id + '/1'); }
+  if (await save('golf/rounds/' + id, r)) { draft = null; go('#/r/' + id + '/' + (r.start + 1)); }
 }
 
 // ---------- course editor ----------
@@ -531,6 +539,7 @@ function vPlay({ id, hole }) {
   if (!r) { app.innerHTML = `<a class="back" href="#/">‹ Partidas</a><div class="empty">Esta partida no existe o se ha borrado.</div>`; return; }
   const hs = holesOf(r), n = hs.length;
   const i = hole === null || hole < 0 || hole >= n ? firstOpen(r) : hole;
+  const o = order(r), pos = o.indexOf(i);
   const h = hs[i];
   const w = r.format === 'match' ? holeWinner(r, i) : null;
   const pcards = r.players.map((p, k) => {
@@ -554,7 +563,7 @@ function vPlay({ id, hole }) {
     <div class="hd"><a class="back" href="#/">‹ Partidas</a><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></div>
     <div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>
     ${summaryBox(r)}
-    <div class="strip">${hs.map((_, j) => {
+    <div class="strip">${o.map(j => {
       const done = r.players.every((_, k) => scoreOf(r, k, j) !== null);
       return `<button data-hole="${j}" class="${j === i ? 'cur' : done ? 'done' : ''}">${j + 1}</button>`;
     }).join('')}</div>
@@ -562,8 +571,8 @@ function vPlay({ id, hole }) {
     <div class="hres">${r.format === 'match' ? (w === null ? '' : w === 'h' ? 'Hoyo empatado' : `Hoyo para ${esc(teamName(r, w))}`) : ''}</div>
     ${pcards}
     <div class="nav">
-      <button class="btn light" data-hole="${i - 1}" ${i === 0 ? 'disabled' : ''}>${i ? `‹ Hoyo ${i}` : '‹'}</button>
-      ${i < n - 1 ? `<button class="btn" data-hole="${i + 1}">Hoyo ${i + 2} ›</button>` : `<button class="btn" data-go="#/r/${esc(id)}/tarjeta">Ver tarjeta</button>`}
+      <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${o[pos - 1] + 1}` : '‹'}</button>
+      ${pos < n - 1 ? `<button class="btn" data-hole="${o[pos + 1]}">Hoyo ${o[pos + 1] + 1} ›</button>` : `<button class="btn" data-go="#/r/${esc(id)}/tarjeta">Ver tarjeta</button>`}
     </div>
     <p style="margin-top:30px;text-align:center"><button class="link" data-rdel="${esc(id)}">Borrar partida</button></p>`;
 }
@@ -659,6 +668,8 @@ app.addEventListener('click', ev => {
     if (ds.rm !== undefined) { draft.players.splice(+ds.rm, 1); draft.pairing = 0; return render(); }
     if (ds.fmt) { draft.format = ds.fmt; return render(); }
     if (ds.pair !== undefined) { draft.pairing = +ds.pair; return render(); }
+    if (ds.course) { draft.courseId = ds.course; return render(); }
+    if (ds.startHole !== undefined) { draft.start = +ds.startHole; return render(); }
     if (ds.start !== undefined) return startRound();
   }
   // course
@@ -700,7 +711,6 @@ app.addEventListener('input', ev => {
 app.addEventListener('change', ev => {
   const t = ev.target;
   if (cur.v === 'setup') {
-    if (t.id === 'sc') draft.courseId = t.value;
     if (t.id === 'suh') { draft.useHcp = t.checked; render(); }
   }
 });
@@ -709,13 +719,14 @@ app.addEventListener('change', ev => {
 function conn(label, kind) { const c = document.getElementById('conn'); c.textContent = label; c.className = 'conn ' + kind; }
 function listen() {
   let got = 0;
-  const done = () => { if (++got >= 2) S.loaded = true; };
+  // First full load always renders; later updates skip the forms so typing is not interrupted.
+  const done = () => { if (++got === 2) { S.loaded = true; render(); return true; } return got < 2; };
   const onErr = err => {
     conn('desconectado', 'down');
     toast(/PERMISSION|DENIED/i.test(err?.code || err?.message || '') ? 'La base de datos no deja leer /golf.' : 'Se ha perdido la conexión.');
   };
-  store.on('golf/courses', v => { S.courses = v || {}; done(); if (cur.v !== 'course') render(); }, onErr);
-  store.on('golf/rounds', v => { S.rounds = v || {}; done(); if (cur.v !== 'setup' && cur.v !== 'course') render(); }, onErr);
+  store.on('golf/courses', v => { S.courses = v || {}; if (!done() && cur.v !== 'course') render(); }, onErr);
+  store.on('golf/rounds', v => { S.rounds = v || {}; if (!done() && cur.v !== 'setup' && cur.v !== 'course') render(); }, onErr);
   store.on('golf/players', v => { S.names = v; }, () => {});
 }
 
