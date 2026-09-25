@@ -242,7 +242,11 @@
   .btn.cancel{background:#eef0f2;color:var(--mid);box-shadow:none}
   .btn.go{background:var(--green);color:#fff}
   .hd-r{display:flex;align-items:center;gap:14px}
-  .gear{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 10px;font-size:13px;color:var(--mid);margin:0 0 6px}
+  .rnav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 12px}
+  .rnav-l{display:flex;gap:8px;min-width:0}
+  .pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;
+        font-size:13px;font-weight:500;color:var(--mid);text-decoration:none;white-space:nowrap;line-height:1.2;font-family:var(--sans)}
+  .pill:active{background:#f3f6f4}
   #dset{width:min(460px,calc(100vw - 24px));max-height:calc(100vh - 40px);overflow-y:auto}
   .set-h{display:flex;justify-content:space-between;align-items:center}
   .set-h .x{border:0;background:none;font-size:26px;color:var(--light);padding:0 4px}
@@ -1067,7 +1071,7 @@ function vPlay({ id, hole }) {
       </div></div>`;
   }).join('');
   app.innerHTML = `<div class="aug">
-    <div class="hd"><a class="back" href="#/">‹ Inicio</a><span class="hd-r"><button class="gear" data-settings="${esc(id)}">⚙️ Ajustes</button><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></span></div>
+    ${roundNav(id, 'play')}
     <div class="rhead"><div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>${finBadge(r)}</div>
     <div class="aug-sum"><div class="board-title">${r.format === 'match' ? 'MATCH' : 'LEADERS'}</div>${summaryBox(r)}</div>
     <div class="strip">${o.map(j => {
@@ -1222,6 +1226,11 @@ async function sendComment(id) {
   const key = store.key(`golf/rounds/${id}/comments`);
   if (await save(`golf/rounds/${id}/comments/${key}`, { by, text, created: Date.now() })) { commentDraft = ''; keepFocus = false; render(); }
 }
+// Same bar on both round pages: home and the other view on the left, settings always on the right.
+const roundNav = (id, page) => `<nav class="rnav"><span class="rnav-l">
+    <a class="pill" href="#/">‹ Inicio</a>
+    ${page === 'play' ? `<a class="pill" href="#/r/${esc(id)}/tarjeta">Tarjeta completa</a>` : `<a class="pill" href="#/r/${esc(id)}">Apuntar golpes</a>`}
+  </span><button class="pill" data-settings="${esc(id)}">⚙️ Ajustes</button></nav>`;
 function vCard({ id }) {
   const r = S.rounds[id];
   if (!r) { app.innerHTML = `<a class="back" href="#/">‹ Partidas</a><div class="empty">Esta partida no existe o se ha borrado.</div>`; return; }
@@ -1235,7 +1244,7 @@ function vCard({ id }) {
       || (isPts(r) ? b.st.pts - a.st.pts : a.st.vsPar - b.st.vsPar) || (a.vh ?? 0) - (b.vh ?? 0));
   const extra = leaderBoard(r, order);
   app.innerHTML = `
-    <div class="hd"><a class="back" href="#/r/${esc(id)}">‹ Volver a la partida</a><button class="gear" data-settings="${esc(id)}">⚙️ Ajustes</button></div>
+    ${roundNav(id, 'card')}
     <div class="rhead"><h1 style="font-size:24px">${esc(r.course.name)}</h1>${finBadge(r)}</div>
     <div class="muted" style="font-size:14px">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))}${r.useHcp ? ' · con hándicap' : ''}</div>
     ${standings}
