@@ -190,6 +190,26 @@
   .lboard td.over{color:var(--agred)}
   .lboard td.pu{color:#8a929a}
   .lboard .tot{min-width:52px;font-size:13px;letter-spacing:.5px}
+  dialog{border:0;border-radius:18px;padding:0;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+  dialog::backdrop{background:rgba(8,30,23,.55);backdrop-filter:blur(3px)}
+  .dlg{padding:20px 18px 18px}
+  .dlg h3{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 12px}
+  .row2{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+  .row2 .btn{box-shadow:none}
+  .btn.cancel{background:#eef0f2;color:var(--mid);box-shadow:none}
+  .btn.go{background:var(--green);color:#fff}
+  .hd-r{display:flex;align-items:center;gap:14px}
+  .gear{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 10px;font-size:13px;color:var(--mid);margin:0 0 6px}
+  #dset{width:min(460px,calc(100vw - 24px));max-height:calc(100vh - 40px);overflow-y:auto}
+  .set-h{display:flex;justify-content:space-between;align-items:center}
+  .set-h .x{border:0;background:none;font-size:26px;color:var(--light);padding:0 4px}
+  .set-team{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;margin:0 0 10px}
+  .set-team .muted{grid-column:1/-1;font-size:12px}
+  .set-p{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center;margin:0 0 6px}
+  .set-p span{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .set-p input{text-align:center}
+  .set-danger{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+  .toast.ok{background:var(--green)}
   .rhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .tag.live{background:#1f9d57;color:#fff}
   .tag.live::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#c8ffd9;margin-right:6px;
@@ -332,6 +352,7 @@
   <span class="conn" id="conn">conectando…</span>
 </div></header>
 <main id="app"></main>
+<dialog id="dset" aria-label="Ajustes de la partida"></dialog>
 
 <script type="module">
 // Scorecard for any round: up to four players, a course library with par and
@@ -990,7 +1011,7 @@ function vPlay({ id, hole }) {
       </div></div>`;
   }).join('');
   app.innerHTML = `<div class="aug">
-    <div class="hd"><a class="back" href="#/">‹ Partidas</a><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></div>
+    <div class="hd"><a class="back" href="#/">‹ Partidas</a><span class="hd-r"><button class="gear" data-settings="${esc(id)}">⚙️ Ajustes</button><a class="back" href="#/r/${esc(id)}/tarjeta">Tarjeta completa ›</a></span></div>
     <div class="rhead"><div class="muted" style="font-size:14px">${esc(r.course.name)} · ${esc(fmtLabel(r))}</div>${finBadge(r)}</div>
     <div class="aug-sum"><div class="board-title">${r.format === 'match' ? 'MATCH' : 'LEADERS'}</div>${summaryBox(r)}</div>
     <div class="strip">${o.map(j => {
@@ -1005,7 +1026,7 @@ function vPlay({ id, hole }) {
       <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${holeNo(r, o[pos - 1])}` : '‹'}</button>
       ${pos < n - 1 ? `<button class="btn" data-hole="${o[pos + 1]}">Hoyo ${holeNo(r, o[pos + 1])} ›</button>` : `<button class="btn" data-go="#/r/${esc(id)}/tarjeta">Ver tarjeta</button>`}
     </div>
-    <p style="margin-top:30px;text-align:center"><button class="link" data-rdel="${esc(id)}">Borrar partida</button></p></div>`;
+    </div>`;
 }
 function setScore(k, delta) {
   const r = S.rounds[cur.id]; if (!r) return;
@@ -1147,6 +1168,97 @@ function vCard({ id }) {
     <div class="hint">Cada casilla son los golpes en ese hoyo: en verde bajo par, en negro al par y en rojo por encima. X es una bola levantada.</div>`;
 }
 
+// ---------- round settings ----------
+// Overlay with the settings of a round in progress. Each changed field is written on its own, so
+// scores entered meanwhile on another phone are never overwritten. The course cannot be changed.
+let sd = null;
+function openSettings(id) {
+  const r = S.rounds[id]; if (!r) return;
+  sd = { id, date: r.date, format: r.format, useHcp: !!r.useHcp, start: r.start || 0, worst: !!r.worst,
+         teamNames: r.teamNames ? [...r.teamNames] : [teamName({ ...r, teams: [[0, 1], [2, 3]] }, 0), teamName({ ...r, teams: [[0, 1], [2, 3]] }, 1)],
+         hcps: r.players.map(p => p.hcp) };
+  paintSettings();
+  document.getElementById('dset').showModal();
+}
+function paintSettings() {
+  const r = S.rounds[sd.id], np = r.players.length, dlg = document.getElementById('dset');
+  const ok = { medal: true, stableford: true, match: np === 2 || np === 4, sindicato: np === 3 };
+  const pairs = sd.format === 'match' && np === 4;
+  const can10 = holesOf(r).length === 18 && !r.half;
+  dlg.innerHTML = `<form method="dialog" class="dlg set">
+    <div class="set-h"><h3>Ajustes de la partida</h3><button type="button" class="x" data-close aria-label="Cerrar">×</button></div>
+    <div class="muted" style="font-size:14px;margin:-8px 0 14px">${esc(r.course.name)}</div>
+    <div class="f"><label for="s-date">Fecha</label><input type="date" id="s-date" value="${esc(sd.date)}"></div>
+    <div class="f"><div class="lab">Modalidad</div><div class="seg fmt">${Object.entries(FORMAT).map(([k, v]) =>
+      `<button type="button" data-sfmt="${k}" class="${sd.format === k ? 'on' : ''}" ${ok[k] ? '' : 'disabled'}>${k === 'medal' ? 'Golpes' : v}</button>`).join('')}</div>
+      ${sd.format !== r.format ? '<div class="hint">Los golpes ya apuntados se mantienen; solo cambia cómo se cuentan.</div>' : ''}</div>
+    ${pairs ? `<div class="f"><div class="lab">Equipos</div>
+      ${[0, 1].map(t => `<div class="set-team"><input data-stn="${t}" value="${esc(sd.teamNames[t])}" maxlength="30">
+        <button type="button" class="reroll" data-sroll="${t}" aria-label="Otro nombre">🎲</button>
+        <span class="muted">${esc(r.teams && r.teams[0].length === 2 ? members(r, t) : [0, 1].map(i => firstName(r.players[t * 2 + i].name)).join(' y '))}</span></div>`).join('')}
+      </div>
+      <div class="f"><label class="check"><input type="checkbox" id="s-worst" ${sd.worst ? 'checked' : ''}> Desempata la mala</label></div>` : ''}
+    <div class="f"><label class="check"><input type="checkbox" id="s-hcp" ${sd.useHcp ? 'checked' : ''}> Jugar con hándicap</label></div>
+    ${can10 ? `<div class="f"><div class="lab">Salida</div><div class="seg"><button type="button" data-sstart="0" class="${sd.start ? '' : 'on'}">Hoyo 1</button><button type="button" data-sstart="9" class="${sd.start ? 'on' : ''}">Hoyo 10</button></div></div>` : ''}
+    <div class="f"><div class="lab">Hándicap en esta partida</div>
+      ${r.players.map((p, k) => `<div class="set-p"><span>${esc(p.name)}</span><input type="number" data-shcp="${k}" value="${esc(sd.hcps[k])}" inputmode="decimal" step="0.1" min="0" max="54"></div>`).join('')}
+      <div class="hint">Solo cambia esta partida; la ficha del jugador no se toca.</div></div>
+    <div class="row2"><button type="button" class="btn cancel" data-close>Cancelar</button><button type="button" class="btn go" data-ssave>Guardar</button></div>
+    <div class="set-danger"><button type="button" class="btn danger full" data-sdel>Borrar partida</button></div>
+  </form>`;
+}
+async function saveSettings() {
+  const r = S.rounds[sd.id], base = 'golf/rounds/' + sd.id + '/', np = r.players.length;
+  const w = [];
+  if (sd.date !== r.date) w.push(['date', sd.date || r.date]);
+  if (sd.useHcp !== !!r.useHcp) w.push(['useHcp', sd.useHcp]);
+  if (sd.format !== r.format) {
+    w.push(['format', sd.format]);
+    if (sd.format === 'match') w.push(['teams', np === 4 ? [[0, 1], [2, 3]] : [[0], [1]]]);
+  }
+  if (sd.format === 'match' && np === 4) {
+    const names = sd.teamNames.map((t, i) => t.trim() || TEAM_NAMES[i]);
+    if (JSON.stringify(names) !== JSON.stringify(r.teamNames || null)) w.push(['teamNames', names]);
+    if (sd.worst !== !!r.worst) w.push(['worst', sd.worst]);
+  }
+  if ((sd.start || 0) !== (r.start || 0)) w.push(['start', sd.start]);
+  sd.hcps.forEach((h, k) => { const v = Math.max(0, Math.min(54, +h || 0)); if (v !== +r.players[k].hcp) w.push([`players/${k}/hcp`, v]); });
+  for (const [path, v] of w) if (!(await save(base + path, v))) return;
+  document.getElementById('dset').close();
+  if (w.length) toast2('Ajustes guardados.');
+}
+function toast2(msg) { toast(msg); document.querySelector('.toast')?.classList.add('ok'); }
+(() => {
+  const dlg = document.getElementById('dset');
+  dlg.addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b || !sd) return;
+    const ds = b.dataset;
+    if (ds.close !== undefined) return dlg.close();
+    if (ds.sfmt) { sd.format = ds.sfmt; return paintSettings(); }
+    if (ds.sstart !== undefined) { sd.start = +ds.sstart; return paintSettings(); }
+    if (ds.sroll !== undefined) {
+      const t = +ds.sroll, pool = TEAM_NAMES.filter(x => x !== sd.teamNames[0] && x !== sd.teamNames[1]);
+      sd.teamNames[t] = pool[Math.floor(Math.random() * pool.length)]; return paintSettings();
+    }
+    if (ds.ssave !== undefined) return saveSettings();
+    if (ds.sdel !== undefined) {
+      if (confirm('¿Borrar esta partida para todos? No se puede deshacer.'))
+        save('golf/rounds/' + sd.id, null).then(ok => { if (ok) { dlg.close(); go('#/'); } });
+    }
+  });
+  dlg.addEventListener('input', ev => {
+    const t = ev.target; if (!sd) return;
+    if (t.id === 's-date') sd.date = t.value;
+    if (t.dataset.stn !== undefined) sd.teamNames[+t.dataset.stn] = t.value;
+    if (t.dataset.shcp !== undefined) sd.hcps[+t.dataset.shcp] = t.value;
+  });
+  dlg.addEventListener('change', ev => {
+    const t = ev.target; if (!sd) return;
+    if (t.id === 's-hcp') sd.useHcp = t.checked;
+    if (t.id === 's-worst') sd.worst = t.checked;
+  });
+})();
+
 // ---------- events ----------
 app.addEventListener('click', ev => {
   const b = ev.target.closest('button, [data-go]'); if (!b) return;
@@ -1158,7 +1270,7 @@ app.addEventListener('click', ev => {
   if (ds.dec !== undefined) return setScore(+ds.dec, -1);
   if (ds.set !== undefined) return setScore(+ds.set, 'set');
   if (ds.pick !== undefined) return setScore(+ds.pick, 'pick');
-  if (ds.rdel) { if (confirm('¿Borrar esta partida para todos?')) save('golf/rounds/' + ds.rdel, null).then(ok => ok && go('#/')); return; }
+  if (ds.settings) return openSettings(ds.settings);
   // setup
   if (cur.v === 'setup') {
     if (ds.add !== undefined) { draft.players.push(emptyRow()); render(); document.querySelector(`[data-pn="${draft.players.length - 1}"]`)?.focus(); return; }
