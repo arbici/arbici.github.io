@@ -57,6 +57,10 @@
   .tag{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:99px;
        background:#e7f3ec;color:var(--green2);white-space:nowrap}
   .tag.done{background:#eef0f2;color:var(--mid)}
+  .tag.live{background:#1f9d57;color:#fff}
+  .tag.live::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#c8ffd9;margin-right:6px;
+       vertical-align:1px;animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
   .empty{color:var(--mid);text-align:center;padding:26px 10px;font-size:15px;background:var(--paper);
          border:1px dashed var(--line);border-radius:14px}
   .pdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:0;flex:none}
@@ -371,6 +375,7 @@ function parse() {
   const h = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (h[0] === 'nueva') return { v: 'setup' };
   if (h[0] === 'jugadores') return { v: 'people' };
+  if (h[0] === 'terminadas') return { v: 'done' };
   if (h[0] === 'campo') return { v: 'course', id: h[1] || 'nuevo' };
   if (h[0] === 'r' && h[1]) return h[2] === 'tarjeta' ? { v: 'card', id: h[1] } : { v: 'play', id: h[1], hole: h[2] ? +h[2] - 1 : null };
   return { v: 'home' };
@@ -386,12 +391,33 @@ const go = h => { location.hash = h; };
 
 function render() {
   if (!S.loaded) { app.innerHTML = '<p class="muted">Cargando…</p>'; return; }
-  ({ home: vHome, setup: vSetup, course: vCourse, play: vPlay, card: vCard, people: vPeople })[cur.v](cur);
+  ({ home: vHome, setup: vSetup, course: vCourse, play: vPlay, card: vCard, people: vPeople, done: vDone })[cur.v](cur);
 }
 
 // ---------- home ----------
+const byNewest = () => Object.entries(S.rounds).sort((a, b) => (b[1].created || 0) - (a[1].created || 0));
+function roundCard(id, r) {
+  const done = roundDone(r);
+  return `
+      <a class="card" href="#/r/${esc(id)}">
+        <div class="row"><div class="t">${esc(r.course.name)}</div>
+          ${done ? '<span class="tag done">Terminada</span>' : `<span class="tag live">En juego · hoyo ${holeNo(r, firstOpen(r))}</span>`}</div>
+        <div class="m">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))} · ${r.players.map(p => esc(p.name)).join(', ')}</div>
+        <div class="m"><b>${esc(headline(r))}</b></div>
+      </a>`;
+}
+function vDone() {
+  const rounds = byNewest().filter(([, r]) => roundDone(r));
+  app.innerHTML = `
+    <a class="back" href="#/">‹ Partidas en juego</a>
+    <h1>Partidas terminadas</h1>
+    <p class="sub">${rounds.length} ${rounds.length === 1 ? 'partida' : 'partidas'}, de la más reciente a la más antigua.</p>
+    ${rounds.length ? rounds.map(([id, r]) => roundCard(id, r)).join('') : '<div class="empty">Aún no hay partidas terminadas.</div>'}`;
+}
 function vHome() {
-  const rounds = Object.entries(S.rounds).sort((a, b) => (b[1].created || 0) - (a[1].created || 0));
+  const all = byNewest();
+  const rounds = all.filter(([, r]) => !roundDone(r));
+  const closed = all.length - rounds.length;
   const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name));
   app.innerHTML = `
     <h1>Tarjeta</h1>
@@ -399,13 +425,8 @@ function vHome() {
     <button class="btn full" data-go="#/nueva" ${courses.length ? '' : 'disabled'}>Nueva partida</button>
     ${courses.length ? '' : '<p class="hint">Primero añade un campo con su tarjeta.</p>'}
 
-    <h2>Partidas</h2>
-    ${rounds.length ? rounds.map(([id, r]) => `
-      <a class="card" href="#/r/${esc(id)}">
-        <div class="row"><div class="t">${esc(r.course.name)}</div><span class="tag ${roundDone(r) ? 'done' : ''}">${roundDone(r) ? 'Terminada' : `Hoyo ${holeNo(r, firstOpen(r))}`}</span></div>
-        <div class="m">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))} · ${r.players.map(p => esc(p.name)).join(', ')}</div>
-        <div class="m"><b>${esc(headline(r))}</b></div>
-      </a>`).join('') : '<div class="empty">Aún no hay partidas.</div>'}
+    <h2>En juego</h2>
+    ${rounds.length ? rounds.map(([id, r]) => roundCard(id, r)).join('') : '<div class="empty">No hay ninguna partida en juego.</div>'}
 
     <h2>Campos</h2>
     ${courses.length ? courses.map(([id, c]) => `
@@ -418,6 +439,9 @@ function vHome() {
     <h2>Jugadores</h2>
     <a class="card" href="#/jugadores"><div class="row"><div class="t">Jugadores y hándicaps</div><span class="m">${Object.keys(S.people).length}</span></div>
       <div class="m">Cambia aquí el hándicap de cada uno cuando se mueva.</div></a>
+
+    <h2>Historial</h2>
+    <a class="card" href="#/terminadas"><div class="row"><div class="t">Partidas terminadas</div><span class="m" style="margin:0">${closed} ›</span></div></a>
 
     <p style="margin-top:34px"><a class="back" href="../">‹ Las Cuentas</a></p>`;
 }
@@ -910,6 +934,9 @@ if (DEMO) {
       r2: { created: 1, date: '2026-09-20', course: { id: 'c1', name: 'Campo de ejemplo', holes },
             players: [{ id: 'p1', name: 'Javi', hcp: 18 }, { id: 'p2', name: 'Hugo', hcp: 14 }, { id: 'p3', name: 'Ana', hcp: 24 }, { id: 'p4', name: 'Luis', hcp: 10 }],
             format: 'match', teams: [[0, 2], [1, 3]], useHcp: true, scores: toObj(sc.map(toObj)) },
+      r3: { created: 0, date: '2026-09-13', course: { id: 'c1', name: 'Campo de ejemplo', holes },
+            players: [{ id: 'p1', name: 'Javi', hcp: 18 }, { id: 'p2', name: 'Hugo', hcp: 14 }],
+            format: 'stableford', useHcp: true, scores: toObj([pars.map((x, i) => x + (i % 3 ? 1 : 0)), pars.map((x, i) => x + (i % 2))].map(toObj)) },
     } } });
   conn('demo, no se guarda', 'down');
   listen();
