@@ -60,6 +60,29 @@
        background:#e7f3ec;color:var(--green2);white-space:nowrap}
   .tag.done{background:#eef0f2;color:var(--mid)}
   .tag.fin{background:var(--ink);color:#fff;font-size:12px;padding:4px 10px}
+  /* match play panel */
+  .mp{margin:10px 0 16px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
+  .mp-head{display:grid;grid-template-columns:1fr auto 1fr;background:#1d3a8a;color:#fff}
+  .mp-side{padding:10px 12px;min-width:0}
+  .mp-side:last-child{text-align:right}
+  .mp-side.lead{background:#fff;color:var(--tc)}
+  .mp-team{font-weight:800;font-size:16px;letter-spacing:.3px}
+  .mp-pl{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.95}
+  .mp-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 12px;border-left:1px solid rgba(255,255,255,.15);border-right:1px solid rgba(255,255,255,.15)}
+  .mp-mid b{font-size:24px;line-height:1.1;font-weight:800}
+  .mp-mid span{font-size:11px;letter-spacing:1.2px;opacity:.8}
+  .mp-note{font-size:12px;color:var(--mid);padding:6px 12px;border-bottom:1px solid var(--line)}
+  .mp-t{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+  .mp-t th,.mp-t td{text-align:center;padding:6px 0;border-bottom:1px solid #f0f1f2}
+  .mp-t th:first-child{width:76px;text-align:left;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}
+  .mp-t thead th{background:#1d3a8a;color:#fff;font-weight:700}
+  .mp-t .sum{font-weight:800;width:46px}
+  .mp-t thead .sum{font-size:11px}
+  .mp-t .par td,.mp-t .par th{color:var(--mid)}
+  .mp-t .st td{font-size:10px;font-weight:700;color:var(--ink)}
+  .mp-t .st th{color:var(--mid)}
+  .mp-s{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;color:var(--tc);font-weight:700}
+  .mp-s.won{background:var(--tc);color:#fff}
   /* Augusta style leader board */
   .board{--ag:#006747;--agred:#c8102e;margin:6px 0 8px;font-family:'Oswald','Arial Narrow',sans-serif}
   .board-title{width:62%;margin:0 auto;background:#fff;border:2px solid #d9dfdb;border-bottom:0;border-radius:60px 60px 0 0/22px 22px 0 0;
@@ -852,8 +875,8 @@ function setScore(k, delta) {
 }
 
 // ---------- full scorecard ----------
-// The Golpes list as an Augusta style leader board: running score to par after every hole, in the
-// order the holes are played, red under par and green level or over. Rows arrive ranked (ranked).
+// The Golpes list as an Augusta style leader board: strokes on every hole, red when under par for
+// that hole and green at par or over, with totals at the end. Rows arrive ranked (ranked).
 function leaderBoard(r, ranked) {
   const hs = holesOf(r), seq = order(r);
   const pos = [];
@@ -862,25 +885,65 @@ function leaderBoard(r, ranked) {
   const head = cols.map(i => `<th>${holeNo(r, i)}</th>`).join('');
   const pars = cols.map(i => `<td>${hs[i].par}</td>`).join('');
   const rows = ranked.map(({ k, st, vh }, n) => {
-    const run = {};
-    let tot = 0;
-    seq.forEach(i => {
-      const s = scoreOf(r, k, i);
-      if (s === null) return;
-      if (s < 0) { run[i] = 'X'; return; }
-      tot += s - hs[i].par; run[i] = tot;
-    });
-    const cell = i => { const v = run[i]; return v === undefined ? '<td></td>'
-      : v === 'X' ? '<td class="pu">X</td>' : `<td class="${v < 0 ? 'under' : 'over'}">${Math.abs(v)}</td>`; };
+    const cell = i => { const v = scoreOf(r, k, i); return v === null ? '<td></td>'
+      : v < 0 ? '<td class="pu">X</td>' : `<td class="${v < hs[i].par ? 'under' : 'over'}">${v}</td>`; };
     const name = r.players[k].name, last = String(name).trim().split(/\s+/).pop();
     return `<tr><td class="pos">${st.played ? pos[n] : ''}</td><td class="nm" title="${esc(name)}">${esc(last.toUpperCase())}</td>${cols.map(cell).join('')}
       <td class="tot">${st.played ? st.gross : ''}</td>
+      <td class="tot ${st.played ? (st.vsPar < 0 ? 'under' : 'over') : ''}">${st.played ? (st.vsPar > 0 ? '+' + st.vsPar : st.vsPar < 0 ? '−' + (-st.vsPar) : 'E') : ''}</td>
       <td class="tot ${vh === null ? '' : vh < 0 ? 'under' : 'over'}">${vh === null ? '' : vh > 0 ? '+' + vh : vh < 0 ? '−' + (-vh) : '0'}</td></tr>`;
   }).join('');
   return `<div class="board"><div class="board-title">LEADERS</div><div class="bw"><table class="lboard num">
-    <thead><tr><th class="pos"></th><th class="nm">HOLE</th>${head}<th class="tot">GOLPES</th><th class="tot">VS HCP</th></tr>
-      <tr class="par"><th class="pos"></th><th class="nm">PAR</th>${pars}<td class="tot">${sum(hs.map(h => h.par))}</td><td class="tot"></td></tr></thead>
+    <thead><tr><th class="pos"></th><th class="nm">HOLE</th>${head}<th class="tot">GOLPES</th><th class="tot">VS PAR</th><th class="tot">VS HCP</th></tr>
+      <tr class="par"><th class="pos"></th><th class="nm">PAR</th>${pars}<td class="tot">${sum(hs.map(h => h.par))}</td><td class="tot"></td><td class="tot"></td></tr></thead>
     <tbody>${rows}</tbody></table></div></div>`;
+}
+// Match play panel for the full scorecard: both sides with their handicap strokes, the result in the
+// middle, and per nine the best net ball of each side (filled when that side won the hole) and the
+// running match status after every hole.
+const TEAMC = ['#c8102e', '#1d3a8a'];
+const shortName = n => { const w = String(n || '').trim().split(/\s+/); return w.length > 1 ? `${w[0][0]}. ${w.slice(1).join(' ')}` : w[0]; };
+function matchPanel(r) {
+  const hs = holesOf(r), n = hs.length, m = matchState(r);
+  const min = Math.min(...inMatch(r).map(q => phcp(r, q)));
+  const label = t => r.teams[t].length > 1 ? `PAREJA ${t + 1}` : firstName(r.players[r.teams[t][0]].name).toUpperCase();
+  const best = (t, i) => { const v = teamNets(r, t, i)[0]; return v === Infinity ? 'X' : v; };
+  // running status after each hole, in the order played
+  const stat = {}; let up = 0, done = 0, closedAt = null;
+  order(r).forEach(i => {
+    const w = m.res[i];
+    if (w === null) return;
+    if (closedAt !== null) { stat[i] = { t: '-', c: '' }; return; }
+    done++; up += w === 0 ? 1 : w === 1 ? -1 : 0;
+    const left = n - done;
+    if (Math.abs(up) > left) { closedAt = i; stat[i] = { t: left ? `${Math.abs(up)}&${left}` : `${Math.abs(up)}UP`, c: up > 0 ? 0 : 1 }; }
+    else stat[i] = up === 0 ? { t: 'AS', c: '' } : { t: `${Math.abs(up)}UP`, c: up > 0 ? 0 : 1 };
+  });
+  const lead = m.closed ? (m.closed.up > 0 ? 0 : 1) : m.up > 0 ? 0 : m.up < 0 ? 1 : null;
+  const side = t => `<div class="mp-side ${lead === t ? 'lead' : ''}" style="--tc:${TEAMC[t]}"><div class="mp-team">${esc(label(t))}</div>
+      ${r.teams[t].map(p => `<div class="mp-pl">${esc(shortName(r.players[p].name))}${r.useHcp ? ` (${phcp(r, p) - min})` : ''}</div>`).join('')}</div>`;
+  const big = m.closed ? (m.closed.left ? `${Math.abs(m.closed.up)}&${m.closed.left}` : `${Math.abs(m.closed.up)}UP`)
+            : m.played === n ? 'AS' : m.up === 0 ? 'AS' : `${Math.abs(m.up)}UP`;
+  const small = m.done ? 'FINAL' : m.played ? `THRU ${m.played}` : 'POR EMPEZAR';
+  const nines = n === 18 ? [[0, 9, 'Ida'], [9, 18, 'Vuelta']] : [[0, n, 'Total']];
+  const table = ([a, b, lab]) => {
+    const idx = hs.slice(a, b).map((_, j) => a + j);
+    const tot = t => idx.every(i => m.res[i] !== null && best(t, i) !== 'X') ? sum(idx.map(i => best(t, i))) : '';
+    const trow = t => `<tr><th style="color:${TEAMC[t]}">${esc(label(t))}</th>${idx.map(i => {
+        if (m.res[i] === null) return '<td></td>';
+        const v = best(t, i), won = m.res[i] === t;
+        return `<td><span class="mp-s ${won ? 'won' : ''}" style="--tc:${TEAMC[t]}">${v}</span></td>`; }).join('')}<td class="sum">${tot(t)}</td></tr>`;
+    return `<table class="mp-t num"><thead><tr><th>Hoyo</th>${idx.map(i => `<th>${holeNo(r, i)}</th>`).join('')}<th class="sum">${lab}</th></tr></thead><tbody>
+      <tr class="par"><th>Par</th>${idx.map(i => `<td>${hs[i].par}</td>`).join('')}<td class="sum">${sum(idx.map(i => hs[i].par))}</td></tr>
+      ${trow(0)}${trow(1)}
+      <tr class="st"><th>Estado</th>${idx.map(i => { const x = stat[i]; return `<td${x && x.c !== '' ? ` style="color:${TEAMC[x.c]}"` : ''}>${x ? x.t : ''}</td>`; }).join('')}<td class="sum"></td></tr>
+    </tbody></table>`;
+  };
+  return `<div class="mp">
+    <div class="mp-head">${side(0)}<div class="mp-mid"><b>${big}</b><span>${small}</span></div>${side(1)}</div>
+    <div class="mp-note">${r.teams[0].length > 1 ? 'Mejor bola' : 'Individual'}${r.useHcp ? ' neta' : ''}${r.worst ? ' · desempata la mala' : ''}${r.useHcp ? ' · entre paréntesis, golpes que recibe cada uno' : ''}</div>
+    ${nines.map(table).join('')}
+  </div>`;
 }
 function vCard({ id }) {
   const r = S.rounds[id];
@@ -916,10 +979,7 @@ function vCard({ id }) {
   }
   // standings
   let standings;
-  if (r.format === 'match') {
-    const m = matchState(r);
-    standings = `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}${matchNote(r)}</div></div>`;
-  } else standings = summaryBox(r);
+  standings = r.format === 'match' ? matchPanel(r) : summaryBox(r);
   // Best score of the day first: strokes against par on the holes played so far, then against handicap.
   const order = r.players.map((_, k) => ({ k, st: playerStats(r, k), vh: vsHandicap(r, k) }))
     .sort((a, b) => (b.st.played ? 1 : 0) - (a.st.played ? 1 : 0) || a.st.vsPar - b.st.vsPar || (a.vh ?? 0) - (b.vh ?? 0));
@@ -935,7 +995,7 @@ function vCard({ id }) {
     <div class="legend"><span><span class="s eagle">3</span> eagle</span><span><span class="s birdie">3</span> birdie</span>
       <span><span class="s bogey">5</span> bogey</span><span><span class="s double">6</span> doble o más</span><span>• golpe de hándicap</span></div>
     <h2>Golpes</h2>${extra}
-    <div class="hint">Cada casilla es el resultado acumulado contra el par tras ese hoyo: en rojo bajo par, en verde par o por encima. X es una bola levantada.</div>`;
+    <div class="hint">Cada casilla son los golpes en ese hoyo: en rojo bajo par, en verde par o por encima. X es una bola levantada.</div>`;
 }
 
 // ---------- events ----------
