@@ -7,7 +7,7 @@
 // strokes, coarse to fine, each laid along the direction of the shapes underneath, with a little
 // relief so the paint catches the light. The result is kept on this phone so it is only painted once.
 let sketchURL = null, sketching = false;
-const PAINT_VERSION = 'paint-v8';
+const PAINT_VERSION = 'paint-v9';
 function paintGolfers(x, S) {
   clubs = [];
   // photo pixels (475 x 318) to canvas pixels
@@ -18,29 +18,41 @@ function paintGolfers(x, S) {
   const disc = (a, b, r, col) => { x.fillStyle = col; x.beginPath(); x.arc(a, b, r, 0, 7); x.fill(); };
   const skin = '#c98f6b', hair = '#4a3426';
   const shadow = (fx, fy, w) => { x.fillStyle = 'rgba(25,45,20,.45)'; x.beginPath(); x.ellipse(fx + w * .25, fy + w * .06, w, w * .2, 0, 0, 7); x.fill(); };
-  // a man about to watch the drive: standing, turned towards the left, both hands on his driver, head resting on the grass
-  const watcher = (fx, fy, h, shirt, pants, cap) => {
-    const u = h / 64, X = v => fx + v * u, Y = v => fy - v * u;
-    shadow(fx, fy, 11 * u);
-    poly([[X(-3.5), Y(33)], [X(-1), Y(33)], [X(-2), Y(1)], [X(-5.5), Y(1)]], sh(pants, .8));       // far leg
-    poly([[X(0), Y(33)], [X(4), Y(33)], [X(4.6), Y(1)], [X(1.2), Y(1)]], pants);                  // near leg
-    poly([[X(-6.5), Y(1.5)], [X(-1.5), Y(1.5)], [X(-1.5), Y(-.5)], [X(-7), Y(-.5)]], '#2a241f');
-    poly([[X(0.5), Y(1.5)], [X(5.5), Y(1.5)], [X(5.5), Y(-.5)], [X(0), Y(-.5)]], '#2a241f');
-    poly([[X(-5.5), Y(54)], [X(5.5), Y(54.5)], [X(5), Y(32)], [X(-4.5), Y(32)]], shirt);           // torso
-    poly([[X(1.5), Y(54.3)], [X(5.5), Y(54.5)], [X(5), Y(32)], [X(2), Y(32)]], sh(shirt, .78));    // shaded side
-    poly([[X(-4.5), Y(34)], [X(5), Y(34)], [X(5), Y(32)], [X(-4.5), Y(32)]], sh(pants, .65));      // belt
-    line(X(-4.5), Y(52), X(-7), Y(38), 3.2 * u, sh(shirt, .9)); line(X(-7), Y(38), X(-6), Y(33), 2.6 * u, skin);  // arms to the grip
-    line(X(4.5), Y(52), X(-2), Y(40), 3.2 * u, sh(shirt, .8)); line(X(-2), Y(40), X(-5.5), Y(33.5), 2.6 * u, sh(skin, .9));
-    disc(X(-5.8), Y(33), 1.9 * u, sh(skin, .95));
-    line(X(-1), Y(55), X(-.5), Y(57.5), 2.4 * u, sh(skin, .85));                                    // neck
-    disc(X(-.6), Y(61), 3.9 * u, skin); disc(X(1.2), Y(61), 2.6 * u, sh(skin, .82));                // head, lit from the left
-    poly([[X(0.5), Y(62.8)], [X(3.6), Y(62.8)], [X(3.4), Y(58.2)], [X(1.8), Y(57.6)]], hair);                 // dark hair at the back
-    // cap, head tipped back to follow the ball: crown towards the upper right, peak towards the upper left
-    { const hx = X(-.6), hy = Y(61), a = -2.25, c = a + Math.PI / 2;
-      x.fillStyle = cap; x.beginPath(); x.arc(hx, hy, 4.1 * u, c - Math.PI / 2 - .25, c + Math.PI / 2 + .25); x.fill();
-      x.save(); x.translate(hx + Math.cos(a) * 3.2 * u, hy + Math.sin(a) * 3.2 * u); x.rotate(a);
-      x.fillStyle = sh(cap, .85); x.fillRect(0, -.7 * u, 4.2 * u, 1.4 * u); x.restore(); }
-    clubs.push([X(-5.8), Y(33), X(-11), Y(0.5), 1.1 * u, '#4b4943', [-1.6 * u, 0, 2.6 * u, 1.3 * u, 0]]);
+  // a man watching the drive, seen from behind as he looks up after the ball. pose 'hold': both hands on
+  // his driver in front of him, only its head showing between his feet; pose 'lean': leaning on the
+  // driver planted at his right side, left hand on his hip, legs crossed at the ankles
+  const watcher = (fx, fy, h, shirt, pants, cap, pose = 'hold') => {
+    const u = h / 64, X = v => fx + v * u, Y = v => fy - v * u, lean = pose === 'lean' ? 1.6 : 0;
+    shadow(fx + 2 * u, fy, 10 * u);
+    if (pose === 'lean') {
+      poly([[X(-4.5), Y(33)], [X(0), Y(33)], [X(-1.5), Y(1)], [X(-5), Y(1)]], sh(pants, .82));                  // left leg, standing
+      poly([[X(-.5), Y(33)], [X(4), Y(33)], [X(1.5), Y(12)], [X(-5.5), Y(2.5)], [X(-7.5), Y(4)], [X(-1.5), Y(13)]], pants); // right leg crossed over
+      poly([[X(-6), Y(1.5)], [X(-.5), Y(1.5)], [X(-.5), Y(-.5)], [X(-6.5), Y(-.5)]], '#2a241f');
+      x.save(); x.translate(X(-6.8), Y(2.6)); x.rotate(-.5); x.fillStyle = '#2a241f'; x.beginPath(); x.ellipse(0, 0, 2.8 * u, 1.3 * u, 0, 0, 7); x.fill(); x.restore(); // right foot on its toe
+    } else {
+      poly([[X(-4.5), Y(33)], [X(-.5), Y(33)], [X(-2), Y(1)], [X(-5.5), Y(1)]], sh(pants, .85));
+      poly([[X(.5), Y(33)], [X(4.5), Y(33)], [X(5), Y(1)], [X(1.5), Y(1)]], pants);
+      poly([[X(-6.5), Y(1.5)], [X(-1.5), Y(1.5)], [X(-1.5), Y(-.5)], [X(-7), Y(-.5)]], '#2a241f');
+      poly([[X(1), Y(1.5)], [X(6), Y(1.5)], [X(6), Y(-.5)], [X(.5), Y(-.5)]], '#2a241f');
+      clubs.push([X(-.2), Y(12), X(-.6), Y(1.2), .9 * u, '#4b4943', [-1.2 * u, 0, 2.2 * u, 1.1 * u, 0]]);   // driver between his feet
+    }
+    const T = v => X(v + lean);                                                                                  // upper body leans towards the club
+    poly([[T(-5.5), Y(54)], [T(5.5), Y(54.3)], [X(5), Y(32)], [X(-4.8), Y(32)]], shirt);                         // back
+    poly([[T(1.8), Y(54.2)], [T(5.5), Y(54.3)], [X(5), Y(32)], [X(2), Y(32)]], sh(shirt, .8));
+    poly([[X(-4.8), Y(34)], [X(5), Y(34)], [X(5), Y(32)], [X(-4.8), Y(32)]], sh(pants, .6));                    // belt
+    if (pose === 'lean') {
+      line(T(-5), Y(52), X(-10), Y(43), 3.2 * u, shirt); line(X(-10), Y(43), X(-5), Y(35.5), 2.6 * u, skin);     // hand on the hip
+      line(T(5), Y(52), X(8.5), Y(42), 3.2 * u, sh(shirt, .85)); line(X(8.5), Y(42), X(9.5), Y(35), 2.6 * u, skin); // arm down to the grip
+      disc(X(9.6), Y(34.5), 1.9 * u, skin);
+      clubs.push([X(9.6), Y(34.5), X(11.5), Y(.8), 1.1 * u, '#4b4943', [1.6 * u, 0, 2.6 * u, 1.3 * u, 0]]);    // driver planted at his side
+    } else {
+      line(T(-5), Y(52), X(-6), Y(38), 3.2 * u, shirt); line(T(5), Y(52), X(5.5), Y(38), 3.2 * u, sh(shirt, .85));  // arms forward to the grip
+    }
+    line(T(0), Y(54.5), T(.2), Y(57), 2.6 * u, sh(skin, .85));                                                     // neck
+    disc(T(.2), Y(60), 3.8 * u, sh(skin, .9));
+    x.fillStyle = hair; x.beginPath(); x.arc(T(.2), Y(60), 3.8 * u, .15, Math.PI - .15); x.fill();               // back of the head
+    x.fillStyle = cap; x.beginPath(); x.arc(T(.2), Y(60.8), 4 * u, Math.PI + .1, -.1); x.fill();                 // cap from behind
+    x.save(); x.translate(T(-1.2), Y(64.2)); x.rotate(-2.1); x.fillStyle = sh(cap, .85); x.fillRect(0, -.7 * u, 3.2 * u, 1.4 * u); x.restore(); // peak tipped up after the ball
   };
   // the golfer holding his finish, seen from behind: weight on the left foot, right foot up on its toe
   // with the sole showing, hands high over the left shoulder, club across behind his head, head turned
@@ -82,10 +94,10 @@ function paintGolfers(x, S) {
   const g = P(172, 213);
   golfer(g[0], g[1], 57 * S, '#f1eee6', '#2e3a52', '#2f5a3a');
   ballInAir = P(265, 57);
-  // the other three to his right and a little behind him, facing him
+  // the other three to his right and a little behind him, backs to us, watching the ball
   watcher(...P(262, 234), 58 * S, '#2f4a6e', '#8c8474', '#6b2e2b');
   watcher(...P(286, 239), 60 * S, '#a7c1d9', '#b19c73', '#27344f');
-  watcher(...P(311, 232), 57 * S, '#9a4a45', '#3a3d45', '#3a3d45');
+  watcher(...P(311, 232), 57 * S, '#9a4a45', '#3a3d45', '#3a3d45', 'lean');
 }
 let clubs = [];
 function paintClubs(x) {
