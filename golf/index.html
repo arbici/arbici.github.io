@@ -253,7 +253,7 @@
 
   <div class="foot">
     <span>Match play, tres apuestas por partida: primeros 9, segundos 9 y 18 hoyos. Una apuesta empatada no mueve dinero.</span>
-    <button id="editnames" disabled>Cambiar nombres</button>
+    <span><a href="./tarjeta/" style="color:var(--mid);margin-right:14px">Tarjeta de juego</a><button id="editnames" disabled>Cambiar nombres</button></span>
   </div>
 </main>
 
@@ -684,18 +684,22 @@ if (DEMO) {
   if (!c) { ready('sin conexión', 'down', false); shout('No se puede conectar con la base de datos, así que ahora mismo no se guarda nada.'); }
   else {
     ({ db, api } = c);
-    api.onValue(api.ref(db, 'golf'), snap => {
-      const v = snap.val() || {};
-      players = { ...DEFAULT_NAMES, ...(v.players || {}) };
-      entries = v.entries || {};
-      ready('en directo', 'live', true);
-      paint();
-    }, err => {
+    // Only players and entries: /golf also holds the scorecard page's courses and rounds.
+    const onErr = err => {
       ready('desconectado', 'down', false);
       shout(isDenied(err)
         ? 'La base de datos no deja acceder a /golf. Las reglas de Firebase necesitan lectura y escritura en /golf.'
         : 'Se ha perdido la conexión con la base de datos.');
-    });
+    };
+    api.onValue(api.ref(db, 'golf/players'), snap => {
+      players = { ...DEFAULT_NAMES, ...(snap.val() || {}) };
+      paint();
+    }, onErr);
+    api.onValue(api.ref(db, 'golf/entries'), snap => {
+      entries = snap.val() || {};
+      ready('en directo', 'live', true);
+      paint();
+    }, onErr);
   }
 }
 </script>
