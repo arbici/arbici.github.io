@@ -426,7 +426,7 @@ function newDraft() {
   const last = Object.values(S.rounds).sort((a, b) => (b.created || 0) - (a.created || 0))[0];
   const rows = (last?.players || []).filter(p => p.id && S.people[p.id]).map(p => personRow(p.id));
   return { courseId: lastCourse && S.courses[lastCourse] ? lastCourse : ids[0], date: today(),
-           players: rows.length ? rows : [emptyRow()],
+           players: rows.concat(Array.from({ length: Math.max(0, 2 - rows.length) }, emptyRow)),
            format: 'stableford', useHcp: true, start: 0, worst: false, err: '' };
 }
 function vSetup() {
@@ -441,7 +441,7 @@ function vSetup() {
           <div class="pick-wrap"><input data-pn="${i}" value="${esc(p.name)}" maxlength="24" placeholder="Busca o escribe un nombre" autocomplete="off"
                class="${p.id ? 'ok' : ''}" aria-label="Jugador ${i + 1}"><div class="sug" data-sug="${i}" hidden></div></div>
           <input data-ph="${i}" value="${esc(p.hcp)}" type="number" inputmode="decimal" step="0.1" min="0" max="54" placeholder="hcp" aria-label="Hándicap del jugador ${i + 1}">
-          ${np > 1 ? `<button class="x" data-rm="${i}" aria-label="Quitar jugador">×</button>` : '<span></span>'}
+          ${np > 2 ? `<button class="x" data-rm="${i}" aria-label="Quitar jugador">×</button>` : '<span></span>'}
         </div>`; };
   app.innerHTML = `
     <a class="back" href="#/">‹ Partidas</a>
@@ -774,7 +774,7 @@ app.addEventListener('click', ev => {
     if (ds.add !== undefined) { draft.players.push(emptyRow()); render(); document.querySelector(`[data-pn="${draft.players.length - 1}"]`)?.focus(); return; }
     if (ds.pickp !== undefined) { draft.players[+ds.pickp] = personRow(ds.pid); draft.err = ''; return render(); }
     if (ds.newp !== undefined) return addPerson(+ds.newp);
-    if (ds.rm !== undefined) { draft.players.splice(+ds.rm, 1); return render(); }
+    if (ds.rm !== undefined) { if (draft.players.length > 2) draft.players.splice(+ds.rm, 1); return render(); }
     if (ds.fmt) { draft.format = ds.fmt; return render(); }
     if (ds.startHole !== undefined) { draft.start = +ds.startHole; return render(); }
     if (ds.start !== undefined) return startRound();
