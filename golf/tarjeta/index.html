@@ -255,13 +255,18 @@ const holesOf = r => r.course.holes;
 const scoreOf = (r, p, i) => { const v = r.scores?.[p]?.[i]; return v == null ? null : v; };
 const inMatch = r => r.format === 'match' ? r.teams.flat() : r.players.map((_, i) => i);
 
+// Handicap used in this round: half for a 9-hole round on an 18-hole course.
+const phcp = (r, p) => { const h = +r.players[p].hcp || 0; return Math.round(r.half ? h / 2 : h); };
+// The hole number on the course card (a 9-hole round on the back nine keeps holes 10 to 18).
+const holeNo = (r, i) => holesOf(r)[i].no || i + 1;
+const hcpLabel = (r, p) => `hcp ${r.players[p].hcp}${r.half ? ` (${phcp(r, p)} en 9 hoyos)` : ''}`;
 // Handicap strokes a player receives on a hole, from the handicap index (si) of that hole.
 // Match play gives the difference to the lowest handicap in the match; the others use the full handicap.
 function received(r, p, i) {
   if (!r.useHcp) return 0;
   const hs = holesOf(r), n = hs.length;
-  let h = +r.players[p].hcp || 0;
-  if (r.format === 'match') h -= Math.min(...inMatch(r).map(q => +r.players[q].hcp || 0));
+  let h = phcp(r, p);
+  if (r.format === 'match') h -= Math.min(...inMatch(r).map(q => phcp(r, q)));
   h = Math.max(0, Math.round(h));
   const si = hs[i].si || i + 1;
   return Math.floor(h / n) + (si <= h % n ? 1 : 0);
@@ -283,7 +288,7 @@ function playerStats(r, p) {
     if (s < 0) { pu++; return; }
     gross += s; par += h.par; played++;
   });
-  const hcp = r.useHcp ? Math.round(+r.players[p].hcp || 0) : 0;
+  const hcp = r.useHcp ? phcp(r, p) : 0;
   return { gross, vsPar: gross - par, played, entered, pu, pts, complete: played === hs.length,
            net: played === hs.length ? gross - hcp : null, netVsPar: gross - par - hcp };
 }
@@ -344,7 +349,8 @@ const shape = (s, par) => s === null ? '' : s < 0 ? 'pu' : s - par <= -2 ? 'eagl
 const order = r => { const n = holesOf(r).length, st = r.start === 9 && n === 18 ? 9 : 0; return holesOf(r).map((_, k) => (st + k) % n); };
 const firstOpen = r => { const o = order(r); return o.find(i => r.players.some((_, p) => scoreOf(r, p, i) === null)) ?? o.at(-1); };
 const roundDone = r => r.format === 'match' ? matchState(r).done : holesOf(r).every((_, i) => r.players.every((_, p) => scoreOf(r, p, i) !== null));
-const fmtLabel = r => r.format === 'match' ? (r.teams[0].length === 2 ? 'Match play parejas' : 'Match play') : FORMAT[r.format];
+const fmtLabel = r => (r.format === 'match' ? (r.teams[0].length === 2 ? 'Match play parejas' : 'Match play') : FORMAT[r.format])
+  + (r.half ? ` · hoyos ${holeNo(r, 0)} a ${holeNo(r, holesOf(r).length - 1)}` : '');
 
 // One-line state of a round, for the list on the home screen.
 function headline(r) {
@@ -396,7 +402,7 @@ function vHome() {
     <h2>Partidas</h2>
     ${rounds.length ? rounds.map(([id, r]) => `
       <a class="card" href="#/r/${esc(id)}">
-        <div class="row"><div class="t">${esc(r.course.name)}</div><span class="tag ${roundDone(r) ? 'done' : ''}">${roundDone(r) ? 'Terminada' : `Hoyo ${firstOpen(r) + 1}`}</span></div>
+        <div class="row"><div class="t">${esc(r.course.name)}</div><span class="tag ${roundDone(r) ? 'done' : ''}">${roundDone(r) ? 'Terminada' : `Hoyo ${holeNo(r, firstOpen(r))}`}</span></div>
         <div class="m">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))} · ${r.players.map(p => esc(p.name)).join(', ')}</div>
         <div class="m"><b>${esc(headline(r))}</b></div>
       </a>`).join('') : '<div class="empty">Aún no hay partidas.</div>'}
@@ -427,7 +433,7 @@ function newDraft() {
   const rows = (last?.players || []).filter(p => p.id && S.people[p.id]).map(p => personRow(p.id));
   return { courseId: lastCourse && S.courses[lastCourse] ? lastCourse : ids[0], date: today(),
            players: rows.concat(Array.from({ length: Math.max(0, 2 - rows.length) }, emptyRow)),
-           format: 'stableford', useHcp: true, start: 0, worst: false, err: '' };
+           format: 'stableford', useHcp: true, start: 0, nine: false, worst: false, err: '' };
 }
 function vSetup() {
   if (!draft) draft = newDraft();
@@ -451,8 +457,11 @@ function vSetup() {
       <select id="sc">${courses.map(([id, c]) => `<option value="${esc(id)}" ${id === d.courseId ? 'selected' : ''}>${esc(c.name)} · ${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</option>`).join('')}</select>
       <div class="hint"><a href="#/campo/nuevo">Añadir otro campo</a></div></div>
     ${S.courses[d.courseId]?.holes.length === 18 ? `
-    <div class="f"><div class="lab">Salida</div>
-      <div class="seg"><button data-start-hole="0" class="${d.start ? '' : 'on'}">Hoyo 1</button><button data-start-hole="9" class="${d.start ? 'on' : ''}">Hoyo 10</button></div></div>` : ''}
+    <div class="f"><div class="lab">Hoyos</div>
+      <div class="seg"><button data-nine="0" class="${d.nine ? '' : 'on'}">18 hoyos</button><button data-nine="1" class="${d.nine ? 'on' : ''}">9 hoyos</button></div></div>
+    <div class="f"><div class="lab">${d.nine ? 'Qué nueve' : 'Salida'}</div>
+      <div class="seg"><button data-start-hole="0" class="${d.start ? '' : 'on'}">${d.nine ? 'Hoyos 1 a 9' : 'Hoyo 1'}</button><button data-start-hole="9" class="${d.start ? 'on' : ''}">${d.nine ? 'Hoyos 10 a 18' : 'Hoyo 10'}</button></div>
+      ${d.nine ? '<div class="hint">En 9 hoyos cada jugador juega con la mitad de su hándicap.</div>' : ''}</div>` : ''}
     <div class="f"><label for="sd">Fecha</label><input type="date" id="sd" value="${esc(d.date)}"></div>
 
     <div class="f"><div class="lab">Modalidad</div>
@@ -499,8 +508,20 @@ async function startRound() {
   // The handicap is copied from the player's record now and never updated in this round afterwards.
   const players = d.players.map(p => ({ id: p.id, name: S.people[p.id].name, hcp: Math.max(0, Math.min(54, +S.people[p.id].hcp || 0)) }));
   const teams = d.format === 'match' ? (players.length === 4 ? [[0, 1], [2, 3]] : [[0], [1]]) : null;
-  const r = { created: Date.now(), date: d.date || today(), course: { id: d.courseId, name: c.name, holes: c.holes },
-              players, format: d.format, useHcp: !!d.useHcp, start: c.holes.length === 18 ? d.start : 0 };
+  // A 9-hole round on an 18-hole course copies only that nine. The handicap index is re-ranked 1 to 9
+  // within the nine (the card's value is kept in sio for display) and handicaps are halved (r.half).
+  const nine = c.holes.length === 18 && d.nine;
+  let holes = c.holes;
+  if (nine) {
+    holes = c.holes.slice(d.start, d.start + 9).map((h, k) => ({ ...h, no: d.start + k + 1 }));
+    if (holes.every(h => h.si)) {
+      const rank = [...holes].sort((a, b) => a.si - b.si);
+      holes = holes.map(h => ({ ...h, sio: h.si, si: rank.indexOf(h) + 1 }));
+    }
+  }
+  const r = { created: Date.now(), date: d.date || today(), course: { id: d.courseId, name: c.name, holes },
+              players, format: d.format, useHcp: !!d.useHcp, start: c.holes.length === 18 && !nine ? d.start : 0 };
+  if (nine) r.half = true;
   if (teams) r.teams = teams;
   if (teams && teams[0].length === 2) r.worst = !!d.worst;
   const id = store.key('golf/rounds');
@@ -654,7 +675,7 @@ function vPlay({ id, hole }) {
     const pts = stbPoints(r, k, i);
     const tot = r.format === 'stableford' ? `<b>${st.pts}</b> pts` : st.entered ? `<b>${st.gross}</b> (${signed(st.vsPar)})` : '';
     return `<div class="pl" style="--c:${COLORS[k]}">
-      <div class="top"><div class="nm">${esc(p.name)}${r.useHcp ? ` <span class="muted" style="font-weight:500;font-size:13px">hcp ${p.hcp}</span>` : ''}</div><div class="tot num">${tot}</div></div>
+      <div class="top"><div class="nm">${esc(p.name)}${r.useHcp ? ` <span class="muted" style="font-weight:500;font-size:13px">${hcpLabel(r, k)}</span>` : ''}</div><div class="tot num">${tot}</div></div>
       <div class="rec">${rec ? `recibe ${rec} ${rec === 1 ? 'golpe' : 'golpes'} ${'•'.repeat(Math.min(rec, 4))}` : ''}</div>
       <div class="ctl">
         <button data-dec="${k}" aria-label="Un golpe menos">−</button>
@@ -672,14 +693,14 @@ function vPlay({ id, hole }) {
     ${summaryBox(r)}
     <div class="strip">${o.map(j => {
       const done = r.players.every((_, k) => scoreOf(r, k, j) !== null);
-      return `<button data-hole="${j}" class="${j === i ? 'cur' : done ? 'done' : ''}">${j + 1}</button>`;
+      return `<button data-hole="${j}" class="${j === i ? 'cur' : done ? 'done' : ''}">${holeNo(r, j)}</button>`;
     }).join('')}</div>
-    <div class="hole"><span class="n">Hoyo ${i + 1}</span><span class="meta">Par <b>${h.par}</b>${h.si ? ` · índice ${h.si}` : ''}</span></div>
+    <div class="hole"><span class="n">Hoyo ${holeNo(r, i)}</span><span class="meta">Par <b>${h.par}</b>${h.si ? ` · índice ${h.sio || h.si}` : ''}</span></div>
     <div class="hres">${r.format === 'match' ? (w === null ? '' : w === 'h' ? 'Hoyo empatado' : `Hoyo para ${esc(teamName(r, w))}${wonByWorst(r, i) ? ', desempata la mala' : ''}`) : ''}</div>
     ${pcards}
     <div class="nav">
-      <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${o[pos - 1] + 1}` : '‹'}</button>
-      ${pos < n - 1 ? `<button class="btn" data-hole="${o[pos + 1]}">Hoyo ${o[pos + 1] + 1} ›</button>` : `<button class="btn" data-go="#/r/${esc(id)}/tarjeta">Ver tarjeta</button>`}
+      <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${holeNo(r, o[pos - 1])}` : '‹'}</button>
+      ${pos < n - 1 ? `<button class="btn" data-hole="${o[pos + 1]}">Hoyo ${holeNo(r, o[pos + 1])} ›</button>` : `<button class="btn" data-go="#/r/${esc(id)}/tarjeta">Ver tarjeta</button>`}
     </div>
     <p style="margin-top:30px;text-align:center"><button class="link" data-rdel="${esc(id)}">Borrar partida</button></p>`;
 }
@@ -713,7 +734,7 @@ function vCard({ id }) {
       ? `<td>${fn(c)}</td>` : `<td class="sum">${agg(...rangeOf(c))}</td>`).join('')}</tr>`;
   const parSum = (a, b) => sum(hs.slice(a, b).map(h => h.par));
   let body = rowFor('Par', j => hs[j].par, parSum, 'sub');
-  if (hs.some(h => h.si)) body += rowFor('Índice', j => hs[j].si || '', () => '', 'sub');
+  if (hs.some(h => h.si)) body += rowFor('Índice', j => hs[j].sio || hs[j].si || '', () => '', 'sub');
   r.players.forEach((p, k) => {
     const gsum = (a, b) => { const v = hs.slice(a, b).map((_, j) => scoreOf(r, k, a + j)).filter(s => s > 0); return v.length ? sum(v) : ''; };
     body += rowFor(`<span class="pdot" style="background:${COLORS[k]}"></span>${esc(p.name)}`, j => {
@@ -741,7 +762,7 @@ function vCard({ id }) {
   const extra = r.players.map((p, k) => {
     const st = playerStats(r, k);
     return `<div class="card" style="margin:0 0 6px;padding:10px 14px"><div class="row">
-      <span><span class="pdot" style="background:${COLORS[k]}"></span><b>${esc(p.name)}</b> <span class="muted">hcp ${p.hcp}</span></span>
+      <span><span class="pdot" style="background:${COLORS[k]}"></span><b>${esc(p.name)}</b> <span class="muted">${hcpLabel(r, k)}</span></span>
       <span class="num">${st.played ? `${st.gross} golpes (${signed(st.vsPar)})` : ''}${st.complete && r.useHcp ? ` · neto ${st.net}` : ''}${st.pu ? ` · ${st.pu} X` : ''}</span></div></div>`;
   }).join('');
   app.innerHTML = `
@@ -750,7 +771,7 @@ function vCard({ id }) {
     <div class="muted" style="font-size:14px">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))}${r.useHcp ? ' · con hándicap' : ''}</div>
     ${standings}
     <div class="tw"><table class="sc num">
-      <thead><tr><th>Hoyo</th>${cols.map(c => typeof c === 'number' ? `<th>${c + 1}</th>` : `<th class="sum">${c}</th>`).join('')}</tr></thead>
+      <thead><tr><th>Hoyo</th>${cols.map(c => typeof c === 'number' ? `<th>${holeNo(r, c)}</th>` : `<th class="sum">${c}</th>`).join('')}</tr></thead>
       <tbody>${body}</tbody></table></div>
     <div class="legend"><span><span class="s eagle">3</span> eagle</span><span><span class="s birdie">3</span> birdie</span>
       <span><span class="s bogey">5</span> bogey</span><span><span class="s double">6</span> doble o más</span><span>• golpe de hándicap</span></div>
@@ -777,6 +798,7 @@ app.addEventListener('click', ev => {
     if (ds.rm !== undefined) { if (draft.players.length > 2) draft.players.splice(+ds.rm, 1); return render(); }
     if (ds.fmt) { draft.format = ds.fmt; return render(); }
     if (ds.startHole !== undefined) { draft.start = +ds.startHole; return render(); }
+    if (ds.nine !== undefined) { draft.nine = ds.nine === '1'; return render(); }
     if (ds.start !== undefined) return startRound();
   }
   // players
