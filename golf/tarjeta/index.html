@@ -93,6 +93,8 @@
   .seg{display:grid;gap:6px;grid-auto-flow:column;grid-auto-columns:1fr}
   .seg button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 6px;font-size:14px;font-weight:600;color:var(--mid)}
   .seg button.on{background:var(--green);border-color:var(--green);color:#fff}
+  .seg.fmt{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}
+  @media (max-width:420px){.seg.fmt{grid-template-columns:1fr 1fr}}
   .seg button:disabled{opacity:.4;cursor:default}
   .hint{font-size:13px;color:var(--light);margin-top:6px}
   .err{background:#fff1ee;border:1px solid #f3c2b8;color:#8a2a17;border-radius:10px;padding:10px 12px;margin:0 0 14px;font-size:14px}
@@ -194,7 +196,7 @@
 //   golf/courses/<id> = { name, holes: [{par, si}], created }
 //   golf/people/<id>  = { name, hcp, created }   the player list; hcp is the current handicap
 //   golf/rounds/<id>  = { created, date, course: {id, name, holes}, players: [{id, name, hcp}],
-//                         format: "medal" | "stableford" | "match", teams: [[0,1],[2,3]] | [[0],[1]],
+//                         format: "medal" | "stableford" | "match" | "sindicato", teams: [[0,1],[2,3]] | [[0],[1]],
 //                         useHcp, scores: { <player>: { <hole index>: strokes | -1 (picked up) } } }
 // The course and each player's handicap are copied into the round when it starts, so changing a
 // course or a handicap later only affects rounds started after that.
@@ -203,7 +205,7 @@ import { connect } from '../../queensland/firebase-config.js';
 
 const DEMO = new URLSearchParams(location.search).has('demo');
 const COLORS = ['var(--p0)', 'var(--p1)', 'var(--p2)', 'var(--p3)'];
-const FORMAT = { medal: 'Juego por golpes', stableford: 'Stableford', match: 'Match play' };
+const FORMAT = { medal: 'Juego por golpes', stableford: 'Stableford', match: 'Match play', sindicato: 'Sindicato' };
 const app = document.getElementById('app');
 const S = { courses: {}, rounds: {}, people: {}, loaded: false };
 const peopleList = () => Object.entries(S.people).map(([id, p]) => ({ id, ...p })).sort((a, b) => a.name.localeCompare(b.name, 'es'));
@@ -265,12 +267,12 @@ const phcp = (r, p) => { const h = +r.players[p].hcp || 0; return Math.round(r.h
 const holeNo = (r, i) => holesOf(r)[i].no || i + 1;
 const hcpLabel = (r, p) => `hcp ${r.players[p].hcp}${r.half ? ` (${phcp(r, p)} en 9 hoyos)` : ''}`;
 // Handicap strokes a player receives on a hole, from the handicap index (si) of that hole.
-// Match play gives the difference to the lowest handicap in the match; the others use the full handicap.
+// Match play and Sindicato give the difference to the lowest handicap; the others use the full handicap.
 function received(r, p, i) {
   if (!r.useHcp) return 0;
   const hs = holesOf(r), n = hs.length;
   let h = phcp(r, p);
-  if (r.format === 'match') h -= Math.min(...inMatch(r).map(q => phcp(r, q)));
+  if (r.format === 'match' || r.format === 'sindicato') h -= Math.min(...inMatch(r).map(q => phcp(r, q)));
   h = Math.max(0, Math.round(h));
   const si = hs[i].si || i + 1;
   return Math.floor(h / n) + (si <= h % n ? 1 : 0);
@@ -281,6 +283,21 @@ function stbPoints(r, p, i) {
   if (s < 0) return 0;
   return Math.max(0, 2 + holesOf(r)[i].par + received(r, p, i) - s);
 }
+// Sindicato, three players: 6 points per hole on net score. 4-2-0 when all differ, 4-1-1 when one wins
+// and the other two tie, 3-3-0 when two tie for best, 2-2-2 when all three tie. A pick-up is the worst score.
+function sindPoints(r, i) {
+  if (r.players.some((_, p) => scoreOf(r, p, i) === null)) return null;
+  const net = r.players.map((_, p) => { const s = scoreOf(r, p, i); return s > 0 ? s - received(r, p, i) : Infinity; });
+  const best = Math.min(...net), worst = Math.max(...net);
+  const nBest = net.filter(v => v === best).length, nWorst = net.filter(v => v === worst).length;
+  if (nBest === 3) return [2, 2, 2];
+  if (nBest === 2) return net.map(v => v === best ? 3 : 0);
+  if (nWorst === 2) return net.map(v => v === best ? 4 : 1);
+  return net.map(v => v === best ? 4 : v === worst ? 0 : 2);
+}
+const isPts = r => r.format === 'stableford' || r.format === 'sindicato';
+const holePts = (r, p, i) => r.format === 'stableford' ? stbPoints(r, p, i) : r.format === 'sindicato' ? (sindPoints(r, i)?.[p] ?? null) : null;
+const ptsWord = n => n === 1 ? 'pt' : 'pts';
 function playerStats(r, p) {
   const hs = holesOf(r);
   let gross = 0, par = 0, played = 0, entered = 0, pu = 0, pts = 0;
@@ -288,7 +305,7 @@ function playerStats(r, p) {
     const s = scoreOf(r, p, i);
     if (s === null) return;
     entered++;
-    pts += stbPoints(r, p, i);
+    pts += holePts(r, p, i) || 0;
     if (s < 0) { pu++; return; }
     gross += s; par += h.par; played++;
   });
@@ -361,7 +378,7 @@ function headline(r) {
   if (r.format === 'match') return matchState(r).text;
   const st = r.players.map((_, p) => ({ p, ...playerStats(r, p) })).filter(x => x.entered);
   if (!st.length) return 'Sin empezar';
-  if (r.format === 'stableford') {
+  if (isPts(r)) {
     st.sort((a, b) => b.pts - a.pts);
     return `${r.players[st[0].p].name} ${st[0].pts} pts`;
   }
@@ -467,8 +484,9 @@ function newDraft() {
 function vSetup() {
   if (!draft) draft = newDraft();
   const d = draft, np = d.players.length;
-  const matchOk = np === 2 || np === 4;
+  const matchOk = np === 2 || np === 4, sindOk = np === 3;
   if (d.format === 'match' && !matchOk) d.format = 'stableford';
+  if (d.format === 'sindicato' && !sindOk) d.format = 'stableford';
   const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name));
   const teams4 = d.format === 'match' && np === 4;
   const prow = i => { const p = d.players[i]; return `
@@ -494,15 +512,17 @@ function vSetup() {
     <div class="f"><label for="sd">Fecha</label><input type="date" id="sd" value="${esc(d.date)}"></div>
 
     <div class="f"><div class="lab">Modalidad</div>
-      <div class="seg">
+      <div class="seg fmt">
         <button data-fmt="medal" class="${d.format === 'medal' ? 'on' : ''}">Golpes</button>
         <button data-fmt="stableford" class="${d.format === 'stableford' ? 'on' : ''}">Stableford</button>
         <button data-fmt="match" class="${d.format === 'match' ? 'on' : ''}" ${matchOk ? '' : 'disabled'}>Match play</button>
+        <button data-fmt="sindicato" class="${d.format === 'sindicato' ? 'on' : ''}" ${sindOk ? '' : 'disabled'}>Sindicato</button>
       </div>
       <div class="hint">${d.format === 'medal' ? 'Gana quien menos golpes haga, contra el par del campo.'
         : d.format === 'stableford' ? 'Todos contra todos. Puntos por hoyo: 2 por el par, uno más por cada golpe por debajo.'
+        : d.format === 'sindicato' ? 'Tres jugadores, 6 puntos por hoyo: 4, 2 y 0 si nadie empata; 4, 1 y 1 si empatan los dos peores; 3, 3 y 0 si empatan los dos mejores; 2 cada uno si empatan los tres.'
         : np === 4 ? 'Dos contra dos, mejor bola: en cada hoyo cuenta el mejor resultado neto de cada pareja.'
-        : 'Uno contra uno, hoyo a hoyo.'}${matchOk ? '' : ' Match play necesita 2 o 4 jugadores.'}</div>
+        : 'Uno contra uno, hoyo a hoyo.'}${matchOk || d.format === 'sindicato' ? '' : ' Match play necesita 2 o 4 jugadores.'}${sindOk || d.format === 'match' ? '' : ' Sindicato necesita 3 jugadores.'}</div>
     </div>
 
     <div class="f"><div class="lab">Jugadores y hándicap de juego</div>
@@ -521,7 +541,7 @@ function vSetup() {
       <div class="hint">Si las mejores bolas empatan, el hoyo es para la pareja con mejor segunda bola.</div></div>` : ''}
 
     <div class="f"><label class="check"><input type="checkbox" id="suh" ${d.useHcp ? 'checked' : ''}> Jugar con hándicap</label>
-      <div class="hint">${d.format === 'match' ? 'En match play se da la diferencia con el hándicap más bajo, repartida por el índice de cada hoyo.' : 'Cada jugador recibe sus golpes repartidos por el índice de cada hoyo.'}</div></div>
+      <div class="hint">${d.format === 'match' || d.format === 'sindicato' ? `En ${d.format === 'match' ? 'match play' : 'Sindicato'} se da la diferencia con el hándicap más bajo, repartida por el índice de cada hoyo.` : 'Cada jugador recibe sus golpes repartidos por el índice de cada hoyo.'}</div></div>
 
     <button class="btn full" data-start>Empezar</button>`;
 }
@@ -680,16 +700,16 @@ function summaryBox(r) {
     return `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}${matchNote(r)}</div></div>`;
   }
   const st = r.players.map((p, i) => ({ i, ...playerStats(r, i) }));
-  const key = r.format === 'stableford' ? (a, b) => b.pts - a.pts
+  const key = isPts(r) ? (a, b) => b.pts - a.pts
             : r.useHcp ? (a, b) => a.netVsPar - b.netVsPar : (a, b) => a.vsPar - b.vsPar;
   const sorted = [...st].sort((a, b) => (b.entered ? 1 : 0) - (a.entered ? 1 : 0) || key(a, b));
   const n = holesOf(r).length;
   return `<div class="summary"><div class="lb">${sorted.map((x, k) => `
     <div class="it"><span class="pos">${x.entered ? k + 1 : ''}</span>
       <span><span class="pdot" style="background:${COLORS[x.i]}"></span>${esc(r.players[x.i].name)}</span>
-      <span class="val num">${r.format === 'stableford' ? x.pts : x.entered ? signed(r.useHcp ? x.netVsPar : x.vsPar) : '·'}</span>
+      <span class="val num">${isPts(r) ? x.pts : x.entered ? signed(r.useHcp ? x.netVsPar : x.vsPar) : '·'}</span>
       <span class="thru">${x.entered === n ? 'fin' : x.entered ? 'tras ' + x.entered : ''}</span></div>`).join('')}
-    </div><div class="small" style="margin-top:8px">${r.format === 'stableford' ? 'Puntos Stableford' : r.useHcp ? 'Neto contra el par' : 'Contra el par'}</div></div>`;
+    </div><div class="small" style="margin-top:8px">${isPts(r) ? `Puntos ${FORMAT[r.format]}` : r.useHcp ? 'Neto contra el par' : 'Contra el par'}</div></div>`;
 }
 function vPlay({ id, hole }) {
   const r = S.rounds[id];
@@ -701,8 +721,8 @@ function vPlay({ id, hole }) {
   const w = r.format === 'match' ? holeWinner(r, i) : null;
   const pcards = r.players.map((p, k) => {
     const s = scoreOf(r, k, i), rec = received(r, k, i), st = playerStats(r, k);
-    const pts = stbPoints(r, k, i);
-    const tot = r.format === 'stableford' ? `<b>${st.pts}</b> pts` : st.entered ? `<b>${st.gross}</b> (${signed(st.vsPar)})` : '';
+    const pts = holePts(r, k, i);
+    const tot = isPts(r) ? `<b>${st.pts}</b> ${ptsWord(st.pts)}` : st.entered ? `<b>${st.gross}</b> (${signed(st.vsPar)})` : '';
     return `<div class="pl" style="--c:${COLORS[k]}">
       <div class="top"><div class="nm">${esc(p.name)}${r.useHcp ? ` <span class="muted" style="font-weight:500;font-size:13px">${hcpLabel(r, k)}</span>` : ''}</div><div class="tot num">${tot}</div></div>
       <div class="rec">${rec ? `recibe ${rec} ${rec === 1 ? 'golpe' : 'golpes'} ${'•'.repeat(Math.min(rec, 4))}` : ''}</div>
@@ -710,7 +730,7 @@ function vPlay({ id, hole }) {
         <button data-dec="${k}" aria-label="Un golpe menos">−</button>
         <button class="val ${s === null ? 'emp' : ''}" data-set="${k}">
           ${s === null ? '<b>toca para par</b>' : s < 0 ? '<b style="font-size:22px">X</b><span>levantada</span>'
-            : `<b class="num">${s}</b><span>${esc(scoreWord(s, h.par))}${r.format === 'stableford' ? ` · ${pts} ${pts === 1 ? 'pt' : 'pts'}` : ''}</span>`}
+            : `<b class="num">${s}</b><span>${esc(scoreWord(s, h.par))}${isPts(r) && pts !== null ? ` · ${pts} ${ptsWord(pts)}` : ''}</span>`}
         </button>
         <button data-inc="${k}" aria-label="Un golpe más">+</button>
         <button class="pick ${s !== null && s < 0 ? 'on' : ''}" data-pick="${k}" aria-label="Bola levantada">X</button>
@@ -725,7 +745,8 @@ function vPlay({ id, hole }) {
       return `<button data-hole="${j}" class="${j === i ? 'cur' : done ? 'done' : ''}">${holeNo(r, j)}</button>`;
     }).join('')}</div>
     <div class="hole"><span class="n">Hoyo ${holeNo(r, i)}</span><span class="meta">Par <b>${h.par}</b>${h.si ? ` · índice ${h.sio || h.si}` : ''}</span></div>
-    <div class="hres">${r.format === 'match' ? (w === null ? '' : w === 'h' ? 'Hoyo empatado' : `Hoyo para ${esc(teamName(r, w))}${wonByWorst(r, i) ? ', desempata la mala' : ''}`) : ''}</div>
+    <div class="hres">${r.format === 'match' ? (w === null ? '' : w === 'h' ? 'Hoyo empatado' : `Hoyo para ${esc(teamName(r, w))}${wonByWorst(r, i) ? ', desempata la mala' : ''}`)
+      : r.format === 'sindicato' && sindPoints(r, i) ? 'Reparto: ' + sindPoints(r, i).map((v, k) => `${esc(r.players[k].name)} ${v}`).join(' · ') : ''}</div>
     ${pcards}
     <div class="nav">
       <button class="btn light" data-hole="${o[pos - 1]}" ${pos === 0 ? 'disabled' : ''}>${pos ? `‹ Hoyo ${holeNo(r, o[pos - 1])}` : '‹'}</button>
@@ -772,9 +793,9 @@ function vCard({ id }) {
       return s === null ? (dots ? `<span class="muted" style="font-size:10px">${'•'.repeat(Math.min(dots, 3))}</span>` : '')
         : `<span class="s ${shape(s, hs[j].par)}">${s < 0 ? 'X' : s}</span>`;
     }, gsum);
-    if (r.format === 'stableford')
-      body += rowFor('<span class="muted">puntos</span>', j => stbPoints(r, k, j) ?? '',
-        (a, b) => sum(hs.slice(a, b).map((_, j) => stbPoints(r, k, a + j) || 0)), 'pts');
+    if (isPts(r))
+      body += rowFor('<span class="muted">puntos</span>', j => holePts(r, k, j) ?? '',
+        (a, b) => sum(hs.slice(a, b).map((_, j) => holePts(r, k, a + j) || 0)), 'pts');
   });
   if (r.format === 'match') {
     const m = matchState(r);
