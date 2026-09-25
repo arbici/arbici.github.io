@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d3b2e">
-<title>The Ledger</title>
+<title>Las Cuentas</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
 <style>
   :root{ color-scheme: light;
@@ -30,6 +30,7 @@
         padding:22px 16px 0}
   .top{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
   .brand{font-family:var(--serif);font-size:20px;letter-spacing:.2px;opacity:.95}
+  .brand{white-space:nowrap}
   .brand a{color:inherit;text-decoration:none}
   .conn{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;padding:4px 9px;border-radius:99px;
         background:rgba(255,255,255,.10);color:rgba(255,255,255,.75);white-space:nowrap}
@@ -186,6 +187,7 @@
   @media (max-width:640px){
     .tiles{grid-template-columns:1fr 1fr}
     .wins{font-size:52px}
+    .brand{font-size:17px}
     .avatar{width:62px;height:62px;font-size:28px}
     .vs{padding-bottom:34px}
     .row{grid-template-columns:1fr;gap:0;padding:12px 12px 10px 16px}
@@ -201,26 +203,26 @@
 
 <header class="hero">
   <div class="top">
-    <div class="brand"><a href="../">arbici</a> <span style="opacity:.5">/</span> The Ledger</div>
-    <div class="conn" id="conn">connecting…</div>
+    <div class="brand"><a href="../">arbici</a> <span style="opacity:.5">/</span> Las Cuentas</div>
+    <div class="conn" id="conn">conectando…</div>
   </div>
 
   <div class="face">
     <div class="player a">
       <div class="avatar"><span id="ia">J</span></div>
       <div class="pname" id="na">Javi</div>
-      <div class="wins num" id="wa">0<small>bets won</small></div>
+      <div class="wins num" id="wa">0<small>apuestas ganadas</small></div>
     </div>
     <div class="vs">vs</div>
     <div class="player b">
       <div class="avatar"><span id="ib">H</span></div>
       <div class="pname" id="nb">Hugo</div>
-      <div class="wins num" id="wb">0<small>bets won</small></div>
+      <div class="wins num" id="wb">0<small>apuestas ganadas</small></div>
     </div>
   </div>
 
   <div class="owe">
-    <div class="who" id="owewho">All square</div>
+    <div class="who" id="owewho">Empatados</div>
     <div class="amt num even" id="oweamt">€0</div>
     <div class="quip" id="quip"></div>
   </div>
@@ -235,40 +237,40 @@
 
 <main class="page">
   <div class="actions">
-    <button class="btn primary" id="addgame" disabled>⛳ Log a round</button>
+    <button class="btn primary" id="addgame" disabled>⛳ Apuntar partida</button>
   </div>
 
   <div id="shoutslot"></div>
 
-  <h2>The numbers</h2>
+  <h2>Los números</h2>
   <div class="tiles" id="tiles"></div>
 
-  <h2>Money over time</h2>
+  <h2>El dinero, partida a partida</h2>
   <div class="chart" id="chart"></div>
 
-  <h2>Every round</h2>
+  <h2>Todas las partidas</h2>
   <ul class="log" id="log"></ul>
 
   <div class="foot">
-    <span>Match play, three bets a round: front 9, back 9 and 18 holes. A halved bet moves no money.</span>
-    <button id="editnames" disabled>Change names</button>
+    <span>Match play, tres apuestas por partida: primeros 9, segundos 9 y 18 hoyos. Una apuesta empatada no mueve dinero.</span>
+    <button id="editnames" disabled>Cambiar nombres</button>
   </div>
 </main>
 
 <!-- log a round -->
 <dialog id="dgame">
   <form class="dlg" method="dialog" id="fgame">
-    <h3>Log a round</h3>
+    <h3>Apuntar partida</h3>
     <div class="two f">
-      <div><label for="gdate">Date</label><input type="date" id="gdate" required></div>
-      <div><label for="gstake">€ per bet</label><input type="number" id="gstake" min="0" step="1" inputmode="decimal" placeholder="10"></div>
+      <div><label for="gdate">Fecha</label><input type="date" id="gdate" required></div>
+      <div><label for="gstake">€ por apuesta</label><input type="number" id="gstake" min="0" step="1" inputmode="decimal" placeholder="10"></div>
     </div>
     <div id="betsin"></div>
-    <div class="hint" id="betshint" style="margin:0 0 14px">18 holes fills in from the two nines. Change it if the match ended early.</div>
-    <div class="f"><label for="gnote">Trash talk (optional)</label><input id="gnote" maxlength="120" placeholder="Three-putted the 18th. Twice."></div>
+    <div class="hint" id="betshint" style="margin:0 0 14px">Los 18 hoyos salen de sumar las dos vueltas. Cámbialo si el partido acabó antes.</div>
+    <div class="f"><label for="gnote">Pique (opcional)</label><input id="gnote" maxlength="120" placeholder="Tres putts en el 18. Dos veces."></div>
     <div class="row2">
-      <button type="button" class="btn cancel" data-close>Cancel</button>
-      <button type="submit" class="btn go">Save round</button>
+      <button type="button" class="btn cancel" data-close>Cancelar</button>
+      <button type="submit" class="btn go">Guardar partida</button>
     </div>
   </form>
 </dialog>
@@ -276,14 +278,14 @@
 <!-- names -->
 <dialog id="dnames">
   <form class="dlg" method="dialog" id="fnames">
-    <h3>Who's playing</h3>
+    <h3>Quién juega</h3>
     <div class="two f">
-      <div><label for="xna"><span class="dot a"></span>Gold</label><input id="xna" maxlength="16" required></div>
-      <div><label for="xnb"><span class="dot b"></span>Blue</label><input id="xnb" maxlength="16" required></div>
+      <div><label for="xna"><span class="dot a"></span>Oro</label><input id="xna" maxlength="16" required></div>
+      <div><label for="xnb"><span class="dot b"></span>Azul</label><input id="xnb" maxlength="16" required></div>
     </div>
     <div class="row2">
-      <button type="button" class="btn cancel" data-close>Cancel</button>
-      <button type="submit" class="btn go">Save</button>
+      <button type="button" class="btn cancel" data-close>Cancelar</button>
+      <button type="submit" class="btn go">Guardar</button>
     </div>
   </form>
 </dialog>
@@ -300,7 +302,7 @@ import { connect } from '../queensland/firebase-config.js';
 
 const $ = id => document.getElementById(id);
 const DEMO = new URLSearchParams(location.search).has('demo');
-const SEGS = [['front', 'Front 9'], ['back', 'Back 9'], ['total', '18 holes']];
+const SEGS = [['front', 'Primeros 9'], ['back', 'Segundos 9'], ['total', '18 hoyos']];
 const DEFAULT_NAMES = { a: 'Javi', b: 'Hugo' };
 let db = null, api = null;
 let players = { ...DEFAULT_NAMES };
@@ -312,6 +314,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const other = k => k === 'a' ? 'b' : 'a';
 const today = () => new Date().toISOString().slice(0, 10);
 const nm = k => players[k] || DEFAULT_NAMES[k];
+const emp = n => n === 1 ? '1 empatada' : n + ' empatadas';
 const lead = (x, y) => x > y ? 'a' : y > x ? 'b' : null;
 
 // Net money for one round, from player a's side: + means b owes a.
@@ -355,19 +358,19 @@ function crunch() {
 
 // ---------- quips ----------
 function quip(s) {
-  if (!s.games) return 'No rounds yet. Somebody book a tee time.';
+  if (!s.games) return 'Aún no hay partidas. Que alguien reserve salida.';
   const last = s.list[s.list.length - 1];
   const ws = SEGS.map(([k]) => last[k]?.w);
   const swept = ws.every(w => w === 'a') ? 'a' : ws.every(w => w === 'b') ? 'b' : null;
   const up = s.balance > 0 ? 'a' : s.balance < 0 ? 'b' : null;
   const amt = Math.abs(s.balance);
   const pick = [
-    swept && `${nm(swept)} took all three bets last time. Brutal.`,
-    s.streak && s.streak.n >= 3 && `${nm(s.streak.k)} has won the 18 ${s.streak.n} times in a row. Somebody stop this.`,
-    !up && 'Dead even. The next round is for everything.',
-    up && amt >= 100 && `${nm(other(up))}, that is a lot of range balls.`,
-    up && amt >= 50 && `${nm(up)} is ordering the expensive beer.`,
-    up && `${nm(other(up))} buys the first round at the clubhouse.`,
+    swept && `${nm(swept)} se llevó las tres apuestas la última vez. Brutal.`,
+    s.streak && s.streak.n >= 3 && `${nm(s.streak.k)} ha ganado el 18 ${s.streak.n} veces seguidas. Que alguien lo pare.`,
+    !up && 'Empate total. La próxima partida lo decide todo.',
+    up && amt >= 100 && `${nm(other(up))}, eso son muchas bolas de prácticas.`,
+    up && amt >= 50 && `${nm(up)} pide la cerveza cara.`,
+    up && `${nm(other(up))} paga la primera ronda en la casa club.`,
   ].filter(Boolean);
   return pick[0];
 }
@@ -378,7 +381,7 @@ function paint() {
   for (const k of ['a', 'b']) {
     $('n' + k).textContent = nm(k);
     $('i' + k).textContent = (nm(k)[0] || '?').toUpperCase();
-    $('w' + k).innerHTML = s.bets[k] + '<small>bets won</small>';
+    $('w' + k).innerHTML = s.bets[k] + '<small>apuestas ganadas</small>';
     document.querySelectorAll('.ln' + k).forEach(el => el.textContent = nm(k));
     const av = document.querySelector('.player.' + k + ' .avatar');
     const leads = s.bets[k] > s.bets[other(k)];
@@ -389,10 +392,10 @@ function paint() {
 
   // money headline
   const amt = $('oweamt'), who = $('owewho');
-  if (s.balance === 0) { who.textContent = s.games ? 'All square' : 'Nothing on the table yet'; amt.className = 'amt num even'; amt.textContent = '€0'; }
+  if (s.balance === 0) { who.textContent = s.games ? 'Empatados' : 'Todavía no hay nada en juego'; amt.className = 'amt num even'; amt.textContent = '€0'; }
   else {
     const up = s.balance > 0 ? 'a' : 'b';
-    who.innerHTML = `<b>${esc(nm(other(up)))}</b> owes <b>${esc(nm(up))}</b>`;
+    who.innerHTML = `<b>${esc(nm(other(up)))}</b> le debe a <b>${esc(nm(up))}</b>`;
     amt.className = 'amt num ' + up;
     countTo(amt, lastBalance === null ? 0 : Math.abs(lastBalance), Math.abs(s.balance));
   }
@@ -427,25 +430,25 @@ function countTo(el, from, to) {
 
 function paintTiles(s) {
   const big = k => s.big[k]
-    ? [`<span class="dot ${k}"></span>${s.big[k].m} up`, `${esc(nm(k))}, ${esc(fmtDate(s.big[k].e.date))}`]
-    : [`<span class="dot ${k}"></span>·`, `${esc(nm(k))}, no 18 won yet`];
+    ? [`<span class="dot ${k}"></span>${s.big[k].m} arriba`, `${esc(nm(k))}, ${esc(fmtDate(s.big[k].e.date))}`]
+    : [`<span class="dot ${k}"></span>·`, `${esc(nm(k))}, aún sin ganar un 18`];
   const rec = k => {
     const r = s.seg[k], l = lead(r.a, r.b);
     return [`<span class="dot a"></span>${r.a} - ${r.b}<span class="dot b" style="margin:0 0 0 6px"></span>`,
-            l ? `${esc(nm(l))} leads${r.h ? `, ${r.h} halved` : ''}` : s.games ? `level${r.h ? `, ${r.h} halved` : ''}` : 'no rounds yet'];
+            l ? `${esc(nm(l))} va ganando${r.h ? ', ' + emp(r.h) : ''}` : s.games ? `igualados${r.h ? ', ' + emp(r.h) : ''}` : 'sin partidas aún'];
   };
   const streak = s.streak
     ? `<span class="dot ${s.streak.k}"></span>${s.streak.n}${s.streak.n >= 3 ? ' 🔥' : ''}`
     : '·';
   const tiles = [
-    ['Rounds', s.games, `${s.games * 3} bets, ${s.halves} halved`],
-    ['Front 9', ...rec('front')],
-    ['Back 9', ...rec('back')],
-    ['18 holes', ...rec('total')],
-    ['Hot streak', streak, s.streak ? `${esc(nm(s.streak.k))} winning the 18` : 'nobody on a run'],
-    ['Clean sweeps', `<span class="dot a"></span>${s.sweeps.a} · <span class="dot b"></span>${s.sweeps.b}`, 'all three bets in one round'],
-    ['Biggest 18 win', ...big('a')],
-    ['Biggest 18 win', ...big('b')],
+    ['Partidas', s.games, `${s.games * 3} apuestas, ${emp(s.halves)}`],
+    ['Primeros 9', ...rec('front')],
+    ['Segundos 9', ...rec('back')],
+    ['18 hoyos', ...rec('total')],
+    ['Racha', streak, s.streak ? `${esc(nm(s.streak.k))} ganando el 18` : 'nadie en racha'],
+    ['Plenos', `<span class="dot a"></span>${s.sweeps.a} · <span class="dot b"></span>${s.sweeps.b}`, 'las tres apuestas en una partida'],
+    ['Mayor paliza en 18', ...big('a')],
+    ['Mayor paliza en 18', ...big('b')],
   ];
   $('tiles').innerHTML = tiles.map(([k, v, sub]) =>
     `<div class="tile"><div class="k">${k}</div><div class="v num">${v}</div><div class="s">${sub}</div></div>`).join('');
@@ -453,7 +456,7 @@ function paintTiles(s) {
 
 function paintChart(s) {
   const box = $('chart');
-  if (s.series.length < 2) { box.innerHTML = '<div class="empty">The line appears after the first round.</div>'; return; }
+  if (s.series.length < 2) { box.innerHTML = '<div class="empty">La línea aparece tras la primera partida.</div>'; return; }
   const W = 600, H = 200, P = 8;
   const max = Math.max(20, ...s.series.map(Math.abs));
   const x = i => P + (W - 2 * P) * i / (s.series.length - 1);
@@ -466,10 +469,10 @@ function paintChart(s) {
     const e = s.list[i], n = e._net;
     const c = n > 0 ? 'var(--a)' : n < 0 ? 'var(--b)' : 'var(--halve)';
     const v = s.series[i + 1];
-    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${c}" stroke="var(--green)" stroke-width="1.2"><title>${esc(fmtDate(e.date))}: ${v === 0 ? 'even' : esc(nm(v > 0 ? 'a' : 'b')) + ' up ' + eur(v)}</title></circle>`;
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${c}" stroke="var(--green)" stroke-width="1.2"><title>${esc(fmtDate(e.date))}: ${v === 0 ? 'empatados' : esc(nm(v > 0 ? 'a' : 'b')) + ' gana ' + eur(v)}</title></circle>`;
   }).join('');
   box.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running balance after each round">
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Saldo acumulado tras cada partida">
       <defs>
         <clipPath id="up"><rect x="0" y="0" width="${W}" height="${H / 2}"/></clipPath>
         <clipPath id="dn"><rect x="0" y="${H / 2}" width="${W}" height="${H / 2}"/></clipPath>
@@ -483,31 +486,31 @@ function paintChart(s) {
       ${dots}
       <circle cx="${last[0]}" cy="${last[1]}" r="6" fill="none" stroke="var(--green)" stroke-width="1.5" opacity=".4"/>
     </svg>
-    <div class="legend"><span><span class="dot a"></span>above the line, ${esc(nm('a'))} is up</span><span><span class="dot b"></span>below, ${esc(nm('b'))} is up</span></div>`;
+    <div class="legend"><span><span class="dot a"></span>por encima, gana ${esc(nm('a'))}</span><span><span class="dot b"></span>por debajo, gana ${esc(nm('b'))}</span></div>`;
 }
 
 function fmtDate(d) {
   if (!d) return '';
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(d + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function paintLog(s) {
   const log = $('log');
-  if (!s.list.length) { log.innerHTML = '<li class="empty">No rounds logged. Tap “Log a round” after your next game.</li>'; return; }
+  if (!s.list.length) { log.innerHTML = '<li class="empty">No hay partidas. Pulsa “Apuntar partida” después de jugar.</li>'; return; }
   log.innerHTML = s.list.slice().reverse().map(e => {
     const dt = new Date((e.date || today()) + 'T12:00:00');
-    const date = `<div class="date"><b>${dt.getDate()}</b><span>${dt.toLocaleDateString('en-GB', { month: 'short' })} ${String(dt.getFullYear()).slice(2)}</span></div>`;
+    const date = `<div class="date"><b>${dt.getDate()}</b><span>${dt.toLocaleDateString('es-ES', { month: 'short' })} ${String(dt.getFullYear()).slice(2)}</span></div>`;
     const st = +e.stake || 0, n = e._net;
-    const pill = n === 0 ? '<span class="pill h">Even</span>'
+    const pill = n === 0 ? '<span class="pill h">Empate</span>'
       : `<span class="pill ${n > 0 ? 'a' : 'b'}">${esc(nm(n > 0 ? 'a' : 'b'))} +${eur(n)}</span>`;
     const bets = SEGS.map(([k, label]) => {
       const b = e[k] || {}, w = b.w || 'h';
-      const sc = w === 'h' ? 'all square' : `<b>${+b.m || 1} up</b>${st ? ' · ' + eur(st) : ''}`;
-      return `<div class="bet ${w}"><div class="lbl">${label}</div><div class="who">${w === 'h' ? 'Halved' : esc(nm(w))}</div><div class="sc num">${sc}</div></div>`;
+      const sc = w === 'h' ? 'empate' : `<b>${+b.m || 1} arriba</b>${st ? ' · ' + eur(st) : ''}`;
+      return `<div class="bet ${w}"><div class="lbl">${label}</div><div class="who">${w === 'h' ? 'Empate' : esc(nm(w))}</div><div class="sc num">${sc}</div></div>`;
     }).join('');
-    const del = db || DEMO ? `<button class="del" data-del="${esc(e.id)}">remove</button>` : '';
+    const del = db || DEMO ? `<button class="del" data-del="${esc(e.id)}">borrar</button>` : '';
     return `<li class="row ${n > 0 ? 'wa' : n < 0 ? 'wb' : ''}">${date}<div class="mid">
-      <div class="head"><div class="course">Round ${s.list.indexOf(e) + 1}</div>${pill}</div>
+      <div class="head"><div class="course">Partida ${s.list.indexOf(e) + 1}</div>${pill}</div>
       <div class="bets">${bets}</div>
       <div class="tail"><div class="note">${e.note ? `“${esc(e.note)}”` : ''}</div>${del}</div>
     </div></li>`;
@@ -555,8 +558,8 @@ async function write(path, value) {
   try { await api.set(api.ref(db, 'golf/' + path), value); shout(''); return true; }
   catch (e) {
     shout(isDenied(e)
-      ? 'Not saved: the database refused it. The Firebase rules need read and write on /golf.'
-      : 'Not saved: no connection to the database. Try again in a moment.');
+      ? 'No se ha guardado: la base de datos lo ha rechazado. Las reglas de Firebase necesitan lectura y escritura en /golf.'
+      : 'No se ha guardado: no hay conexión con la base de datos. Prueba otra vez en un momento.');
     return false;
   }
 }
@@ -574,11 +577,11 @@ const block = k => document.querySelector(`.betin[data-seg="${k}"]`);
 $('betsin').innerHTML = SEGS.map(([k, label]) => `
   <div class="betin" data-seg="${k}">
     <div class="top2"><span class="lab">${label}</span>
-      <div class="step"><button type="button" data-d="-1" aria-label="One hole fewer">−</button><output></output><button type="button" data-d="1" aria-label="One hole more">+</button></div>
+      <div class="step"><button type="button" data-d="-1" aria-label="Un hoyo menos">−</button><output></output><button type="button" data-d="1" aria-label="Un hoyo más">+</button></div>
     </div>
     <div class="seg">
       <button type="button" data-w="a" class="a lna">${esc(nm('a'))}</button>
-      <button type="button" data-w="h" class="h">Halved</button>
+      <button type="button" data-w="h" class="h">Empate</button>
       <button type="button" data-w="b" class="b lnb">${esc(nm('b'))}</button>
     </div>
   </div>`).join('');
@@ -588,7 +591,7 @@ function paintBets() {
     const { w, m } = bet[k], el = block(k), won = w === 'a' || w === 'b';
     el.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.w === w));
     el.querySelector('.step').classList.toggle('off', !won);
-    el.querySelector('output').textContent = won ? `${m} up` : w === 'h' ? 'all square' : 'who won?';
+    el.querySelector('output').textContent = won ? `${m} arriba` : w === 'h' ? 'empate' : '¿quién ganó?';
     const [minus, plus] = el.querySelectorAll('.step button');
     minus.disabled = !won || m <= 1;
     plus.disabled = !won || m >= MAX[k];
@@ -647,7 +650,7 @@ $('fnames').addEventListener('submit', async ev => {
 
 $('log').addEventListener('click', async e => {
   const b = e.target.closest('[data-del]'); if (!b) return;
-  if (confirm('Remove this round for both of you?')) await write('entries/' + b.dataset.del, null);
+  if (confirm('¿Borrar esta partida para los dos?')) await write('entries/' + b.dataset.del, null);
 });
 
 // ---------- boot ----------
@@ -663,35 +666,35 @@ if (DEMO) {
     return { date, stake, note, created: Date.parse(date), front: bet(f), back: bet(b), total: bet(f + b) };
   };
   entries = {
-    g1: r('2026-04-12', 10, 2, 1, 'Beginner’s luck, apparently.'),
+    g1: r('2026-04-12', 10, 2, 1, 'Suerte del principiante, dicen.'),
     g2: r('2026-04-26', 10, -1, -2),
-    g3: r('2026-05-10', 10, 2, -2, 'Nobody wanted to putt.'),
+    g3: r('2026-05-10', 10, 2, -2, 'Nadie quería patear.'),
     g4: r('2026-05-31', 15, 3, 1),
-    g5: r('2026-06-14', 15, -1, 3, 'Lost four balls in the lake. Still won.'),
+    g5: r('2026-06-14', 15, -1, 3, 'Cuatro bolas al lago. Y aun así ganó.'),
     g6: r('2026-07-05', 10, -2, -3),
-    g7: r('2026-08-02', 20, 4, 2, 'Birdie on 17. Unbearable afterwards.'),
+    g7: r('2026-08-02', 20, 4, 2, 'Birdie en el 17. Insoportable después.'),
     g8: r('2026-08-30', 10, 0, 4),
     g9: r('2026-09-20', 10, -1, 2),
   };
-  ready('demo, not saving', 'down', true);
+  ready('demo, no se guarda', 'down', true);
   paint();
 } else {
   paint();
   const c = await connect();
-  if (!c) { ready('offline', 'down', false); shout('Could not reach the database, so nothing can be saved right now.'); }
+  if (!c) { ready('sin conexión', 'down', false); shout('No se puede conectar con la base de datos, así que ahora mismo no se guarda nada.'); }
   else {
     ({ db, api } = c);
     api.onValue(api.ref(db, 'golf'), snap => {
       const v = snap.val() || {};
       players = { ...DEFAULT_NAMES, ...(v.players || {}) };
       entries = v.entries || {};
-      ready('live', 'live', true);
+      ready('en directo', 'live', true);
       paint();
     }, err => {
-      ready('not connected', 'down', false);
+      ready('desconectado', 'down', false);
       shout(isDenied(err)
-        ? 'The database is refusing to share /golf. The Firebase rules need read and write on /golf.'
-        : 'Lost the connection to the database.');
+        ? 'La base de datos no deja acceder a /golf. Las reglas de Firebase necesitan lectura y escritura en /golf.'
+        : 'Se ha perdido la conexión con la base de datos.');
     });
   }
 }
