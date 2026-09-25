@@ -220,7 +220,10 @@
   .lboard .tot{min-width:52px;font-size:13px;letter-spacing:.5px}
   .lboard td{position:relative;height:32px;min-width:28px}
   .lboard .s{width:24px;height:24px;font-size:14px;font-weight:600}
-  .lboard .dots{position:absolute;left:0;right:0;bottom:0;font-style:normal;font-size:9px;line-height:9px;color:#8a929a;letter-spacing:-1px}
+  .lboard .dots{position:absolute;left:0;right:0;bottom:2px;font-style:normal;font-size:9px;line-height:8px;color:#8a929a;letter-spacing:-1px}
+  /* score cells keep a strip at the bottom for the handicap dots, so they never touch the marks */
+  .lboard .pl-row td{height:44px;padding:3px 4px 12px;min-width:32px}
+  .lboard .pl-row td.nm,.lboard .pl-row td.pos,.lboard .pl-row td.tot{padding-bottom:3px}
   .lboard .sub{background:#f3f6f4;color:#1b1d1c;font-size:13px}
   .lboard thead .sub{color:#1b1d1c}
   .lboard .hcp td,.lboard .hcp th{color:var(--mid);font-weight:500;font-size:13px}
