@@ -867,8 +867,11 @@ function vCard({ id }) {
     const m = matchState(r);
     standings = `<div class="summary"><div class="big">${esc(m.text)}</div><div class="small">${esc(m.detail)}${matchNote(r)}</div></div>`;
   } else standings = summaryBox(r);
-  const extra = r.players.map((p, k) => {
-    const st = playerStats(r, k);
+  // Best score of the day first: strokes against par on the holes played so far, then against handicap.
+  const order = r.players.map((_, k) => ({ k, st: playerStats(r, k), vh: vsHandicap(r, k) }))
+    .sort((a, b) => (b.st.played ? 1 : 0) - (a.st.played ? 1 : 0) || a.st.vsPar - b.st.vsPar || (a.vh ?? 0) - (b.vh ?? 0));
+  const extra = order.map(({ k }) => {
+    const p = r.players[k], st = playerStats(r, k);
     return `<div class="card" style="margin:0 0 6px;padding:10px 14px"><div class="row">
       <span><span class="pdot" style="background:${COLORS[k]}"></span><b>${esc(p.name)}</b> <span class="muted">${hcpLabel(r, k)}</span></span>
       <span class="num">${st.played ? `${st.gross} golpes (${signed(st.vsPar)})` : ''}${st.complete && r.useHcp ? ` · neto ${st.net}` : ''}${st.pu ? ` · ${st.pu} X` : ''}</span></div>
