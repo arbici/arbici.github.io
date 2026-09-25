@@ -13,7 +13,6 @@
     --ink:#14181b; --mid:#59626a; --light:#8a929a; --line:#e3e7ea;
     --paper:#fff; --wash:#f4f1e8;
     --green:#0d3b2e; --green2:#14533f; --fair:#2f8a5b; --fair2:#3fa56d;
-    --p0:#e9b44c; --p1:#6fb7e8; --p2:#ef8a74; --p3:#a98be3;
     --serif:'Iowan Old Style',Palatino,Georgia,serif;
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif; }
   *{box-sizing:border-box}
@@ -109,7 +108,7 @@
   .aug .hole .meta{font-size:15px;text-transform:uppercase;letter-spacing:.8px;color:var(--mid)}
   .aug .hole .meta b{color:var(--ag);font-weight:600}
   .aug .hres{font-family:'Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.6px;color:var(--ag);font-size:14px}
-  .aug .pl{border:2px solid var(--agline);border-left:6px solid var(--c);border-radius:4px;padding:10px 12px}
+  .aug .pl{border:2px solid var(--agline);border-radius:4px;padding:10px 12px}
   .aug .pl .nm{font-family:'Oswald','Arial Narrow',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--ag)}
   .aug .pl .nm .muted{font-family:var(--sans);text-transform:none;letter-spacing:0}
   .aug .pl .tot{font-family:'Oswald','Arial Narrow',sans-serif;font-size:14px;letter-spacing:.3px}
@@ -147,7 +146,6 @@
   @keyframes pulse{50%{opacity:.35}}
   .empty{color:var(--mid);text-align:center;padding:26px 10px;font-size:15px;background:var(--paper);
          border:1px dashed var(--line);border-radius:14px}
-  .pdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:0;flex:none}
 
   /* forms */
   label,.lab{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);font-weight:600;margin:0 0 6px}
@@ -156,7 +154,7 @@
   input:focus,select:focus{outline:2px solid var(--fair);outline-offset:1px}
   .f{margin:0 0 16px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .prow{display:grid;grid-template-columns:14px 1fr 78px 36px;gap:8px;align-items:center;margin:0 0 8px}
+  .prow{display:grid;grid-template-columns:1fr 78px 36px;gap:8px;align-items:center;margin:0 0 8px}
   .team{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 10px 2px}
   .reroll{border:0;background:none;padding:0 0 0 4px;font-size:14px;cursor:pointer;vertical-align:1px}
   .team .th{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green2);margin:0 0 8px}
@@ -213,7 +211,7 @@
   .hole .meta b{color:var(--ink);font-size:20px}
   .hres{font-size:14px;color:var(--mid);min-height:20px;margin:0 0 10px}
   .pl{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:0 0 10px;
-      border-left:5px solid var(--c)}
+}
   .pl .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
   .pl .nm{font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pl .tot{font-size:13px;color:var(--mid);white-space:nowrap}
@@ -299,7 +297,6 @@
 import { connect } from '../../queensland/firebase-config.js';
 
 const DEMO = new URLSearchParams(location.search).has('demo');
-const COLORS = ['var(--p0)', 'var(--p1)', 'var(--p2)', 'var(--p3)'];
 const FORMAT = { medal: 'Juego por golpes', stableford: 'Stableford', match: 'Match play', sindicato: 'Sindicato' };
 const app = document.getElementById('app');
 const S = { courses: {}, rounds: {}, people: {}, loaded: false };
@@ -630,7 +627,7 @@ function vSetup() {
   const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name));
   const teams4 = d.format === 'match' && np === 4;
   const prow = i => { const p = d.players[i]; return `
-        <div class="prow"><span class="pdot" style="background:${COLORS[i]}"></span>
+        <div class="prow">
           <div class="pick-wrap"><input data-pn="${i}" value="${esc(p.name)}" maxlength="24" placeholder="Busca o escribe un nombre" autocomplete="off"
                class="${p.id ? 'ok' : ''}" aria-label="Jugador ${i + 1}"><div class="sug" data-sug="${i}" hidden></div></div>
           <input data-ph="${i}" value="${esc(p.hcp)}" type="number" inputmode="decimal" step="0.1" min="0" max="54" placeholder="hcp" aria-label="Hándicap del jugador ${i + 1}">
@@ -868,7 +865,7 @@ function summaryBox(r) {
   const n = holesOf(r).length;
   return `<div class="summary"><div class="lb">${sorted.map((x, k) => `
     <div class="it"><span class="pos">${x.entered ? k + 1 : ''}</span>
-      <span><span class="pdot" style="background:${COLORS[x.i]}"></span>${esc(r.players[x.i].name)}</span>
+      <span>${esc(r.players[x.i].name)}</span>
       <span class="val num ${isPts(r) || !x.entered ? '' : (v => v < 0 ? 'under' : v === 0 ? 'even' : 'over')(r.useHcp ? x.netVsPar : x.vsPar)}">${isPts(r) ? x.pts : x.entered ? signed(r.useHcp ? x.netVsPar : x.vsPar) : '·'}</span>
       <span class="thru">${x.entered === n ? 'fin' : x.entered ? 'tras ' + x.entered : ''}</span></div>`).join('')}
     </div><div class="small" style="margin-top:8px">${isPts(r) ? `Puntos ${FORMAT[r.format]}` : r.useHcp ? 'Neto contra el par' : 'Contra el par'}</div></div>`;
@@ -885,9 +882,9 @@ function vPlay({ id, hole }) {
     const s = scoreOf(r, k, i), rec = received(r, k, i), st = playerStats(r, k);
     const pts = holePts(r, k, i);
     const tot = isPts(r) ? `<b>${st.pts}</b> ${ptsWord(st.pts)}` : st.entered ? `<b>${st.gross}</b> (${signed(st.vsPar)})` : '';
-    return `<div class="pl" style="--c:${COLORS[k]}">
+    return `<div class="pl">
       <div class="top"><div class="nm">${esc(p.name)}${r.useHcp ? ` <span class="muted" style="font-weight:500;font-size:13px">${hcpLabel(r, k)}</span>` : ''}</div><div class="tot num">${tot}</div></div>
-      <div class="rec">${rec ? `recibe ${rec} ${rec === 1 ? 'golpe' : 'golpes'} ${'•'.repeat(Math.min(rec, 4))}` : ''}</div>
+      <div class="rec">${rec ? `${rec} ${rec === 1 ? 'punto' : 'puntos'} en este hoyo ${'•'.repeat(Math.min(rec, 4))}` : ''}</div>
       <div class="ctl">
         <button data-dec="${k}" aria-label="Un golpe menos">−</button>
         <button class="val ${s === null ? 'emp' : ''}" data-set="${k}">
@@ -1019,7 +1016,7 @@ function vCard({ id }) {
   if (hs.some(h => h.si)) body += rowFor('Índice', j => hs[j].sio || hs[j].si || '', () => '', 'sub');
   r.players.forEach((p, k) => {
     const gsum = (a, b) => { const v = hs.slice(a, b).map((_, j) => scoreOf(r, k, a + j)).filter(s => s > 0); return v.length ? sum(v) : ''; };
-    body += rowFor(`<span class="pdot" style="background:${COLORS[k]}"></span>${esc(p.name)}`, j => {
+    body += rowFor(esc(p.name), j => {
       const s = scoreOf(r, k, j);
       const dots = received(r, k, j);
       return s === null ? (dots ? `<span class="muted" style="font-size:10px">${'•'.repeat(Math.min(dots, 3))}</span>` : '')
@@ -1031,7 +1028,7 @@ function vCard({ id }) {
   });
   if (r.format === 'match') {
     const m = matchState(r);
-    const tc = t => r.teams[t].length === 1 ? COLORS[r.teams[t][0]] : t === 0 ? 'var(--green2)' : '#b07d1c';
+    const tc = t => t === 0 ? 'var(--green2)' : '#b07d1c';
     body += rowFor('<span class="muted">gana</span>', j => { const w = m.res[j]; return w === null ? '' : w === 'h' ? '<span class="mw muted">=</span>'
       : `<span class="mw" style="color:${tc(w)}">${esc(r.players[r.teams[w][0]].name[0])}${r.teams[w].length > 1 ? esc(r.players[r.teams[w][1]].name[0]) : ''}</span>`; }, () => '');
   }
