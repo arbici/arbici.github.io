@@ -376,6 +376,7 @@ function parse() {
   if (h[0] === 'nueva') return { v: 'setup' };
   if (h[0] === 'jugadores') return { v: 'people' };
   if (h[0] === 'terminadas') return { v: 'done' };
+  if (h[0] === 'campos') return { v: 'courses' };
   if (h[0] === 'campo') return { v: 'course', id: h[1] || 'nuevo' };
   if (h[0] === 'r' && h[1]) return h[2] === 'tarjeta' ? { v: 'card', id: h[1] } : { v: 'play', id: h[1], hole: h[2] ? +h[2] - 1 : null };
   return { v: 'home' };
@@ -384,6 +385,7 @@ let cur = parse();
 window.addEventListener('hashchange', () => {
   const prev = cur; cur = parse();
   if (cur.v === 'setup' && prev.v !== 'setup' && prev.v !== 'course') draft = null;
+  if (cur.v !== 'setup' && cur.v !== 'course') draft = null;
   if (cur.v === 'course' && (prev.v !== 'course' || prev.id !== cur.id)) cdraft = null;
   render(); window.scrollTo(0, 0);
 });
@@ -391,7 +393,7 @@ const go = h => { location.hash = h; };
 
 function render() {
   if (!S.loaded) { app.innerHTML = '<p class="muted">Cargando…</p>'; return; }
-  ({ home: vHome, setup: vSetup, course: vCourse, play: vPlay, card: vCard, people: vPeople, done: vDone })[cur.v](cur);
+  ({ home: vHome, setup: vSetup, course: vCourse, play: vPlay, card: vCard, people: vPeople, done: vDone, courses: vCourses })[cur.v](cur);
 }
 
 // ---------- home ----------
@@ -405,6 +407,18 @@ function roundCard(id, r) {
         <div class="m">${esc(fmtDate(r.date))} · ${esc(fmtLabel(r))} · ${r.players.map(p => esc(p.name)).join(', ')}</div>
         <div class="m"><b>${esc(headline(r))}</b></div>
       </a>`;
+}
+function vCourses() {
+  const courses = Object.entries(S.courses).sort((a, b) => a[1].name.localeCompare(b[1].name, 'es'));
+  app.innerHTML = `
+    <a class="back" href="#/">‹ Partidas en juego</a>
+    <h1>Campos</h1>
+    ${courses.length ? courses.map(([id, c]) => `
+      <a class="card" href="#/campo/${esc(id)}">
+        <div class="row"><div class="t">${esc(c.name)}</div><span class="m" style="margin:0">Editar</span></div>
+        <div class="m">${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</div>
+      </a>`).join('') : '<div class="empty">No hay campos todavía.</div>'}
+    <button class="btn light full" data-go="#/campo/nuevo" style="margin-top:4px">Añadir campo</button>`;
 }
 function vDone() {
   const rounds = byNewest().filter(([, r]) => roundDone(r));
@@ -428,19 +442,12 @@ function vHome() {
     <h2>En juego</h2>
     ${rounds.length ? rounds.map(([id, r]) => roundCard(id, r)).join('') : '<div class="empty">No hay ninguna partida en juego.</div>'}
 
-    <h2>Campos</h2>
-    ${courses.length ? courses.map(([id, c]) => `
-      <a class="card" href="#/campo/${esc(id)}">
-        <div class="row"><div class="t">${esc(c.name)}</div><span class="m">Editar</span></div>
-        <div class="m">${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</div>
-      </a>`).join('') : '<div class="empty">No hay campos todavía.</div>'}
-    <button class="btn light full" data-go="#/campo/nuevo" style="margin-top:4px">Añadir campo</button>
-
-    <h2>Jugadores</h2>
-    <a class="card" href="#/jugadores"><div class="row"><div class="t">Jugadores y hándicaps</div><span class="m">${Object.keys(S.people).length}</span></div>
+    <h2>Más</h2>
+    <a class="card" href="#/campos"><div class="row"><div class="t">Campos</div><span class="m" style="margin:0">${courses.length} ›</span></div>
+      <div class="m">Tarjetas de los campos: par e índice de cada hoyo.</div></a>
+    <a class="card" href="#/jugadores"><div class="row"><div class="t">Jugadores y hándicaps</div><span class="m" style="margin:0">${Object.keys(S.people).length} ›</span></div>
       <div class="m">Cambia aquí el hándicap de cada uno cuando se mueva.</div></a>
 
-    <h2>Historial</h2>
     <a class="card" href="#/terminadas"><div class="row"><div class="t">Partidas terminadas</div><span class="m" style="margin:0">${closed} ›</span></div></a>
 
     <p style="margin-top:34px"><a class="back" href="../">‹ Las Cuentas</a></p>`;
@@ -631,7 +638,7 @@ function vCourse({ id }) {
       <input data-si="${i}" type="number" inputmode="numeric" min="1" max="${n}" value="${esc(d.holes[i].si)}" aria-label="Índice del hoyo ${i + 1}"></div>`;
   const head = `<div class="cgh">${'<span><i></i><i>par</i><i>índice</i></span>'.repeat(3)}</div>`;
   app.innerHTML = `
-    <a class="back" href="#/">‹ Partidas</a>
+    ${draft ? '<a class="back" href="#/nueva">‹ Nueva partida</a>' : '<a class="back" href="#/campos">‹ Campos</a>'}
     <h1>${d.id ? 'Editar campo' : 'Añadir campo'}</h1>
     ${d.err ? `<div class="err">${esc(d.err)}</div>` : ''}
     <div class="f"><label for="cn">Nombre</label><input id="cn" value="${esc(d.name)}" maxlength="50" placeholder="Nombre del campo"></div>
@@ -664,7 +671,7 @@ async function saveCourse() {
   const id = d.id || store.key('golf/courses');
   if (await save('golf/courses/' + id, c)) {
     cdraft = null;
-    if (draft) { draft.courseId = id; go('#/nueva'); } else go('#/');
+    if (draft) { draft.courseId = id; go('#/nueva'); } else go('#/campos');
   }
 }
 
@@ -845,7 +852,7 @@ app.addEventListener('click', ev => {
     if (ds.par !== undefined) { const h = cdraft.holes[+ds.par]; h.par = h.par >= 5 ? 3 : h.par + 1; return render(); }
     if (ds.csave !== undefined) return saveCourse();
     if (ds.cdel !== undefined) {
-      if (confirm('¿Borrar este campo? Las partidas ya jugadas en él se conservan.')) save('golf/courses/' + cdraft.id, null).then(ok => { if (ok) { cdraft = null; go('#/'); } });
+      if (confirm('¿Borrar este campo? Las partidas ya jugadas en él se conservan.')) save('golf/courses/' + cdraft.id, null).then(ok => { if (ok) { cdraft = null; go('#/campos'); } });
       return;
     }
   }
