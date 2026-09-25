@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b2e">
+<title>The Ledger</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
+<style>
+  :root{ color-scheme: light;
+    --ink:#14181b; --mid:#59626a; --light:#8a929a; --line:#e3e7ea;
+    --paper:#fff; --wash:#f4f1e8;
+    --green:#0d3b2e; --green2:#14533f; --fair:#2f8a5b; --fair2:#3fa56d; --sand:#e8d9a8;
+    --a:#e9b44c; --adeep:#b9851c; --b:#6fb7e8; --bdeep:#2b7bb6; --halve:#9aa3ab;
+    --serif:'Iowan Old Style',Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,monospace; }
+  *{box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--wash);color:var(--ink);font-family:var(--sans);
+       font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font:inherit;cursor:pointer}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;color:#fff;overflow:hidden;
+        background:
+          radial-gradient(1200px 400px at 50% -120px, rgba(255,255,255,.10), transparent 70%),
+          repeating-linear-gradient(90deg, var(--green) 0 60px, #0f4233 60px 120px);
+        padding:22px 16px 0}
+  .top{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{font-family:var(--serif);font-size:20px;letter-spacing:.2px;opacity:.95}
+  .brand a{color:inherit;text-decoration:none}
+  .conn{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;padding:4px 9px;border-radius:99px;
+        background:rgba(255,255,255,.10);color:rgba(255,255,255,.75);white-space:nowrap}
+  .conn.live::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;
+        background:#6ee7a0;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 3px rgba(110,231,160,.25)}
+  .conn.down{background:rgba(255,120,100,.2);color:#ffd2c8}
+
+  .face{max-width:880px;margin:26px auto 0;display:grid;grid-template-columns:1fr auto 1fr;
+        align-items:end;gap:10px;text-align:center}
+  .player{position:relative;padding-bottom:6px}
+  .avatar{width:74px;height:74px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
+          font-family:var(--serif);font-size:34px;color:var(--green);position:relative;
+          box-shadow:0 0 0 4px rgba(255,255,255,.12), 0 10px 30px rgba(0,0,0,.25)}
+  .player.a .avatar{background:var(--a)} .player.b .avatar{background:var(--b)}
+  .crown{position:absolute;top:-24px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:28px;
+         filter:drop-shadow(0 3px 4px rgba(0,0,0,.3));animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateX(-50%) rotate(8deg) translateY(-3px)}}
+  .pname{font-weight:600;font-size:17px;letter-spacing:.2px}
+  .wins{font-family:var(--serif);font-size:64px;line-height:1;margin-top:6px}
+  .wins small{display:block;font-family:var(--sans);font-size:11px;letter-spacing:1.6px;
+              text-transform:uppercase;opacity:.6;margin-top:6px}
+  .vs{padding-bottom:40px;font-family:var(--serif);font-style:italic;opacity:.5;font-size:20px}
+
+  .owe{max-width:880px;margin:22px auto 0;text-align:center}
+  .owe .who{font-size:15px;opacity:.85}
+  .owe .amt{font-family:var(--serif);font-size:clamp(56px,14vw,104px);line-height:1;margin:6px 0 4px;
+            letter-spacing:-2px;text-shadow:0 6px 30px rgba(0,0,0,.25)}
+  .owe .amt.a{color:var(--a)} .owe .amt.b{color:var(--b)} .owe .amt.even{color:#fff}
+  .owe .quip{font-size:14px;opacity:.7;font-style:italic;min-height:21px}
+
+  /* the fairway: ball rolls toward whoever is up on money */
+  .fairway{max-width:880px;margin:26px auto 0;position:relative;height:116px}
+  .strip{position:absolute;left:0;right:0;bottom:0;height:72px;border-radius:72px 72px 0 0;
+         background:
+           repeating-linear-gradient(90deg, var(--fair) 0 40px, var(--fair2) 40px 80px);
+         box-shadow:inset 0 8px 18px rgba(0,0,0,.18)}
+  .strip::after{content:'';position:absolute;left:50%;top:10px;bottom:0;width:2px;background:rgba(255,255,255,.35)}
+  .flag{position:absolute;bottom:38px;width:40px;height:64px}
+  .flag.a{left:14px} .flag.b{right:14px}
+  .flag i{position:absolute;left:0;bottom:0;width:3px;height:64px;background:#f4f4f4;border-radius:2px}
+  .flag b{position:absolute;left:3px;top:0;width:30px;height:20px;clip-path:polygon(0 0,100% 50%,0 100%);
+          transform-origin:left center;animation:wave 1.6s ease-in-out infinite}
+  .flag.a b{background:var(--a)} .flag.b b{background:var(--b)}
+  .flag::after{content:'';position:absolute;left:-7px;bottom:-4px;width:18px;height:7px;border-radius:50%;background:rgba(0,0,0,.35)}
+  @keyframes wave{50%{transform:scaleX(.8) skewY(4deg)}}
+  .ball{position:absolute;bottom:36px;left:50%;width:26px;height:26px;margin-left:-13px;border-radius:50%;
+        background:radial-gradient(circle at 35% 30%, #fff 0 35%, #e6e6e6 70%, #c9c9c9);
+        box-shadow:0 5px 6px rgba(0,0,0,.35);
+        transition:left 1.6s cubic-bezier(.2,.9,.25,1.08)}
+  .ball::before{content:'';position:absolute;inset:0;border-radius:50%;
+        background:radial-gradient(circle, rgba(0,0,0,.10) 1px, transparent 1.6px) 0 0/5px 5px}
+  .ball.rolling{animation:spin 1.6s cubic-bezier(.2,.9,.25,1.08)}
+  @keyframes spin{to{transform:rotate(var(--turn,720deg))}}
+
+  /* ---------- body ---------- */
+  .page{max-width:880px;margin:0 auto;padding:28px 16px 80px}
+  .actions{display:flex;gap:10px;margin:-52px 0 26px;position:relative;z-index:2;justify-content:center;flex-wrap:wrap}
+  .btn{border:0;border-radius:99px;padding:13px 22px;font-weight:600;font-size:15px;
+       box-shadow:0 8px 24px rgba(13,59,46,.25);transition:transform .12s}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:#fff;color:var(--green)}
+  .btn.ghost{background:var(--green2);color:#fff}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  h2{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--light);margin:34px 0 12px;font-weight:600}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tile{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px}
+  .tile .k{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--light);font-weight:600}
+  .tile .v{font-family:var(--serif);font-size:28px;line-height:1.15;margin-top:6px}
+  .tile .s{font-size:13px;color:var(--mid);margin-top:2px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .dot.a{background:var(--a)} .dot.b{background:var(--b)}
+
+  .chart{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 16px 10px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart .legend{display:flex;justify-content:space-between;font-size:12px;color:var(--mid);margin-top:6px}
+  .empty{color:var(--mid);text-align:center;padding:38px 10px;font-size:15px}
+
+  .log{list-style:none;margin:0;padding:0}
+  .row{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:0 0 8px;
+       display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:12px;padding:12px 14px;
+       position:relative;overflow:hidden}
+  .row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--halve)}
+  .row.wa::before{background:var(--a)} .row.wb::before{background:var(--b)}
+  .row.pay{background:transparent;border-style:dashed}
+  .row.pay::before{display:none}
+  .date{text-align:center;line-height:1.1}
+  .date b{display:block;font-family:var(--serif);font-size:24px;font-weight:400}
+  .date span{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--light)}
+  .mid{min-width:0}
+  .course{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card{display:flex;gap:14px;font-size:14px;color:var(--mid);margin-top:2px;flex-wrap:wrap}
+  .card .w{color:var(--ink);font-weight:600}
+  .note{font-size:13px;color:var(--light);font-style:italic;margin-top:2px}
+  .right{text-align:right}
+  .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+  .pill.a{background:#fbf0d6;color:var(--adeep)} .pill.b{background:#e2f1fb;color:var(--bdeep)}
+  .pill.h{background:#eef0f2;color:var(--mid)}
+  .del{border:0;background:none;color:var(--light);font-size:12px;padding:4px 0 0;display:block;margin-left:auto}
+  .del:hover{color:#c0392b}
+
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--light);
+        display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .foot button{border:0;background:none;color:var(--mid);text-decoration:underline;padding:0}
+  .shout{background:#fff1ee;border:1px solid #f3c2b8;color:#8a2a17;border-radius:10px;padding:12px 14px;
+         margin:0 0 18px;font-size:14px}
+
+  /* ---------- dialogs ---------- */
+  dialog{border:0;border-radius:18px;padding:0;width:min(440px,calc(100vw - 32px));
+         box-shadow:0 30px 80px rgba(0,0,0,.35)}
+  dialog::backdrop{background:rgba(8,30,23,.55);backdrop-filter:blur(3px)}
+  .dlg{padding:22px 20px 18px}
+  .dlg h3{font-family:var(--serif);font-weight:400;font-size:26px;margin:0 0 16px}
+  label{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);font-weight:600;margin:0 0 5px}
+  input,select{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);
+         border-radius:10px;background:#fafafa;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--fair);outline-offset:1px;background:#fff}
+  .f{margin:0 0 14px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .seg button{border:1px solid var(--line);background:#fafafa;border-radius:10px;padding:10px 6px;font-size:14px;
+              font-weight:600;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .seg button.on.a{background:var(--a);border-color:var(--a);color:var(--green)}
+  .seg button.on.b{background:var(--b);border-color:var(--b);color:var(--green)}
+  .seg button.on.h{background:var(--halve);border-color:var(--halve);color:#fff}
+  .seg.two2{grid-template-columns:1fr 1fr}
+  .hint{font-size:12px;color:var(--light);margin-top:5px}
+  .row2{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+  .row2 .btn{box-shadow:none}
+  .btn.go{background:var(--green);color:#fff}
+  .btn.cancel{background:#eef0f2;color:var(--mid)}
+
+  /* confetti */
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:99}
+  .confetti i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;opacity:.95;
+              animation:fall linear forwards}
+  @keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--r));opacity:1}}
+
+  @media (max-width:640px){
+    .tiles{grid-template-columns:1fr 1fr}
+    .wins{font-size:52px}
+    .avatar{width:62px;height:62px;font-size:28px}
+    .vs{padding-bottom:34px}
+    .row{grid-template-columns:48px 1fr auto;gap:10px;padding:11px 12px}
+    .date b{font-size:20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="top">
+    <div class="brand"><a href="../">arbici</a> <span style="opacity:.5">/</span> The Ledger</div>
+    <div class="conn" id="conn">connecting…</div>
+  </div>
+
+  <div class="face">
+    <div class="player a">
+      <div class="avatar"><span id="ia">J</span></div>
+      <div class="pname" id="na">Javi</div>
+      <div class="wins num" id="wa">0<small>wins</small></div>
+    </div>
+    <div class="vs">vs</div>
+    <div class="player b">
+      <div class="avatar"><span id="ib">F</span></div>
+      <div class="pname" id="nb">Friend</div>
+      <div class="wins num" id="wb">0<small>wins</small></div>
+    </div>
+  </div>
+
+  <div class="owe">
+    <div class="who" id="owewho">All square</div>
+    <div class="amt num even" id="oweamt">€0</div>
+    <div class="quip" id="quip"></div>
+  </div>
+
+  <div class="fairway" aria-hidden="true">
+    <div class="strip"></div>
+    <div class="flag a"><i></i><b></b></div>
+    <div class="flag b"><i></i><b></b></div>
+    <div class="ball" id="ball"></div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="actions">
+    <button class="btn primary" id="addgame" disabled>⛳ Log a round</button>
+    <button class="btn ghost" id="settleup" disabled>💸 Settle up</button>
+  </div>
+
+  <div id="shoutslot"></div>
+
+  <h2>The numbers</h2>
+  <div class="tiles" id="tiles"></div>
+
+  <h2>Money over time</h2>
+  <div class="chart" id="chart"></div>
+
+  <h2>Every round</h2>
+  <ul class="log" id="log"></ul>
+
+  <div class="foot">
+    <span id="footnote">Lower score takes the pot. A halved round moves no money.</span>
+    <button id="editnames" disabled>Change names</button>
+  </div>
+</main>
+
+<!-- log a round -->
+<dialog id="dgame">
+  <form class="dlg" method="dialog" id="fgame">
+    <h3>Log a round</h3>
+    <div class="two f">
+      <div><label for="gdate">Date</label><input type="date" id="gdate" required></div>
+      <div><label for="gstake">Stake €</label><input type="number" id="gstake" min="0" step="1" inputmode="decimal" placeholder="20"></div>
+    </div>
+    <div class="f"><label for="gcourse">Course</label><input id="gcourse" maxlength="60" placeholder="Where did it happen?"></div>
+    <div class="two f">
+      <div><label for="gsa" class="lna">Javi</label><input type="number" id="gsa" min="1" max="200" inputmode="numeric" placeholder="strokes"></div>
+      <div><label for="gsb" class="lnb">Friend</label><input type="number" id="gsb" min="1" max="200" inputmode="numeric" placeholder="strokes"></div>
+    </div>
+    <div class="f">
+      <label>Who took the money</label>
+      <div class="seg" id="gwin">
+        <button type="button" data-w="a" class="a lna">Javi</button>
+        <button type="button" data-w="h" class="h">Halved</button>
+        <button type="button" data-w="b" class="b lnb">Friend</button>
+      </div>
+      <div class="hint">Picked from the scores. Tap to override for match play or a side bet.</div>
+    </div>
+    <div class="f"><label for="gnote">Trash talk (optional)</label><input id="gnote" maxlength="120" placeholder="Three-putted the 18th. Twice."></div>
+    <div class="row2">
+      <button type="button" class="btn cancel" data-close>Cancel</button>
+      <button type="submit" class="btn go">Save round</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- settle up -->
+<dialog id="dpay">
+  <form class="dlg" method="dialog" id="fpay">
+    <h3>Settle up</h3>
+    <div class="f">
+      <label>Who paid</label>
+      <div class="seg two2" id="pfrom">
+        <button type="button" data-w="a" class="a lna">Javi</button>
+        <button type="button" data-w="b" class="b lnb">Friend</button>
+      </div>
+    </div>
+    <div class="two f">
+      <div><label for="pamt">Amount €</label><input type="number" id="pamt" min="1" step="1" inputmode="decimal" required></div>
+      <div><label for="pdate">Date</label><input type="date" id="pdate" required></div>
+    </div>
+    <div class="row2">
+      <button type="button" class="btn cancel" data-close>Cancel</button>
+      <button type="submit" class="btn go">Record payment</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- names -->
+<dialog id="dnames">
+  <form class="dlg" method="dialog" id="fnames">
+    <h3>Who's playing</h3>
+    <div class="two f">
+      <div><label for="xna"><span class="dot a"></span>Gold</label><input id="xna" maxlength="16" required></div>
+      <div><label for="xnb"><span class="dot b"></span>Blue</label><input id="xnb" maxlength="16" required></div>
+    </div>
+    <div class="row2">
+      <button type="button" class="btn cancel" data-close>Cancel</button>
+      <button type="submit" class="btn go">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module">
+// Shared state lives at /golf in the same Firebase project as the Queensland pages:
+//   golf/players = { a: "Javi", b: "..." }
+//   golf/entries/<id> = { type:"game", date, course, sa, sb, winner:"a"|"b"|"h", stake, note, created }
+//                     | { type:"pay",  date, from:"a"|"b", amount, created }
+// Open with ?demo to see the page filled with sample rounds (nothing is saved).
+import { connect } from '../queensland/firebase-config.js';
+
+const $ = id => document.getElementById(id);
+const DEMO = new URLSearchParams(location.search).has('demo');
+let db = null, api = null;
+let players = { a: 'Javi', b: 'Friend' };
+let entries = {};
+let lastBalance = null;
+
+const eur = n => '€' + Math.round(Math.abs(n)).toLocaleString('de-DE');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const other = k => k === 'a' ? 'b' : 'a';
+const today = () => new Date().toISOString().slice(0, 10);
+const nm = k => players[k] || (k === 'a' ? 'Gold' : 'Blue');
+
+// ---------- derived numbers ----------
+function crunch() {
+  const list = Object.entries(entries).map(([id, e]) => ({ id, ...e }))
+    .sort((x, y) => (x.date || '').localeCompare(y.date || '') || (x.created || 0) - (y.created || 0));
+  let bal = 0;                              // > 0 means b owes a
+  const series = [0];
+  const s = { list, wins: { a: 0, b: 0 }, halves: 0, games: 0, won: { a: 0, b: 0 },
+              best: { a: null, b: null }, strokes: { a: [], b: [] }, pot: null, streak: null, bigStreak: null };
+  let run = null;
+  for (const e of list) {
+    if (e.type === 'pay') {
+      bal += e.from === 'a' ? +e.amount : -e.amount;
+    } else {
+      s.games++;
+      const st = +e.stake || 0;
+      if (e.winner === 'a' || e.winner === 'b') {
+        s.wins[e.winner]++;
+        s.won[e.winner] += st;
+        bal += e.winner === 'a' ? st : -st;
+        run = run && run.k === e.winner ? { k: e.winner, n: run.n + 1 } : { k: e.winner, n: 1 };
+        if (!s.bigStreak || run.n > s.bigStreak.n) s.bigStreak = { ...run };
+        if (!s.pot || st > s.pot.stake) s.pot = e;
+      } else {
+        s.halves++;
+        run = null;
+      }
+      for (const k of ['a', 'b']) {
+        const v = +e['s' + k];
+        if (v > 0) { s.strokes[k].push(v); if (s.best[k] === null || v < s.best[k]) s.best[k] = v; }
+      }
+    }
+    e._bal = bal;
+    series.push(bal);
+  }
+  s.streak = run;
+  s.balance = bal;
+  s.series = series;
+  return s;
+}
+
+// ---------- quips ----------
+function quip(s) {
+  const up = s.balance > 0 ? 'a' : s.balance < 0 ? 'b' : null;
+  if (!s.games) return 'No rounds yet. Somebody book a tee time.';
+  if (!up) return 'Dead even. The next round is for everything.';
+  const w = nm(up), l = nm(other(up)), amt = Math.abs(s.balance);
+  const pick = [
+    s.streak && s.streak.n >= 3 && `${nm(s.streak.k)} has won ${s.streak.n} in a row. Somebody stop this.`,
+    amt >= 100 && `${l}, that is a lot of range balls.`,
+    amt >= 50 && `${w} is ordering the expensive beer.`,
+    s.streak && s.streak.k !== up && `${nm(s.streak.k)} is clawing it back.`,
+    `${l} buys the first round at the clubhouse.`,
+  ].filter(Boolean);
+  return pick[0];
+}
+
+// ---------- paint ----------
+function paint() {
+  const s = crunch();
+  for (const k of ['a', 'b']) {
+    $('n' + k).textContent = nm(k);
+    $('i' + k).textContent = (nm(k)[0] || '?').toUpperCase();
+    $('w' + k).innerHTML = s.wins[k] + '<small>wins</small>';
+    document.querySelectorAll('.ln' + k).forEach(el => el.textContent = nm(k));
+    const av = document.querySelector('.player.' + k + ' .avatar');
+    const lead = s.wins[k] > s.wins[other(k)];
+    let c = av.querySelector('.crown');
+    if (lead && !c) av.insertAdjacentHTML('beforeend', '<span class="crown">👑</span>');
+    if (!lead && c) c.remove();
+  }
+
+  // money headline
+  const amt = $('oweamt'), who = $('owewho');
+  if (s.balance === 0) { who.textContent = s.games ? 'All square' : 'Nothing on the table yet'; amt.className = 'amt num even'; amt.textContent = '€0'; }
+  else {
+    const up = s.balance > 0 ? 'a' : 'b';
+    who.innerHTML = `<b>${esc(nm(other(up)))}</b> owes <b>${esc(nm(up))}</b>`;
+    amt.className = 'amt num ' + up;
+    countTo(amt, lastBalance === null ? 0 : Math.abs(lastBalance), Math.abs(s.balance));
+  }
+  $('quip').textContent = quip(s);
+
+  // ball: toward the flag of whoever is up, scaled to the biggest swing so far
+  const scale = Math.max(50, ...s.series.map(Math.abs));
+  const pct = 50 - 42 * Math.max(-1, Math.min(1, s.balance / scale));
+  const ball = $('ball');
+  const prevLeft = parseFloat(ball.style.left || '50');
+  if (Math.abs(prevLeft - pct) > .5) {
+    ball.style.setProperty('--turn', (pct < prevLeft ? -1 : 1) * Math.round(Math.abs(pct - prevLeft) * 18) + 'deg');
+    ball.classList.remove('rolling'); void ball.offsetWidth; ball.classList.add('rolling');
+  }
+  requestAnimationFrame(() => { ball.style.left = pct + '%'; });
+
+  paintTiles(s);
+  paintChart(s);
+  paintLog(s);
+  lastBalance = s.balance;
+}
+
+function countTo(el, from, to) {
+  const t0 = performance.now(), d = 900;
+  const step = t => {
+    const p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = eur(from + (to - from) * e);
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function paintTiles(s) {
+  const avg = k => s.strokes[k].length ? (s.strokes[k].reduce((x, y) => x + y, 0) / s.strokes[k].length).toFixed(1) : '·';
+  const streak = s.streak
+    ? `<span class="dot ${s.streak.k}"></span>${s.streak.n}${s.streak.n >= 3 ? ' 🔥' : ''}`
+    : '·';
+  const tiles = [
+    ['Rounds', s.games, `${s.halves} halved`],
+    ['Record', `${s.wins.a} - ${s.wins.b}`, `${esc(nm('a'))} first`],
+    ['Hot streak', streak, s.streak ? `${esc(nm(s.streak.k))} in a row` : 'nobody on a run'],
+    ['Biggest pot', s.pot ? eur(s.pot.stake) : '·', s.pot ? `${esc(nm(s.pot.winner))}, ${esc(s.pot.course || fmtDate(s.pot.date))}` : 'no money moved yet'],
+    ['Best round', `<span class="dot a"></span>${s.best.a ?? '·'}`, `${esc(nm('a'))}, avg ${avg('a')}`],
+    ['Best round', `<span class="dot b"></span>${s.best.b ?? '·'}`, `${esc(nm('b'))}, avg ${avg('b')}`],
+    ['Won in total', `<span class="dot a"></span>${eur(s.won.a)}`, `by ${esc(nm('a'))}`],
+    ['Won in total', `<span class="dot b"></span>${eur(s.won.b)}`, `by ${esc(nm('b'))}`],
+  ];
+  $('tiles').innerHTML = tiles.map(([k, v, sub]) =>
+    `<div class="tile"><div class="k">${k}</div><div class="v num">${v}</div><div class="s">${sub}</div></div>`).join('');
+}
+
+function paintChart(s) {
+  const box = $('chart');
+  if (s.series.length < 2) { box.innerHTML = '<div class="empty">The line appears after the first round.</div>'; return; }
+  const W = 600, H = 200, P = 8;
+  const max = Math.max(20, ...s.series.map(Math.abs));
+  const x = i => P + (W - 2 * P) * i / (s.series.length - 1);
+  const y = v => H / 2 - (H / 2 - P) * v / max;
+  const pts = s.series.map((v, i) => [x(i), y(v)]);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const area = `${line} L${x(s.series.length - 1)} ${H / 2} L${x(0)} ${H / 2} Z`;
+  const last = pts[pts.length - 1];
+  const dots = pts.slice(1).map((p, i) => {
+    const e = s.list[i];
+    const c = e.type === 'pay' ? '#fff' : e.winner === 'a' ? 'var(--a)' : e.winner === 'b' ? 'var(--b)' : 'var(--halve)';
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${c}" stroke="var(--green)" stroke-width="1.2" vector-effect="non-scaling-stroke"><title>${esc(fmtDate(e.date))}: ${s.series[i + 1] === 0 ? 'even' : esc(nm(s.series[i + 1] > 0 ? 'a' : 'b')) + ' up ' + eur(s.series[i + 1])}</title></circle>`;
+  }).join('');
+  box.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running balance after each round">
+      <defs>
+        <clipPath id="up"><rect x="0" y="0" width="${W}" height="${H / 2}"/></clipPath>
+        <clipPath id="dn"><rect x="0" y="${H / 2}" width="${W}" height="${H / 2}"/></clipPath>
+        <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9b44c" stop-opacity=".55"/><stop offset="1" stop-color="#e9b44c" stop-opacity=".05"/></linearGradient>
+        <linearGradient id="gb" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#6fb7e8" stop-opacity=".55"/><stop offset="1" stop-color="#6fb7e8" stop-opacity=".05"/></linearGradient>
+      </defs>
+      <line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#d5dadd" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+      <path d="${area}" fill="url(#ga)" clip-path="url(#up)"/>
+      <path d="${area}" fill="url(#gb)" clip-path="url(#dn)"/>
+      <path d="${line}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      ${dots}
+      <circle cx="${last[0]}" cy="${last[1]}" r="6" fill="none" stroke="var(--green)" stroke-width="1.5" vector-effect="non-scaling-stroke" opacity=".4"/>
+    </svg>
+    <div class="legend"><span><span class="dot a"></span>above the line, ${esc(nm('a'))} is up</span><span><span class="dot b"></span>below, ${esc(nm('b'))} is up</span></div>`;
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function paintLog(s) {
+  const log = $('log');
+  if (!s.list.length) { log.innerHTML = '<li class="empty">No rounds logged. Tap “Log a round” after your next game.</li>'; return; }
+  log.innerHTML = s.list.slice().reverse().map(e => {
+    const dt = new Date((e.date || today()) + 'T12:00:00');
+    const date = `<div class="date"><b>${dt.getDate()}</b><span>${dt.toLocaleDateString('en-GB', { month: 'short' })} ${String(dt.getFullYear()).slice(2)}</span></div>`;
+    const del = db || DEMO ? `<button class="del" data-del="${esc(e.id)}">remove</button>` : '';
+    if (e.type === 'pay') {
+      return `<li class="row pay">${date}<div class="mid"><div class="course">💸 ${esc(nm(e.from))} paid ${esc(nm(other(e.from)))}</div>
+        <div class="card">Balance after: ${e._bal === 0 ? 'all square' : esc(nm(e._bal > 0 ? 'a' : 'b')) + ' up ' + eur(e._bal)}</div></div>
+        <div class="right"><span class="pill h">${eur(e.amount)}</span>${del}</div></li>`;
+    }
+    const w = e.winner, st = +e.stake || 0;
+    const sc = k => e['s' + k] ? `<span class="${w === k ? 'w' : ''}">${esc(nm(k))} ${esc(e['s' + k])}</span>` : '';
+    const pill = w === 'h' ? '<span class="pill h">Halved</span>'
+      : `<span class="pill ${w}">${esc(nm(w))}${st ? ' +' + eur(st) : ''}</span>`;
+    return `<li class="row w${w}">${date}<div class="mid"><div class="course">${esc(e.course || 'Somewhere green')}</div>
+      <div class="card">${sc('a')}${sc('b')}</div>${e.note ? `<div class="note">“${esc(e.note)}”</div>` : ''}</div>
+      <div class="right">${pill}${del}</div></li>`;
+  }).join('');
+}
+
+// ---------- confetti ----------
+function confetti(k) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  const cols = k === 'a' ? ['#e9b44c', '#f6d58e', '#fff', '#2f8a5b'] : ['#6fb7e8', '#bfe0f6', '#fff', '#2f8a5b'];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement('i');
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = cols[i % cols.length];
+    c.style.setProperty('--dx', (Math.random() * 200 - 100) + 'px');
+    c.style.setProperty('--r', (Math.random() * 900 - 450) + 'deg');
+    c.style.animationDuration = 1.8 + Math.random() * 1.6 + 's';
+    c.style.animationDelay = Math.random() * .4 + 's';
+    box.appendChild(c);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 4200);
+}
+
+// ---------- writes ----------
+function isDenied(e) {
+  const c = ((e && (e.code || e.message)) || '').toString().toUpperCase();
+  return c.includes('PERMISSION') || c.includes('DENIED');
+}
+function shout(msg) {
+  $('shoutslot').innerHTML = msg ? `<div class="shout">${esc(msg)}</div>` : '';
+}
+async function write(path, value) {
+  if (DEMO) {
+    const [, id] = path.split('/');
+    if (path === 'players') players = value;
+    else if (value === null) delete entries[id];
+    else entries[id] = value;
+    paint();
+    return true;
+  }
+  if (!db) return false;
+  try { await api.set(api.ref(db, 'golf/' + path), value); shout(''); return true; }
+  catch (e) {
+    shout(isDenied(e)
+      ? 'Not saved: the database refused it. The Firebase rules need read and write on /golf.'
+      : 'Not saved: no connection to the database. Try again in a moment.');
+    return false;
+  }
+}
+const newId = () => DEMO ? 'd' + Date.now() : api.push(api.ref(db, 'golf/entries')).key;
+
+// ---------- dialogs ----------
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+
+let gWin = 'h', gTouched = false;
+function setSeg(seg, v) { seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.w === v)); }
+function autoWin() {
+  if (gTouched) return;
+  const a = +$('gsa').value, b = +$('gsb').value;
+  gWin = a && b ? (a < b ? 'a' : b < a ? 'b' : 'h') : gWin;
+  setSeg($('gwin'), gWin);
+}
+$('gsa').addEventListener('input', autoWin);
+$('gsb').addEventListener('input', autoWin);
+$('gwin').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; gWin = b.dataset.w; gTouched = true; setSeg($('gwin'), gWin); });
+
+$('addgame').addEventListener('click', () => {
+  const lastStake = crunch().list.filter(e => e.type === 'game').pop()?.stake;
+  $('fgame').reset(); $('gdate').value = today(); $('gstake').value = lastStake ?? '';
+  const lastCourse = crunch().list.filter(e => e.type === 'game').pop()?.course;
+  $('gcourse').value = lastCourse || '';
+  gWin = 'h'; gTouched = false; setSeg($('gwin'), gWin);
+  $('dgame').showModal();
+});
+$('fgame').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const e = { type: 'game', date: $('gdate').value || today(), course: $('gcourse').value.trim(),
+              winner: gWin, stake: Math.max(0, +$('gstake').value || 0), note: $('gnote').value.trim(),
+              created: Date.now() };
+  if (+$('gsa').value) e.sa = +$('gsa').value;
+  if (+$('gsb').value) e.sb = +$('gsb').value;
+  if (await write('entries/' + newId(), e)) { $('dgame').close(); if (e.winner !== 'h') confetti(e.winner); }
+});
+
+let pFrom = 'b';
+$('pfrom').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pFrom = b.dataset.w; setSeg($('pfrom'), pFrom); });
+$('settleup').addEventListener('click', () => {
+  const bal = crunch().balance;
+  pFrom = bal < 0 ? 'a' : 'b'; setSeg($('pfrom'), pFrom);
+  $('pamt').value = bal ? Math.abs(bal) : ''; $('pdate').value = today();
+  $('dpay').showModal();
+});
+$('fpay').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const amount = +$('pamt').value;
+  if (!(amount > 0)) return;
+  const e = { type: 'pay', date: $('pdate').value || today(), from: pFrom, amount, created: Date.now() };
+  if (await write('entries/' + newId(), e)) $('dpay').close();
+});
+
+$('editnames').addEventListener('click', () => { $('xna').value = players.a; $('xnb').value = players.b; $('dnames').showModal(); });
+$('fnames').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const p = { a: $('xna').value.trim() || 'Gold', b: $('xnb').value.trim() || 'Blue' };
+  if (await write('players', p)) $('dnames').close();
+});
+
+$('log').addEventListener('click', async e => {
+  const b = e.target.closest('[data-del]'); if (!b) return;
+  if (confirm('Remove this entry for both of you?')) await write('entries/' + b.dataset.del, null);
+});
+
+// ---------- boot ----------
+function ready(label, kind) {
+  $('conn').textContent = label; $('conn').className = 'conn ' + kind;
+  const on = kind === 'live';
+  ['addgame', 'settleup', 'editnames'].forEach(id => $(id).disabled = !on);
+}
+
+if (DEMO) {
+  players = { a: 'Javi', b: 'Marco' };
+  const d = (date, course, sa, sb, stake, note) => ({ type: 'game', date, course, sa, sb, stake, note,
+    winner: sa < sb ? 'a' : sb < sa ? 'b' : 'h', created: Date.parse(date) });
+  entries = {
+    g1: d('2026-04-12', 'Golfclub Wannsee', 94, 99, 20, 'Beginner’s luck, apparently.'),
+    g2: d('2026-04-26', 'Berliner GC Stolper Heide', 97, 92, 20),
+    g3: d('2026-05-10', 'Golfclub Wannsee', 91, 91, 20, 'Nobody wanted to putt.'),
+    g4: d('2026-05-31', 'Motzener See', 89, 95, 30),
+    g5: d('2026-06-14', 'Motzener See', 90, 93, 30, 'Lost four balls in the lake. Still won.'),
+    p1: { type: 'pay', date: '2026-06-20', from: 'b', amount: 40, created: Date.parse('2026-06-20') },
+    g6: d('2026-07-05', 'Golfclub Wannsee', 96, 90, 25),
+    g7: d('2026-08-02', 'Bad Saarow Faldo', 88, 94, 50, 'Birdie on 17. Unbearable afterwards.'),
+    g8: d('2026-08-30', 'Golfclub Wannsee', 87, 92, 25),
+    g9: d('2026-09-20', 'Motzener See', 90, 96, 25),
+  };
+  ready('demo, not saving', 'down');
+  ['addgame', 'settleup', 'editnames'].forEach(id => $(id).disabled = false);
+  paint();
+} else {
+  paint();
+  const c = await connect();
+  if (!c) { ready('offline', 'down'); shout('Could not reach the database, so nothing can be saved right now.'); }
+  else {
+    ({ db, api } = c);
+    api.onValue(api.ref(db, 'golf'), snap => {
+      const v = snap.val() || {};
+      players = { a: 'Javi', b: 'Friend', ...(v.players || {}) };
+      entries = v.entries || {};
+      ready('live', 'live');
+      paint();
+    }, err => {
+      ready('not connected', 'down');
+      shout(isDenied(err)
+        ? 'The database is refusing to share /golf. The Firebase rules need read and write on /golf.'
+        : 'Lost the connection to the database.');
+    });
+  }
+}
+</script>
+</body>
+</html>
