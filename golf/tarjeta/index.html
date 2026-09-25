@@ -72,6 +72,19 @@
   .team{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 10px 2px}
   .team .th{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green2);margin:0 0 8px}
   .vs2{text-align:center;font-family:var(--serif);font-style:italic;color:var(--light);margin:4px 0}
+  .pick-wrap{position:relative;min-width:0}
+  .pick-wrap input.ok{border-color:#9fcfb3;background:#f3faf6}
+  .sug{position:absolute;left:0;right:-86px;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:12px;
+       box-shadow:0 12px 30px rgba(0,0,0,.15);z-index:20;overflow:hidden}
+  .sug button{display:flex;justify-content:space-between;gap:10px;width:100%;border:0;border-bottom:1px solid #f0f1f2;background:#fff;
+              padding:12px 14px;text-align:left;font-size:15px}
+  .sug button:last-child{border-bottom:0}
+  .sug button.new{color:var(--green2);font-weight:600}
+  .sug .none{padding:12px 14px;font-size:14px;color:var(--light)}
+  .pgrid{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center}
+  .hc{display:flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0}
+  .hc span{font-size:13px;color:var(--light);font-weight:600}
+  .hc input{text-align:center}
   .prow .x{border:0;background:none;font-size:20px;color:var(--light);padding:0}
   .seg{display:grid;gap:6px;grid-auto-flow:column;grid-auto-columns:1fr}
   .seg button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 6px;font-size:14px;font-weight:600;color:var(--mid)}
@@ -175,10 +188,12 @@
 // handicap index per hole, and three formats (stroke play, Stableford, match play).
 // Shared through Firebase under the /golf node the ledger page already uses:
 //   golf/courses/<id> = { name, holes: [{par, si}], created }
-//   golf/rounds/<id>  = { created, date, course: {id, name, holes}, players: [{name, hcp}],
+//   golf/people/<id>  = { name, hcp, created }   the player list; hcp is the current handicap
+//   golf/rounds/<id>  = { created, date, course: {id, name, holes}, players: [{id, name, hcp}],
 //                         format: "medal" | "stableford" | "match", teams: [[0,1],[2,3]] | [[0],[1]],
 //                         useHcp, scores: { <player>: { <hole index>: strokes | -1 (picked up) } } }
-// The course is copied into the round, so editing a course later does not change old rounds.
+// The course and each player's handicap are copied into the round when it starts, so changing a
+// course or a handicap later only affects rounds started after that.
 // Open with ?demo for an in-memory copy with sample data (nothing is saved).
 import { connect } from '../../queensland/firebase-config.js';
 
@@ -186,11 +201,13 @@ const DEMO = new URLSearchParams(location.search).has('demo');
 const COLORS = ['var(--p0)', 'var(--p1)', 'var(--p2)', 'var(--p3)'];
 const FORMAT = { medal: 'Juego por golpes', stableford: 'Stableford', match: 'Match play' };
 const app = document.getElementById('app');
-const S = { courses: {}, rounds: {}, names: null, loaded: false };
+const S = { courses: {}, rounds: {}, people: {}, loaded: false };
+const peopleList = () => Object.entries(S.people).map(([id, p]) => ({ id, ...p })).sort((a, b) => a.name.localeCompare(b.name, 'es'));
 let store = null;
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 const fmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 const signed = v => v === 0 ? 'par' : v > 0 ? '+' + v : '−' + (-v);
 const sum = a => a.reduce((x, y) => x + y, 0);
@@ -347,6 +364,7 @@ function headline(r) {
 function parse() {
   const h = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (h[0] === 'nueva') return { v: 'setup' };
+  if (h[0] === 'jugadores') return { v: 'people' };
   if (h[0] === 'campo') return { v: 'course', id: h[1] || 'nuevo' };
   if (h[0] === 'r' && h[1]) return h[2] === 'tarjeta' ? { v: 'card', id: h[1] } : { v: 'play', id: h[1], hole: h[2] ? +h[2] - 1 : null };
   return { v: 'home' };
@@ -362,7 +380,7 @@ const go = h => { location.hash = h; };
 
 function render() {
   if (!S.loaded) { app.innerHTML = '<p class="muted">Cargando…</p>'; return; }
-  ({ home: vHome, setup: vSetup, course: vCourse, play: vPlay, card: vCard })[cur.v](cur);
+  ({ home: vHome, setup: vSetup, course: vCourse, play: vPlay, card: vCard, people: vPeople })[cur.v](cur);
 }
 
 // ---------- home ----------
@@ -391,16 +409,24 @@ function vHome() {
       </a>`).join('') : '<div class="empty">No hay campos todavía.</div>'}
     <button class="btn light full" data-go="#/campo/nuevo" style="margin-top:4px">Añadir campo</button>
 
+    <h2>Jugadores</h2>
+    <a class="card" href="#/jugadores"><div class="row"><div class="t">Jugadores y hándicaps</div><span class="m">${Object.keys(S.people).length}</span></div>
+      <div class="m">Cambia aquí el hándicap de cada uno cuando se mueva.</div></a>
+
     <p style="margin-top:34px"><a class="back" href="../">‹ Las Cuentas</a></p>`;
 }
 
 // ---------- new round ----------
 let draft = null, lastCourse = null;
+const emptyRow = () => ({ id: null, name: '', hcp: '' });
+const personRow = id => ({ id, name: S.people[id].name, hcp: S.people[id].hcp ?? 0 });
 function newDraft() {
-  const ids = Object.keys(S.courses);
-  const n = S.names || {};
+  const ids = Object.keys(S.courses).sort((a, b) => S.courses[a].name.localeCompare(S.courses[b].name));
+  // Start from the players of the most recent round, with their current handicaps.
+  const last = Object.values(S.rounds).sort((a, b) => (b.created || 0) - (a.created || 0))[0];
+  const rows = (last?.players || []).filter(p => p.id && S.people[p.id]).map(p => personRow(p.id));
   return { courseId: lastCourse && S.courses[lastCourse] ? lastCourse : ids[0], date: today(),
-           players: [{ name: n.a || 'Javi', hcp: '' }, { name: n.b || 'Hugo', hcp: '' }],
+           players: rows.length ? rows : [emptyRow()],
            format: 'stableford', useHcp: true, start: 0, worst: false, err: '' };
 }
 function vSetup() {
@@ -412,19 +438,17 @@ function vSetup() {
   const teams4 = d.format === 'match' && np === 4;
   const prow = i => { const p = d.players[i]; return `
         <div class="prow"><span class="pdot" style="background:${COLORS[i]}"></span>
-          <input data-pn="${i}" value="${esc(p.name)}" maxlength="16" placeholder="Nombre" aria-label="Nombre del jugador ${i + 1}">
-          <input data-ph="${i}" value="${esc(p.hcp)}" type="number" inputmode="numeric" min="0" max="54" placeholder="hcp" aria-label="Hándicap del jugador ${i + 1}">
+          <div class="pick-wrap"><input data-pn="${i}" value="${esc(p.name)}" maxlength="24" placeholder="Busca o escribe un nombre" autocomplete="off"
+               class="${p.id ? 'ok' : ''}" aria-label="Jugador ${i + 1}"><div class="sug" data-sug="${i}" hidden></div></div>
+          <input data-ph="${i}" value="${esc(p.hcp)}" type="number" inputmode="decimal" step="0.1" min="0" max="54" placeholder="hcp" aria-label="Hándicap del jugador ${i + 1}">
           ${np > 1 ? `<button class="x" data-rm="${i}" aria-label="Quitar jugador">×</button>` : '<span></span>'}
         </div>`; };
   app.innerHTML = `
     <a class="back" href="#/">‹ Partidas</a>
     <h1>Nueva partida</h1>
     ${d.err ? `<div class="err">${esc(d.err)}</div>` : ''}
-    <div class="f"><div class="lab">Campo</div>
-      <div style="display:grid;gap:6px">${courses.map(([id, c]) => `
-        <button class="card" data-course="${esc(id)}" style="margin:0;text-align:left;${id === d.courseId ? 'border-color:var(--green);box-shadow:0 0 0 1px var(--green)' : ''}">
-          <div class="row"><span class="t">${esc(c.name)}</span><span class="m" style="margin:0">${id === d.courseId ? '✓ ' : ''}${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</span></div></button>`).join('')}
-      </div>
+    <div class="f"><label for="sc">Campo</label>
+      <select id="sc">${courses.map(([id, c]) => `<option value="${esc(id)}" ${id === d.courseId ? 'selected' : ''}>${esc(c.name)} · ${c.holes.length} hoyos · par ${sum(c.holes.map(h => h.par))}</option>`).join('')}</select>
       <div class="hint"><a href="#/campo/nuevo">Añadir otro campo</a></div></div>
     ${S.courses[d.courseId]?.holes.length === 18 ? `
     <div class="f"><div class="lab">Salida</div>
@@ -450,6 +474,7 @@ function vSetup() {
         <div class="team"><div class="th">Pareja 2</div>${prow(2)}${prow(3)}</div>`
       : d.players.map((_, i) => prow(i)).join('')}
       ${np < 4 ? '<button class="link" data-add>+ Añadir jugador</button>' : ''}
+      <div class="hint">El hándicap viene de la ficha del jugador. Si lo cambias aquí, se guarda en su ficha para esta y las próximas partidas; las partidas ya empezadas no cambian. <a href="#/jugadores">Ver jugadores</a></div>
     </div>
 
 
@@ -465,8 +490,14 @@ function vSetup() {
 async function startRound() {
   const d = draft;
   const c = S.courses[d.courseId];
-  const players = d.players.map((p, i) => ({ name: p.name.trim() || `Jugador ${i + 1}`, hcp: Math.max(0, Math.min(54, +p.hcp || 0)) }));
   if (!c) { d.err = 'Elige un campo.'; return render(); }
+  const missing = d.players.find(p => !p.id || !S.people[p.id]);
+  if (missing) {
+    d.err = missing.name.trim() ? `Elige a «${missing.name.trim()}» de la lista o añádelo como jugador nuevo.` : 'Falta un jugador: escribe su nombre o quita la fila.';
+    return render();
+  }
+  // The handicap is copied from the player's record now and never updated in this round afterwards.
+  const players = d.players.map(p => ({ id: p.id, name: S.people[p.id].name, hcp: Math.max(0, Math.min(54, +S.people[p.id].hcp || 0)) }));
   const teams = d.format === 'match' ? (players.length === 4 ? [[0, 1], [2, 3]] : [[0], [1]]) : null;
   const r = { created: Date.now(), date: d.date || today(), course: { id: d.courseId, name: c.name, holes: c.holes },
               players, format: d.format, useHcp: !!d.useHcp, start: c.holes.length === 18 ? d.start : 0 };
@@ -475,6 +506,69 @@ async function startRound() {
   const id = store.key('golf/rounds');
   lastCourse = d.courseId;
   if (await save('golf/rounds/' + id, r)) { draft = null; go('#/r/' + id + '/' + (r.start + 1)); }
+}
+
+// Suggestions under a player's name field: matching players not already in the round,
+// plus an option to create a new player when the typed name does not exist yet.
+function suggest(i) {
+  const input = document.querySelector(`[data-pn="${i}"]`), box = document.querySelector(`[data-sug="${i}"]`);
+  if (!input || !box) return;
+  const q = norm(input.value);
+  const taken = new Set(draft.players.map((p, k) => k !== i && p.id).filter(Boolean));
+  const all = peopleList();
+  const list = all.filter(p => !taken.has(p.id) && (!q || norm(p.name).includes(q))).slice(0, 6);
+  const exists = all.find(p => norm(p.name) === q);
+  let html = list.map(p => `<button type="button" data-pickp="${i}" data-pid="${esc(p.id)}"><span>${esc(p.name)}</span><span class="muted">hcp ${esc(p.hcp ?? 0)}</span></button>`).join('');
+  if (q && !exists) html += `<button type="button" class="new" data-newp="${i}">+ Añadir «${esc(input.value.trim())}» como jugador nuevo</button>`;
+  if (!html && !q) html = '<div class="none">Escribe el nombre para añadir el primer jugador.</div>';
+  box.innerHTML = html;
+  box.hidden = !html || document.activeElement !== input;
+}
+async function addPerson(i) {
+  const row = draft.players[i], name = row.name.trim();
+  if (!name) return;
+  const hcp = row.hcp === '' ? 0 : Math.max(0, Math.min(54, +row.hcp || 0));
+  const id = store.key('golf/people');
+  if (await save('golf/people/' + id, { name, hcp, created: Date.now() })) {
+    draft.players[i] = { id, name, hcp };
+    draft.err = '';
+    render();
+  }
+}
+
+// ---------- players ----------
+function vPeople() {
+  const list = peopleList();
+  const rounds = Object.values(S.rounds);
+  const info = id => {
+    const mine = rounds.filter(r => r.players.some(p => p.id === id)).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return mine.length ? `${mine.length} ${mine.length === 1 ? 'partida' : 'partidas'} · última ${esc(fmtDate(mine[0].date))}` : 'Sin partidas todavía';
+  };
+  app.innerHTML = `
+    <a class="back" href="#/">‹ Partidas</a>
+    <h1>Jugadores</h1>
+    <p class="sub">Cuando se mueva el hándicap de alguien, cámbialo aquí. Vale para las partidas que empiecen a partir de ahora; las ya empezadas mantienen el hándicap con el que se jugaron.</p>
+    ${list.length ? list.map(p => `
+      <div class="card pcard">
+        <div class="pgrid">
+          <input data-pid="${esc(p.id)}" data-f="name" value="${esc(p.name)}" maxlength="24" aria-label="Nombre">
+          <label class="hc"><span>hcp</span><input data-pid="${esc(p.id)}" data-f="hcp" type="number" inputmode="decimal" step="0.1" min="0" max="54" value="${esc(p.hcp ?? 0)}" aria-label="Hándicap de ${esc(p.name)}"></label>
+        </div>
+        <div class="row" style="margin-top:6px"><span class="m" style="margin:0">${info(p.id)}</span><button class="link" data-pdel="${esc(p.id)}">borrar</button></div>
+      </div>`).join('') : '<div class="empty">Aún no hay jugadores.</div>'}
+    <h2>Añadir jugador</h2>
+    <div class="card"><div class="pgrid">
+      <input id="npn" maxlength="24" placeholder="Nombre" aria-label="Nombre del jugador nuevo">
+      <label class="hc"><span>hcp</span><input id="nph" type="number" inputmode="decimal" step="0.1" min="0" max="54" placeholder="0" aria-label="Hándicap del jugador nuevo"></label>
+    </div><button class="btn full" data-padd style="margin-top:10px">Añadir</button></div>
+    <p class="hint">Los cambios se guardan al salir de cada casilla.</p>`;
+}
+async function addPersonFromPage() {
+  const name = document.getElementById('npn').value.trim();
+  const hcp = Math.max(0, Math.min(54, +document.getElementById('nph').value || 0));
+  if (!name) return toast('Escribe el nombre del jugador.');
+  if (peopleList().some(p => norm(p.name) === norm(name))) return toast(`Ya existe un jugador llamado ${name}.`);
+  if (await save('golf/people/' + store.key('golf/people'), { name, hcp, created: Date.now() })) render();
 }
 
 // ---------- course editor ----------
@@ -677,12 +771,22 @@ app.addEventListener('click', ev => {
   if (ds.rdel) { if (confirm('¿Borrar esta partida para todos?')) save('golf/rounds/' + ds.rdel, null).then(ok => ok && go('#/')); return; }
   // setup
   if (cur.v === 'setup') {
-    if (ds.add !== undefined) { draft.players.push({ name: '', hcp: '' }); return render(); }
+    if (ds.add !== undefined) { draft.players.push(emptyRow()); render(); document.querySelector(`[data-pn="${draft.players.length - 1}"]`)?.focus(); return; }
+    if (ds.pickp !== undefined) { draft.players[+ds.pickp] = personRow(ds.pid); draft.err = ''; return render(); }
+    if (ds.newp !== undefined) return addPerson(+ds.newp);
     if (ds.rm !== undefined) { draft.players.splice(+ds.rm, 1); return render(); }
     if (ds.fmt) { draft.format = ds.fmt; return render(); }
-    if (ds.course) { draft.courseId = ds.course; return render(); }
     if (ds.startHole !== undefined) { draft.start = +ds.startHole; return render(); }
     if (ds.start !== undefined) return startRound();
+  }
+  // players
+  if (cur.v === 'people') {
+    if (ds.padd !== undefined) return addPersonFromPage();
+    if (ds.pdel) {
+      const p = S.people[ds.pdel];
+      if (p && confirm(`¿Borrar a ${p.name}? Sus partidas ya jugadas se conservan.`)) save('golf/people/' + ds.pdel, null).then(() => render());
+      return;
+    }
   }
   // course
   if (cur.v === 'course') {
@@ -703,7 +807,12 @@ app.addEventListener('click', ev => {
 app.addEventListener('input', ev => {
   const t = ev.target, ds = t.dataset;
   if (cur.v === 'setup') {
-    if (ds.pn !== undefined) draft.players[+ds.pn].name = t.value;
+    if (ds.pn !== undefined) {
+      const i = +ds.pn;
+      draft.players[i] = { id: null, name: t.value, hcp: draft.players[i].hcp };
+      t.classList.remove('ok');
+      suggest(i);
+    }
     if (ds.ph !== undefined) draft.players[+ds.ph].hcp = t.value;
     if (t.id === 'sd') draft.date = t.value;
   }
@@ -723,24 +832,43 @@ app.addEventListener('input', ev => {
 app.addEventListener('change', ev => {
   const t = ev.target;
   if (cur.v === 'setup') {
+    if (t.id === 'sc') { draft.courseId = t.value; render(); }
+    if (t.dataset.ph !== undefined) {
+      const row = draft.players[+t.dataset.ph];
+      if (row.id && t.value !== '') save(`golf/people/${row.id}/hcp`, Math.max(0, Math.min(54, +t.value)));
+    }
     if (t.id === 'suh') { draft.useHcp = t.checked; render(); }
     if (t.id === 'sworst') draft.worst = t.checked;
   }
+  if (cur.v === 'people') {
+    const id = t.dataset.pid;
+    if (id && t.dataset.f === 'hcp' && t.value !== '') save(`golf/people/${id}/hcp`, Math.max(0, Math.min(54, +t.value)));
+    if (id && t.dataset.f === 'name' && t.value.trim()) save(`golf/people/${id}/name`, t.value.trim());
+  }
 });
+app.addEventListener('focusin', ev => {
+  if (cur.v === 'setup' && ev.target.dataset.pn !== undefined) suggest(+ev.target.dataset.pn);
+});
+app.addEventListener('focusout', ev => {
+  const i = ev.target.dataset?.pn;
+  if (cur.v === 'setup' && i !== undefined) setTimeout(() => { const b = document.querySelector(`[data-sug="${i}"]`); if (b) b.hidden = true; }, 200);
+});
+// Keep focus in the name field while a suggestion is being picked with a mouse.
+app.addEventListener('mousedown', ev => { if (ev.target.closest('.sug')) ev.preventDefault(); });
 
 // ---------- boot ----------
 function conn(label, kind) { const c = document.getElementById('conn'); c.textContent = label; c.className = 'conn ' + kind; }
 function listen() {
   let got = 0;
   // First full load always renders; later updates skip the forms so typing is not interrupted.
-  const done = () => { if (++got === 2) { S.loaded = true; render(); return true; } return got < 2; };
+  const done = () => { if (++got === 3) { S.loaded = true; render(); return true; } return got < 3; };
   const onErr = err => {
     conn('desconectado', 'down');
     toast(/PERMISSION|DENIED/i.test(err?.code || err?.message || '') ? 'La base de datos no deja leer /golf.' : 'Se ha perdido la conexión.');
   };
   store.on('golf/courses', v => { S.courses = v || {}; if (!done() && cur.v !== 'course') render(); }, onErr);
   store.on('golf/rounds', v => { S.rounds = v || {}; if (!done() && cur.v !== 'setup' && cur.v !== 'course') render(); }, onErr);
-  store.on('golf/players', v => { S.names = v; }, () => {});
+  store.on('golf/people', v => { S.people = v || {}; if (!done() && cur.v !== 'setup' && cur.v !== 'people') render(); }, onErr);
 }
 
 render();
@@ -751,14 +879,14 @@ if (DEMO) {
   const sc = [[5, 4, 3, 6, 5, 4, 4, 5, 5, 4, 6], [4, 5, 4, 5, 4, 5, 3, 6, 4, 5, 5], [6, 5, 3, 7, 5, 5, 4, 6, 5, 5, 6], [5, 4, 4, 5, 4, 4, 3, 5, 5, 4, 5]];
   const toObj = a => Object.fromEntries(a.map((v, i) => [i, v]));
   store = memoryStore({ golf: {
-    players: { a: 'Javi', b: 'Hugo' },
+    people: { p1: { name: 'Javi', hcp: 18 }, p2: { name: 'Hugo', hcp: 14 }, p3: { name: 'Ana', hcp: 24 }, p4: { name: 'Luis', hcp: 10 } },
     courses: { c1: { name: 'Campo de ejemplo', holes, created: 1 } },
     rounds: {
       r1: { created: 2, date: today(), course: { id: 'c1', name: 'Campo de ejemplo', holes },
-            players: [{ name: 'Javi', hcp: 18 }, { name: 'Hugo', hcp: 14 }, { name: 'Ana', hcp: 24 }, { name: 'Luis', hcp: 10 }],
+            players: [{ id: 'p1', name: 'Javi', hcp: 18 }, { id: 'p2', name: 'Hugo', hcp: 14 }, { id: 'p3', name: 'Ana', hcp: 24 }, { id: 'p4', name: 'Luis', hcp: 10 }],
             format: 'stableford', useHcp: true, scores: toObj(sc.map(toObj)) },
       r2: { created: 1, date: '2026-09-20', course: { id: 'c1', name: 'Campo de ejemplo', holes },
-            players: [{ name: 'Javi', hcp: 18 }, { name: 'Hugo', hcp: 14 }, { name: 'Ana', hcp: 24 }, { name: 'Luis', hcp: 10 }],
+            players: [{ id: 'p1', name: 'Javi', hcp: 18 }, { id: 'p2', name: 'Hugo', hcp: 14 }, { id: 'p3', name: 'Ana', hcp: 24 }, { id: 'p4', name: 'Luis', hcp: 10 }],
             format: 'match', teams: [[0, 2], [1, 3]], useHcp: true, scores: toObj(sc.map(toObj)) },
     } } });
   conn('demo, no se guarda', 'down');
