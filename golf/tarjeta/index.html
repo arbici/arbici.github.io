@@ -96,8 +96,9 @@
        color:var(--ag);font-weight:600;letter-spacing:.5px;position:sticky;left:30px;z-index:1}
   .lboard thead .nm{color:#1b1d1c}
   .lboard .pos{min-width:24px;color:var(--agred);position:sticky;left:0;z-index:1}
-  .lboard td.under{color:var(--agred)}
-  .lboard td.over{color:var(--ag)}
+  .lboard td.under{color:var(--ag)}
+  .lboard td.even{color:#1b1d1c}
+  .lboard td.over{color:var(--agred)}
   .lboard td.pu{color:#8a929a}
   .lboard .tot{min-width:52px;font-size:13px;letter-spacing:.5px}
   .rhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -875,8 +876,8 @@ function setScore(k, delta) {
 }
 
 // ---------- full scorecard ----------
-// The Golpes list as an Augusta style leader board: strokes on every hole, red when under par for
-// that hole and green at par or over, with totals at the end. Rows arrive ranked (ranked).
+// The Golpes list as an Augusta style leader board: strokes on every hole, green under par for
+// that hole, black at par and red over, with totals at the end. Rows arrive ranked (ranked).
 function leaderBoard(r, ranked) {
   const hs = holesOf(r), seq = order(r);
   const pos = [];
@@ -886,12 +887,12 @@ function leaderBoard(r, ranked) {
   const pars = cols.map(i => `<td>${hs[i].par}</td>`).join('');
   const rows = ranked.map(({ k, st, vh }, n) => {
     const cell = i => { const v = scoreOf(r, k, i); return v === null ? '<td></td>'
-      : v < 0 ? '<td class="pu">X</td>' : `<td class="${v < hs[i].par ? 'under' : 'over'}">${v}</td>`; };
+      : v < 0 ? '<td class="pu">X</td>' : `<td class="${v < hs[i].par ? 'under' : v === hs[i].par ? 'even' : 'over'}">${v}</td>`; };
     const name = r.players[k].name, last = String(name).trim().split(/\s+/).pop();
     return `<tr><td class="pos">${st.played ? pos[n] : ''}</td><td class="nm" title="${esc(name)}">${esc(last.toUpperCase())}</td>${cols.map(cell).join('')}
       <td class="tot">${st.played ? st.gross : ''}</td>
-      <td class="tot ${st.played ? (st.vsPar < 0 ? 'under' : 'over') : ''}">${st.played ? (st.vsPar > 0 ? '+' + st.vsPar : st.vsPar < 0 ? '−' + (-st.vsPar) : 'E') : ''}</td>
-      <td class="tot ${vh === null ? '' : vh < 0 ? 'under' : 'over'}">${vh === null ? '' : vh > 0 ? '+' + vh : vh < 0 ? '−' + (-vh) : '0'}</td></tr>`;
+      <td class="tot ${st.played ? (st.vsPar < 0 ? 'under' : st.vsPar === 0 ? 'even' : 'over') : ''}">${st.played ? (st.vsPar > 0 ? '+' + st.vsPar : st.vsPar < 0 ? '−' + (-st.vsPar) : 'E') : ''}</td>
+      <td class="tot ${vh === null ? '' : vh < 0 ? 'under' : vh === 0 ? 'even' : 'over'}">${vh === null ? '' : vh > 0 ? '+' + vh : vh < 0 ? '−' + (-vh) : '0'}</td></tr>`;
   }).join('');
   return `<div class="board"><div class="board-title">LEADERS</div><div class="bw"><table class="lboard num">
     <thead><tr><th class="pos"></th><th class="nm">HOLE</th>${head}<th class="tot">GOLPES</th><th class="tot">VS PAR</th><th class="tot">VS HCP</th></tr>
@@ -995,7 +996,7 @@ function vCard({ id }) {
     <div class="legend"><span><span class="s eagle">3</span> eagle</span><span><span class="s birdie">3</span> birdie</span>
       <span><span class="s bogey">5</span> bogey</span><span><span class="s double">6</span> doble o más</span><span>• golpe de hándicap</span></div>
     <h2>Golpes</h2>${extra}
-    <div class="hint">Cada casilla son los golpes en ese hoyo: en rojo bajo par, en verde par o por encima. X es una bola levantada.</div>`;
+    <div class="hint">Cada casilla son los golpes en ese hoyo: en verde bajo par, en negro al par y en rojo por encima. X es una bola levantada.</div>`;
 }
 
 // ---------- events ----------
